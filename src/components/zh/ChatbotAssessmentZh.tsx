@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuizStore } from '../../store/quiz';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, Heart } from 'lucide-react';
+import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, TrendingUp } from 'lucide-react';
 import LoadingAnimation from '../LoadingAnimation';
 import AssessmentLeadCaptureZh from './AssessmentLeadCaptureZh';
 import ChatbotWelcomeZh from './ChatbotWelcomeZh';
@@ -20,6 +20,14 @@ const ChatbotAssessmentZh: React.FC = () => {
   >('sitToStand');
   const navigate = useNavigate();
   const quizStore = useQuizStore();
+
+  // Mock last assessment data - in real app, this would come from API/database
+  const lastAssessment = {
+    date: '2025年1月15日',
+    riskLevel: '低風險',
+    score: 85,
+    color: 'text-green-600'
+  };
 
   useEffect(() => {
     if (!showWelcome) {
@@ -196,39 +204,47 @@ const ChatbotAssessmentZh: React.FC = () => {
   const currentTitle = step === 3 ? "體能評估" : questions[step]?.title;
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
-      {/* Standardized Header - Same format as Rehab page */}
-      <div className="bg-white px-4 py-6 border-b flex-shrink-0">
-        <div className="flex items-center justify-between mb-2">
+    <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative">
+      {/* Header with back button and last score */}
+      <div className="bg-white px-4 py-3 border-b flex-shrink-0">
+        <div className="flex items-center justify-between mb-3">
           <button
             onClick={() => navigate('/')}
             className="p-2 hover:bg-gray-100 rounded-full"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <div className="flex items-center">
-            <Heart className="h-6 w-6 text-[#08449E] mr-2" />
-            <span className="text-lg font-bold">
-              GOFA <span style={{ color: '#08449E' }}>銀齡樂</span>
-            </span>
-          </div>
-          <div></div>
-        </div>
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">自我評估</h1>
-        <p className="text-gray-600">個人化跌倒風險評估，了解您的健康狀況</p>
-      </div>
-
-      {/* Progress Indicator */}
-      <div className="bg-white px-4 py-3 border-b flex-shrink-0">
-        <div className="flex items-center justify-between mb-2">
-          <span className="text-sm text-gray-600">評估進度</span>
+          <h2 className="text-lg font-bold text-gray-900">
+            跌倒風險評估
+          </h2>
           <span className="text-sm text-gray-500">
             第 {step + 1} / {totalSteps} 步
           </span>
         </div>
-        <div className="w-full bg-gray-200 rounded-full h-2">
+
+        {/* Last Assessment Score */}
+        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-3 mb-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-600">上次評估結果</p>
+              <p className="text-xs text-gray-500">{lastAssessment.date}</p>
+            </div>
+            <div className="flex items-center">
+              <div className="text-right mr-2">
+                <p className={`font-bold ${lastAssessment.color}`}>{lastAssessment.riskLevel}</p>
+                <p className="text-sm text-gray-600">分數: {lastAssessment.score}/100</p>
+              </div>
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Progress Bar */}
+        <div className="w-full bg-gray-200 rounded-full h-1">
           <motion.div
-            className="h-2 rounded-full"
+            className="h-1 rounded-full"
             style={{ backgroundColor: '#08449E' }}
             initial={{ width: 0 }}
             animate={{ width: `${((step + 1) / totalSteps) * 100}%` }}
@@ -239,8 +255,8 @@ const ChatbotAssessmentZh: React.FC = () => {
 
       {/* Main Content - Scrollable with proper padding */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-6 pb-40">
-          <h3 className="text-xl font-bold text-gray-900 mb-6">{currentTitle}</h3>
+        <div className="px-4 py-4 pb-40">
+          <h3 className="text-xl font-bold text-gray-900 mb-4">{currentTitle}</h3>
           
           {showFrailtyPrompt ? (
             <div className="bg-yellow-50 p-6 rounded-lg mb-4">
@@ -306,17 +322,17 @@ const ChatbotAssessmentZh: React.FC = () => {
               />
             </div>
           ) : (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {questions[step].questions.map((question, idx) => (
-                <div key={idx} className="bg-white p-4 rounded-lg shadow-sm border">
-                  <p className="mb-4 font-medium text-gray-900">{question.text}</p>
+                <div key={idx} className="bg-gray-50 p-4 rounded-lg">
+                  <p className="mb-3 font-medium">{question.text}</p>
                   <div className="flex gap-3">
                     <button
                       onClick={() => handleAnswer(question.field, true)}
                       className={`flex-1 py-3 rounded-lg transition-all font-medium ${
                         quizStore[question.field as keyof typeof quizStore] === true
                           ? 'text-white'
-                          : 'bg-gray-50 hover:bg-gray-100'
+                          : 'bg-white hover:bg-gray-100'
                       }`}
                       style={{
                         backgroundColor: quizStore[question.field as keyof typeof quizStore] === true ? '#08449E' : undefined
@@ -329,7 +345,7 @@ const ChatbotAssessmentZh: React.FC = () => {
                       className={`flex-1 py-3 rounded-lg transition-all font-medium ${
                         quizStore[question.field as keyof typeof quizStore] === false
                           ? 'text-white'
-                          : 'bg-gray-50 hover:bg-gray-100'
+                          : 'bg-white hover:bg-gray-100'
                       }`}
                       style={{
                         backgroundColor: quizStore[question.field as keyof typeof quizStore] === false ? '#08449E' : undefined
