@@ -12,7 +12,7 @@ const MobileLayout: React.FC = () => {
   const navigate = useNavigate();
 
   const handleTabChange = (tab: string) => {
-    if (tab === 'assessment') {
+    if (tab === 'program') {
       // Navigate to Chinese chatbot for 自我評估
       navigate('/chatbot-zh');
       return;
@@ -24,7 +24,7 @@ const MobileLayout: React.FC = () => {
     switch (activeTab) {
       case 'dashboard':
         return <DashboardScreen />;
-      case 'program':
+      case 'assessment':
         return <AssessmentScreen />;
       case 'today':
         return <ProgramScreen />;

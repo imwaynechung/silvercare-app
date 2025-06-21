@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuizStore } from '../../store/quiz';
 import { motion } from 'framer-motion';
-import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, TrendingUp, Heart } from 'lucide-react';
+import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, TrendingUp } from 'lucide-react';
 import LoadingAnimation from '../LoadingAnimation';
 import AssessmentLeadCaptureZh from './AssessmentLeadCaptureZh';
 import ChatbotWelcomeZh from './ChatbotWelcomeZh';
@@ -173,7 +173,7 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <ChatbotWelcomeZh onStart={() => setShowWelcome(false)} />
         </div>
-        <TabNavigation activeTab="assessment" onTabChange={handleTabChange} />
+        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -184,7 +184,7 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <LoadingAnimation />
         </div>
-        <TabNavigation activeTab="assessment" onTabChange={handleTabChange} />
+        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -195,7 +195,7 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <AssessmentLeadCaptureZh onComplete={() => {}} />
         </div>
-        <TabNavigation activeTab="assessment" onTabChange={handleTabChange} />
+        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -205,7 +205,7 @@ const ChatbotAssessmentZh: React.FC = () => {
 
   return (
     <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative">
-      {/* Header with GOFA logo and branding */}
+      {/* Header with back button and last score */}
       <div className="bg-white px-4 py-3 border-b flex-shrink-0">
         <div className="flex items-center justify-between mb-3">
           <button
@@ -214,12 +214,9 @@ const ChatbotAssessmentZh: React.FC = () => {
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <div className="flex items-center">
-            <Heart className="h-6 w-6" style={{ color: '#08449E' }} />
-            <span className="ml-2 text-lg font-bold">
-              GOFA <span style={{ color: '#08449E' }}>銀齡樂</span>
-            </span>
-          </div>
+          <h2 className="text-lg font-bold text-gray-900">
+            跌倒風險評估
+          </h2>
           <span className="text-sm text-gray-500">
             第 {step + 1} / {totalSteps} 步
           </span>
@@ -395,7 +392,7 @@ const ChatbotAssessmentZh: React.FC = () => {
       )}
 
       {/* Bottom Tab Navigation */}
-      <TabNavigation activeTab="assessment" onTabChange={handleTabChange} />
+      <TabNavigation activeTab="program" onTabChange={handleTabChange} />
     </div>
   );
 };
