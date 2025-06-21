@@ -26,12 +26,10 @@ const MobileLayout: React.FC = () => {
         return <DashboardScreen />;
       case 'assessment':
         return <AssessmentScreen />;
-      case 'today':
-        return <ProgramScreen />;
-      case 'family':
-        return <FamilyScreen />;
       case 'companion':
         return <CompanionScreen />;
+      case 'family':
+        return <FamilyScreen />;
       default:
         return <DashboardScreen />;
     }
