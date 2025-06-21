@@ -1,5 +1,5 @@
 import React from 'react';
-import { Home, Brain, Dumbbell, Users, MessageCircle } from 'lucide-react';
+import { Home, Brain, Dumbbell, Users, MessageCircle, Calendar } from 'lucide-react';
 
 interface TabNavigationProps {
   activeTab: string;
