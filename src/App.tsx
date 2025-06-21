@@ -17,6 +17,7 @@ import BetaQuizPromptZh from './components/zh/BetaQuizPromptZh';
 import SimpleLeadCapture from './components/SimpleLeadCapture';
 import SimpleLeadCaptureZh from './components/zh/SimpleLeadCaptureZh';
 import DirectLeadCaptureZh from './components/DirectLeadCaptureZh';
+import MobileLayout from './components/MobileLayout';
 
 function AppContent() {
   const location = useLocation();
@@ -31,6 +32,11 @@ function AppContent() {
     });
   }, [location]);
 
+  // Check if we're on the mobile app route
+  if (location.pathname === '/app') {
+    return <MobileLayout />;
+  }
+
   // Only show language selector on main routes
   const showLanguageSelector = location.pathname === '/' || location.pathname === '/zh';
   
@@ -43,6 +49,9 @@ function AppContent() {
       {!isChatbotZh && showBetaQuizPrompt && (language === 'zh' ? <BetaQuizPromptZh /> : <BetaQuizPrompt />)}
       {!isChatbotZh && showLeadCapture && (language === 'zh' ? <SimpleLeadCaptureZh /> : <SimpleLeadCapture />)}
       <Routes>
+        {/* Mobile App Route */}
+        <Route path="/app" element={<MobileLayout />} />
+        
         {/* Main routes */}
         <Route path="/" element={<EnglishLayout />} />
         <Route path="/zh" element={<ChineseLayout />} />
@@ -65,7 +74,7 @@ function AppContent() {
         <Route path="/simple-lead-capture-zh" element={<DirectLeadCaptureZh />} />
         
         {/* Catch all route */}
-        <Route path="*" element={<Navigate to="/\" replace />} />
+        <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>
   );
