@@ -12,12 +12,8 @@ const DashboardScreen: React.FC = () => {
             <img 
               src="https://iili.io/3rSv1St.png" 
               alt="GOFA Logo" 
-              className="h-10 w-auto mr-3"
+              className="h-10 w-auto"
             />
-            <div>
-              <span className="text-white text-lg font-bold">GOFA</span>
-              <span className="bg-white text-blue-900 px-2 py-1 rounded text-xs font-bold ml-2">PRO</span>
-            </div>
           </div>
           <div className="flex items-center space-x-3">
             <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
