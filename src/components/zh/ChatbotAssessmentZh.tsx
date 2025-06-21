@@ -170,7 +170,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   if (showWelcome) {
     return (
       <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
-        <div className="flex-1 overflow-y-auto pb-20">
+        <div className="flex-1 overflow-y-auto pb-32">
           <ChatbotWelcomeZh onStart={() => setShowWelcome(false)} />
         </div>
         <TabNavigation activeTab="program" onTabChange={handleTabChange} />
@@ -181,7 +181,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   if (isLoading) {
     return (
       <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
-        <div className="flex-1 overflow-y-auto pb-20">
+        <div className="flex-1 overflow-y-auto pb-32">
           <LoadingAnimation />
         </div>
         <TabNavigation activeTab="program" onTabChange={handleTabChange} />
@@ -192,7 +192,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   if (showLeadCapture) {
     return (
       <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
-        <div className="flex-1 overflow-y-auto pb-20">
+        <div className="flex-1 overflow-y-auto pb-32">
           <AssessmentLeadCaptureZh onComplete={() => {}} />
         </div>
         <TabNavigation activeTab="program" onTabChange={handleTabChange} />
@@ -206,7 +206,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   return (
     <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative">
       {/* Header with back button and last score */}
-      <div className="bg-white px-4 py-3 border-b">
+      <div className="bg-white px-4 py-3 border-b flex-shrink-0">
         <div className="flex items-center justify-between mb-3">
           <button
             onClick={() => navigate('/')}
@@ -253,9 +253,9 @@ const ChatbotAssessmentZh: React.FC = () => {
         </div>
       </div>
 
-      {/* Main Content */}
-      <div className="flex-1 overflow-y-auto pb-20">
-        <div className="px-4 py-4">
+      {/* Main Content - Scrollable with proper padding */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-4 pb-40">
           <h3 className="text-xl font-bold text-gray-900 mb-4">{currentTitle}</h3>
           
           {showFrailtyPrompt ? (
@@ -361,9 +361,9 @@ const ChatbotAssessmentZh: React.FC = () => {
         </div>
       </div>
 
-      {/* Footer Navigation */}
+      {/* Footer Navigation - Fixed at bottom above tab navigation */}
       {!showFrailtyPrompt && step !== 3 && (
-        <div className="bg-white border-t px-4 py-3 flex justify-between items-center">
+        <div className="bg-white border-t px-4 py-3 flex justify-between items-center absolute bottom-16 left-0 right-0">
           {step > 0 && (
             <button
               onClick={handleBack}

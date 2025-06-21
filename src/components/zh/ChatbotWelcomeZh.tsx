@@ -117,7 +117,7 @@ const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6, duration: 0.6 }}
-          className="text-center"
+          className="text-center pb-8"
         >
           <button
             onClick={onStart}
