@@ -41,7 +41,7 @@ const ChineseLayout: React.FC = () => {
       'og:title': '銀齡樂 | 香港首個AI智能防跌評估系統',
       'og:description': '立即體驗AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。',
       'og:image': 'https://iili.io/3rSv1St.png',
-      'og:url': 'https://silvercare.gofa.co/zh',
+      'og:url': 'https://silvercare.gofa.co/website/zh',
       'og:type': 'website',
       'og:locale': 'zh_HK',
       'og:site_name': '銀齡樂 SilverCare',
@@ -83,12 +83,12 @@ const ChineseLayout: React.FC = () => {
       canonical.setAttribute('rel', 'canonical');
       document.head.appendChild(canonical);
     }
-    canonical.setAttribute('href', 'https://silvercare.gofa.co/zh');
+    canonical.setAttribute('href', 'https://silvercare.gofa.co/website/zh');
 
     // Add alternate language links
     const alternateLinks = [
-      { hreflang: 'zh-HK', href: 'https://silvercare.gofa.co/zh' },
-      { hreflang: 'en', href: 'https://silvercare.gofa.co' },
+      { hreflang: 'zh-HK', href: 'https://silvercare.gofa.co/website/zh' },
+      { hreflang: 'en', href: 'https://silvercare.gofa.co/website' },
       { hreflang: 'x-default', href: 'https://silvercare.gofa.co' },
     ];
 
@@ -119,7 +119,8 @@ const ChineseLayout: React.FC = () => {
       event_category: 'engagement',
       event_label: 'main_cta_zh'
     });
-    setShowLeadCapture(true);
+    // Navigate to the main app instead of showing lead capture
+    window.location.href = '/';
   };
 
   return (

@@ -10,7 +10,8 @@ const Hero: React.FC = () => {
       event_label: 'hero_section',
       language: 'en'
     });
-    setShowBetaQuizPrompt(true);
+    // Navigate to the main app instead of showing prompt
+    window.location.href = '/';
   };
 
   return (
@@ -57,7 +58,7 @@ const Hero: React.FC = () => {
             </div>
             <div className="flex items-center space-x-4">
               <a 
-                href="#get-started" 
+                href="/" 
                 onClick={handleStartClick}
                 className="inline-block bg-blue-600 text-white px-8 py-3 rounded-full font-medium text-lg hover:bg-blue-700 transition-colors shadow-lg hover:shadow-xl transform hover:-translate-y-1 transition-transform"
               >

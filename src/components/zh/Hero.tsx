@@ -10,7 +10,8 @@ const Hero: React.FC = () => {
       event_label: 'hero_section_zh',
       user_type: userType
     });
-    setShowBetaQuizPrompt(true);
+    // Navigate to the main app instead of showing prompt
+    window.location.href = '/';
   };
 
   const handleWatchVideo = () => {

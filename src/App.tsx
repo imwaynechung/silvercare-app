@@ -32,13 +32,8 @@ function AppContent() {
     });
   }, [location]);
 
-  // Check if we're on the mobile app route
-  if (location.pathname === '/app') {
-    return <MobileLayout />;
-  }
-
-  // Only show language selector on main routes
-  const showLanguageSelector = location.pathname === '/' || location.pathname === '/zh';
+  // Only show language selector on specific routes
+  const showLanguageSelector = location.pathname === '/website' || location.pathname === '/website/zh';
   
   // Don't show prompts on chatbot-zh route
   const isChatbotZh = location.pathname === '/chatbot-zh';
@@ -49,12 +44,12 @@ function AppContent() {
       {!isChatbotZh && showBetaQuizPrompt && (language === 'zh' ? <BetaQuizPromptZh /> : <BetaQuizPrompt />)}
       {!isChatbotZh && showLeadCapture && (language === 'zh' ? <SimpleLeadCaptureZh /> : <SimpleLeadCapture />)}
       <Routes>
-        {/* Mobile App Route */}
-        <Route path="/app" element={<MobileLayout />} />
+        {/* Default route - Mobile App Dashboard */}
+        <Route path="/" element={<MobileLayout />} />
         
-        {/* Main routes */}
-        <Route path="/" element={<EnglishLayout />} />
-        <Route path="/zh" element={<ChineseLayout />} />
+        {/* Website routes (moved to /website) */}
+        <Route path="/website" element={<EnglishLayout />} />
+        <Route path="/website/zh" element={<ChineseLayout />} />
         
         {/* Assessment routes */}
         <Route path="/chatbot" element={<ChatbotAssessment onComplete={(state) => console.log('Assessment completed:', state)} />} />
@@ -73,7 +68,10 @@ function AppContent() {
         {/* Direct Lead Capture route */}
         <Route path="/simple-lead-capture-zh" element={<DirectLeadCaptureZh />} />
         
-        {/* Catch all route */}
+        {/* Legacy app route redirect */}
+        <Route path="/app" element={<Navigate to="/" replace />} />
+        
+        {/* Catch all route - redirect to dashboard */}
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
     </>

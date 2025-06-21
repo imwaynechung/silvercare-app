@@ -29,11 +29,15 @@ const EnglishLayout: React.FC = () => {
     // Update Open Graph
     const ogTitle = document.querySelector('meta[property="og:title"]');
     const ogDescription = document.querySelector('meta[property="og:description"]');
+    const ogUrl = document.querySelector('meta[property="og:url"]');
     if (ogTitle) {
       ogTitle.setAttribute('content', 'SilverCare by GOFA | AI-Powered Fall Prevention for Seniors');
     }
     if (ogDescription) {
       ogDescription.setAttribute('content', 'Join our founding community! Be one of the first 100 members to shape the future of fall prevention. AI-powered assessment takes just 10 minutes - protect your loved ones today.');
+    }
+    if (ogUrl) {
+      ogUrl.setAttribute('content', 'https://silvercare.gofa.co/website');
     }
 
     // Update Twitter Cards
@@ -45,6 +49,15 @@ const EnglishLayout: React.FC = () => {
     if (twitterDescription) {
       twitterDescription.setAttribute('content', 'Join our founding community! Be one of the first 100 members to shape the future of fall prevention. AI-powered assessment takes just 10 minutes - protect your loved ones today.');
     }
+
+    // Update canonical link
+    let canonical = document.querySelector('link[rel="canonical"]');
+    if (!canonical) {
+      canonical = document.createElement('link');
+      canonical.setAttribute('rel', 'canonical');
+      document.head.appendChild(canonical);
+    }
+    canonical.setAttribute('href', 'https://silvercare.gofa.co/website');
   }, []);
 
   return (
