@@ -4,12 +4,12 @@ import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle
 const DashboardScreen: React.FC = () => {
   return (
     <div className="min-h-full bg-gray-50">
-      {/* Header with GOFA Pro branding */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex items-center justify-between mb-6">
+      {/* Reduced Header with GOFA Pro branding */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-8 pb-4 rounded-b-3xl">
+        <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <div className="w-12 h-12 bg-white rounded-xl flex items-center justify-center mr-3">
-              <Heart className="w-6 h-6 text-blue-900" />
+            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-3">
+              <Heart className="w-5 h-5 text-blue-900" />
             </div>
             <div>
               <span className="text-white text-lg font-bold">GOFA</span>
@@ -17,29 +17,54 @@ const DashboardScreen: React.FC = () => {
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-5 h-5 text-white" />
+            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+              <User className="w-4 h-4 text-white" />
             </button>
-            <button className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center">
-              <Bell className="w-5 h-5 text-white" />
+            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+              <Bell className="w-4 h-4 text-white" />
             </button>
           </div>
         </div>
 
-        <div className="flex items-center mb-4">
-          <h1 className="text-2xl font-bold text-white mr-4">您好，健樂</h1>
-          <div className="bg-white/20 rounded-full p-3">
-            <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-              <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-900 text-lg">👨‍⚕️</span>
+        <div className="flex items-center mb-3">
+          <h1 className="text-xl font-bold text-white mr-3">您好，健樂</h1>
+          <div className="bg-white/20 rounded-full p-2">
+            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
+              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
+                <span className="text-blue-900 text-sm">👨‍⚕️</span>
               </div>
             </div>
           </div>
         </div>
-        <p className="text-blue-100">歡迎回到銀齡樂</p>
+        <p className="text-blue-100 text-sm">歡迎回到銀齡樂</p>
       </div>
 
-      <div className="px-4 -mt-6 relative z-10 pb-6">
+      <div className="px-4 -mt-2 relative z-10 pb-6">
+        {/* Weekly Progress Stats - Added below header */}
+        <div className="grid grid-cols-2 gap-4 mb-6">
+          <div className="bg-white rounded-xl p-4 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
+                <TrendingUp className="w-5 h-5 text-green-600" />
+              </div>
+              <span className="text-xs text-gray-500">本週</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">85%</p>
+            <p className="text-sm text-gray-600">復康進度</p>
+          </div>
+
+          <div className="bg-white rounded-xl p-4 shadow-lg">
+            <div className="flex items-center justify-between mb-2">
+              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
+                <Calendar className="w-5 h-5 text-blue-900" />
+              </div>
+              <span className="text-xs text-gray-500">連續</span>
+            </div>
+            <p className="text-2xl font-bold text-gray-900">12</p>
+            <p className="text-sm text-gray-600">天活躍</p>
+          </div>
+        </div>
+
         {/* Most Popular Health Assessments */}
         <div className="mb-6">
           <h2 className="text-lg font-bold text-blue-900 mb-4">Rehab 復康中心</h2>
@@ -169,31 +194,6 @@ const DashboardScreen: React.FC = () => {
                 進行
               </button>
             </div>
-          </div>
-        </div>
-
-        {/* Progress Stats */}
-        <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-              <span className="text-xs text-gray-500">本週</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">85%</p>
-            <p className="text-sm text-gray-600">復康進度</p>
-          </div>
-
-          <div className="bg-white rounded-xl p-4 shadow-lg">
-            <div className="flex items-center justify-between mb-2">
-              <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
-                <Calendar className="w-5 h-5 text-blue-900" />
-              </div>
-              <span className="text-xs text-gray-500">連續</span>
-            </div>
-            <p className="text-2xl font-bold text-gray-900">12</p>
-            <p className="text-sm text-gray-600">天活躍</p>
           </div>
         </div>
       </div>
