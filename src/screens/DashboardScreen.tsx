@@ -4,22 +4,22 @@ import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle
 const DashboardScreen: React.FC = () => {
   return (
     <div className="min-h-full bg-gray-50">
-      {/* Reduced Header with GOFA Pro branding */}
+      {/* Reduced Header with proper GOFA logo and photo avatar */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-8 pb-4 rounded-b-3xl">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            <div className="w-10 h-10 bg-white rounded-xl flex items-center justify-center mr-3">
-              <Heart className="w-5 h-5 text-blue-900" />
-            </div>
+            {/* Use proper GOFA logo from chatbot-zh */}
+            <img 
+              src="https://iili.io/3rSv1St.png" 
+              alt="GOFA Logo" 
+              className="h-10 w-auto mr-3"
+            />
             <div>
               <span className="text-white text-lg font-bold">GOFA</span>
               <span className="bg-white text-blue-900 px-2 py-1 rounded text-xs font-bold ml-2">PRO</span>
             </div>
           </div>
           <div className="flex items-center space-x-3">
-            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <User className="w-4 h-4 text-white" />
-            </button>
             <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
               <Bell className="w-4 h-4 text-white" />
             </button>
@@ -28,11 +28,14 @@ const DashboardScreen: React.FC = () => {
 
         <div className="flex items-center mb-3">
           <h1 className="text-xl font-bold text-white mr-3">您好，健樂</h1>
+          {/* Photo Avatar */}
           <div className="bg-white/20 rounded-full p-2">
-            <div className="w-12 h-12 bg-white rounded-full flex items-center justify-center">
-              <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                <span className="text-blue-900 text-sm">👨‍⚕️</span>
-              </div>
+            <div className="w-12 h-12 bg-white rounded-full overflow-hidden">
+              <img 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
+                alt="User Avatar" 
+                className="w-full h-full object-cover"
+              />
             </div>
           </div>
         </div>
