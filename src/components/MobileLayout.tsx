@@ -4,7 +4,7 @@ import TabNavigation from './TabNavigation';
 import DashboardScreen from '../screens/DashboardScreen';
 import AssessmentScreen from '../screens/AssessmentScreen';
 import ProgramScreen from '../screens/ProgramScreen';
-import FamilyScreen from '../screens/FamilyScreen';
+import CommunityScreen from '../screens/CommunityScreen';
 import CompanionScreen from '../screens/CompanionScreen';
 
 const MobileLayout: React.FC = () => {
@@ -28,8 +28,8 @@ const MobileLayout: React.FC = () => {
         return <AssessmentScreen />;
       case 'companion':
         return <CompanionScreen />;
-      case 'family':
-        return <FamilyScreen />;
+      case 'community':
+        return <CommunityScreen />;
       default:
         return <DashboardScreen />;
     }

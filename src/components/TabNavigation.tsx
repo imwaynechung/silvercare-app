@@ -12,7 +12,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     { id: 'assessment', label: '復康計劃', icon: Brain },
     { id: 'dashboard', label: '首頁', icon: Home },
     { id: 'program', label: '自我評估', icon: Dumbbell },
-    { id: 'family', label: '記錄', icon: Users },
+    { id: 'community', label: '社區', icon: Users },
   ];
 
   return (
