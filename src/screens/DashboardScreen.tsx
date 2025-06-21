@@ -66,7 +66,7 @@ const DashboardScreen: React.FC = () => {
 
         {/* Most Popular Health Assessments */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-blue-900 mb-4">Rehab 復康中心</h2>
+          <h2 className="text-lg font-bold text-blue-900 mb-4">復康中心</h2>
           
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="relative">
