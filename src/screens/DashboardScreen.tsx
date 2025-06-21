@@ -1,5 +1,5 @@
 import React from 'react';
-import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle } from 'lucide-react';
+import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle, Utensils, Dumbbell } from 'lucide-react';
 
 const DashboardScreen: React.FC = () => {
   return (
@@ -42,63 +42,79 @@ const DashboardScreen: React.FC = () => {
       <div className="px-4 -mt-6 relative z-10 pb-6">
         {/* Most Popular Health Assessments */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-blue-900 mb-4">最熱門的健康檢測</h2>
+          <h2 className="text-lg font-bold text-blue-900 mb-4">Rehab 復康中心</h2>
           
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop" 
-                alt="Fall Risk Assessment" 
+                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
+                alt="Rehabilitation Program" 
                 className="w-full h-48 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="text-xl font-bold mb-1">長者跌倒風險檢測</h3>
-                <p className="text-sm opacity-90">跌倒風險機率</p>
+                <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
+                <p className="text-sm opacity-90">運動訓練 + 營養指導</p>
               </div>
               <button className="absolute bottom-4 right-4 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
-                開始檢測
+                開始復康
               </button>
             </div>
           </div>
         </div>
 
-        {/* Recovery Programs */}
+        {/* Personalized Plans */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-blue-900 mb-4">復康計劃</h2>
+          <h2 className="text-lg font-bold text-blue-900 mb-4">個人化計劃</h2>
           
           <div className="flex space-x-4 overflow-x-auto pb-4">
             <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden">
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=150&fit=crop" 
-                  alt="Muscle Training" 
+                  alt="Workout Plan" 
                   className="w-full h-32 object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
-                  0/8
+                  3/12
+                </div>
+                <div className="absolute top-3 left-3 bg-blue-900 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <Dumbbell className="w-3 h-3 mr-1" />
+                  運動
                 </div>
               </div>
               <div className="p-4">
-                <h3 className="font-bold text-gray-900 mb-1">整體肌力提升訓練</h3>
-                <p className="text-sm text-gray-600">14天 計劃 | 8 課程</p>
+                <h3 className="font-bold text-gray-900 mb-1">個人化運動計劃</h3>
+                <p className="text-sm text-gray-600">12週計劃 | 平衡力 + 肌力訓練</p>
+                <div className="mt-3 bg-gray-200 rounded-full h-2">
+                  <div className="bg-blue-900 h-2 rounded-full" style={{ width: '25%' }}></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">進度: 25%</p>
               </div>
             </div>
 
             <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=300&h=150&fit=crop" 
-                  alt="Balance Training" 
+                  src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=150&fit=crop" 
+                  alt="Diet Plan" 
                   className="w-full h-32 object-cover"
                 />
                 <div className="absolute top-3 right-3 bg-black/50 text-white px-2 py-1 rounded-full text-xs">
-                  3/12
+                  7/7
+                </div>
+                <div className="absolute top-3 left-3 bg-green-600 text-white px-2 py-1 rounded-full text-xs flex items-center">
+                  <Utensils className="w-3 h-3 mr-1" />
+                  飲食
                 </div>
               </div>
               <div className="p-4">
-                <h3 className="font-bold text-gray-900 mb-1">平衡力強化課程</h3>
-                <p className="text-sm text-gray-600">21天 計劃 | 12 課程</p>
+                <h3 className="font-bold text-gray-900 mb-1">個人化飲食計劃</h3>
+                <p className="text-sm text-gray-600">本週計劃 | 均衡營養指導</p>
+                <div className="mt-3 bg-gray-200 rounded-full h-2">
+                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '100%' }}></div>
+                </div>
+                <p className="text-xs text-gray-500 mt-1">進度: 100%</p>
               </div>
             </div>
           </div>
@@ -112,15 +128,30 @@ const DashboardScreen: React.FC = () => {
             <div className="flex items-center justify-between p-3 bg-blue-50 rounded-xl border-l-4 border-blue-900">
               <div className="flex items-center">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Play className="w-5 h-5 text-blue-900" />
+                  <Dumbbell className="w-5 h-5 text-blue-900" />
                 </div>
                 <div>
-                  <p className="font-medium text-gray-900">晨間平衡運動</p>
-                  <p className="text-sm text-gray-600">10分鐘 • 初級</p>
+                  <p className="font-medium text-gray-900">平衡力訓練</p>
+                  <p className="text-sm text-gray-600">15分鐘 • 中級</p>
                 </div>
               </div>
               <button className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
                 開始
+              </button>
+            </div>
+
+            <div className="flex items-center justify-between p-3 bg-green-50 rounded-xl border-l-4 border-green-600">
+              <div className="flex items-center">
+                <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                  <Utensils className="w-5 h-5 text-green-600" />
+                </div>
+                <div>
+                  <p className="font-medium text-gray-900">營養記錄</p>
+                  <p className="text-sm text-gray-600">記錄今日飲食</p>
+                </div>
+              </div>
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+                記錄
               </button>
             </div>
 
@@ -151,7 +182,7 @@ const DashboardScreen: React.FC = () => {
               <span className="text-xs text-gray-500">本週</span>
             </div>
             <p className="text-2xl font-bold text-gray-900">85%</p>
-            <p className="text-sm text-gray-600">平衡分數</p>
+            <p className="text-sm text-gray-600">復康進度</p>
           </div>
 
           <div className="bg-white rounded-xl p-4 shadow-lg">

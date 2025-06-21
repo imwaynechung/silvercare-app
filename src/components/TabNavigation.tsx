@@ -9,7 +9,7 @@ interface TabNavigationProps {
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'today', label: '今日', icon: Calendar },
-    { id: 'assessment', label: '健康檢測', icon: Brain },
+    { id: 'assessment', label: 'Rehab', icon: Brain },
     { id: 'dashboard', label: '首頁', icon: Home },
     { id: 'program', label: '自我評估', icon: Dumbbell },
     { id: 'family', label: '記錄', icon: Users },
