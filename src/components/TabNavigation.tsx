@@ -8,15 +8,15 @@ interface TabNavigationProps {
 
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
-    { id: 'dashboard', label: 'Dashboard', icon: Home },
-    { id: 'assessment', label: 'Assessment', icon: Brain },
-    { id: 'program', label: 'Program', icon: Dumbbell },
-    { id: 'family', label: 'Family', icon: Users },
-    { id: 'companion', label: 'Companion', icon: MessageCircle },
+    { id: 'today', label: '今日', icon: Calendar },
+    { id: 'assessment', label: '健康檢測', icon: Brain },
+    { id: 'dashboard', label: '首頁', icon: Home },
+    { id: 'program', label: '自我評估', icon: Dumbbell },
+    { id: 'family', label: '記錄', icon: Users },
   ];
 
   return (
-    <div className="bg-white border-t border-gray-200 px-2 py-1">
+    <div className="bg-white border-t border-gray-200 px-2 py-2 safe-area-bottom">
       <div className="flex justify-around">
         {tabs.map((tab) => {
           const Icon = tab.icon;
@@ -26,14 +26,20 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors ${
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors min-w-0 ${
                 isActive
-                  ? 'text-blue-600 bg-blue-50'
-                  : 'text-gray-600 hover:text-gray-900 hover:bg-gray-50'
+                  ? 'text-blue-600'
+                  : 'text-gray-600 hover:text-gray-900'
               }`}
             >
-              <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-600'}`} />
-              <span className={`text-xs font-medium ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
+              {tab.id === 'dashboard' && isActive ? (
+                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mb-1">
+                  <Icon className="w-5 h-5 text-white" />
+                </div>
+              ) : (
+                <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-600'}`} />
+              )}
+              <span className={`text-xs font-medium truncate ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
                 {tab.label}
               </span>
             </button>

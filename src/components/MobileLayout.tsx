@@ -17,6 +17,8 @@ const MobileLayout: React.FC = () => {
         return <AssessmentScreen />;
       case 'program':
         return <ProgramScreen />;
+      case 'today':
+        return <ProgramScreen />;
       case 'family':
         return <FamilyScreen />;
       case 'companion':
@@ -27,7 +29,7 @@ const MobileLayout: React.FC = () => {
   };
 
   return (
-    <div className="h-screen flex flex-col bg-gray-50">
+    <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto">
       {/* Main Content */}
       <div className="flex-1 overflow-hidden">
         {renderScreen()}
