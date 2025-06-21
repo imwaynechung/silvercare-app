@@ -13,7 +13,7 @@ const CompanionScreen: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 bg-gray-50 flex flex-col overflow-hidden">
+    <div className="min-h-full bg-gray-50 flex flex-col">
       {/* Header */}
       <div className="bg-white p-4 border-b">
         <h1 className="text-xl font-bold text-gray-900 mb-1">AI Companion</h1>
@@ -47,7 +47,7 @@ const CompanionScreen: React.FC = () => {
       {activeTab === 'chat' ? (
         <>
           {/* Chat Messages */}
-          <div className="flex-1 p-4 overflow-y-auto pb-20">
+          <div className="flex-1 p-4 overflow-y-auto">
             <div className="space-y-4">
               {/* AI Message */}
               <div className="flex items-start">
@@ -126,7 +126,7 @@ const CompanionScreen: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="flex-1 p-4 overflow-y-auto pb-20">
+        <div className="flex-1 p-4 overflow-y-auto">
           {/* Today's Tip */}
           <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-xl p-6 mb-6 text-white">
             <div className="flex items-center mb-3">

@@ -5,8 +5,8 @@ const FamilyScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'family' | 'caregivers'>('family');
 
   return (
-    <div className="flex-1 bg-gray-50 overflow-y-auto">
-      <div className="p-4 pb-20">
+    <div className="min-h-full bg-gray-50">
+      <div className="p-4">
         {/* Header */}
         <div className="mb-6">
           <h1 className="text-2xl font-bold text-gray-900 mb-2">Family & Care Team</h1>

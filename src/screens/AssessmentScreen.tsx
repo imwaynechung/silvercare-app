@@ -12,7 +12,7 @@ const AssessmentScreen: React.FC = () => {
 
   if (showDetails) {
     return (
-      <div className="flex-1 bg-gray-50 overflow-y-auto">
+      <div className="min-h-full bg-gray-50">
         {/* Header */}
         <div className="bg-white px-4 py-3 border-b flex items-center">
           <button 
@@ -24,7 +24,7 @@ const AssessmentScreen: React.FC = () => {
           <h1 className="text-lg font-semibold text-gray-900">健康檢測內容</h1>
         </div>
 
-        <div className="px-4 py-6 pb-20">
+        <div className="px-4 py-6">
           {/* Hero Image */}
           <div className="mb-6">
             <img 
@@ -89,14 +89,14 @@ const AssessmentScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50 overflow-y-auto">
+    <div className="min-h-full bg-gray-50">
       {/* Header */}
       <div className="bg-white px-4 py-6 border-b">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">健康檢測</h1>
         <p className="text-gray-600">追蹤您的進度並識別改善領域</p>
       </div>
 
-      <div className="px-4 py-6 pb-20">
+      <div className="px-4 py-6">
         {/* Current Risk Level */}
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
           <div className="flex items-center justify-between mb-4">

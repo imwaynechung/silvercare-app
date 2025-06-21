@@ -3,7 +3,7 @@ import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle
 
 const DashboardScreen: React.FC = () => {
   return (
-    <div className="flex-1 bg-gray-50 overflow-y-auto">
+    <div className="min-h-full bg-gray-50">
       {/* Header with GOFA Pro branding */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-12 pb-8 rounded-b-3xl">
         <div className="flex items-center justify-between mb-6">

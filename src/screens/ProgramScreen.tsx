@@ -7,7 +7,7 @@ const ProgramScreen: React.FC = () => {
 
   if (showProgramDetail) {
     return (
-      <div className="flex-1 bg-gray-50 overflow-y-auto">
+      <div className="min-h-full bg-gray-50">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-4 pt-12 pb-8 rounded-b-3xl">
           <div className="flex items-center mb-6">
@@ -33,7 +33,7 @@ const ProgramScreen: React.FC = () => {
           <p className="text-purple-100">歡迎來到 GOFA Rehab</p>
         </div>
 
-        <div className="px-4 -mt-6 relative z-10 pb-20">
+        <div className="px-4 -mt-6 relative z-10 pb-6">
           {/* Program Card */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
             <div className="relative">
@@ -83,7 +83,7 @@ const ProgramScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50 overflow-y-auto">
+    <div className="min-h-full bg-gray-50">
       {/* Header */}
       <div className="bg-white px-4 py-6 border-b">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">訓練計劃</h1>
@@ -114,7 +114,7 @@ const ProgramScreen: React.FC = () => {
         </button>
       </div>
 
-      <div className="px-4 py-6 pb-20">
+      <div className="px-4 py-6">
         {activeTab === 'today' ? (
           <>
             {/* Today's Program */}
