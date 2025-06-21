@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Brain, Clock, TrendingUp, Play, BarChart3, ArrowLeft, FileText, Utensils, Dumbbell, Target } from 'lucide-react';
 import ChatbotAssessment from '../components/ChatbotAssessment';
+import ExerciseProgramScreen from './ExerciseProgramScreen';
 
 const AssessmentScreen: React.FC = () => {
   const [showAssessment, setShowAssessment] = useState(false);
@@ -91,50 +92,10 @@ const AssessmentScreen: React.FC = () => {
     );
   }
 
-  return (
-    <div className="min-h-full bg-gray-50">
-      {/* Header */}
-      <div className="bg-white px-4 py-6 border-b">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Rehab 復康中心</h1>
-        <p className="text-gray-600">個人化復康計劃，改善您的健康狀況</p>
-      </div>
-
-      {/* Tab Navigation */}
-      <div className="flex bg-white border-b">
-        <button
-          onClick={() => setActiveTab('overview')}
-          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'overview'
-              ? 'text-blue-900 border-b-2 border-blue-900'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          總覽
-        </button>
-        <button
-          onClick={() => setActiveTab('workout')}
-          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'workout'
-              ? 'text-blue-900 border-b-2 border-blue-900'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          運動計劃
-        </button>
-        <button
-          onClick={() => setActiveTab('diet')}
-          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'diet'
-              ? 'text-blue-900 border-b-2 border-blue-900'
-              : 'text-gray-600 hover:text-gray-900'
-          }`}
-        >
-          飲食計劃
-        </button>
-      </div>
-
-      <div className="px-4 py-6">
-        {activeTab === 'overview' ? (
+  const renderScreen = () => {
+    switch (activeTab) {
+      case 'overview':
+        return (
           <>
             {/* Current Progress */}
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
@@ -225,105 +186,11 @@ const AssessmentScreen: React.FC = () => {
               </div>
             </div>
           </>
-        ) : activeTab === 'workout' ? (
-          <>
-            {/* Personalized Workout Plan */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">個人化運動計劃</h2>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Clock className="w-4 h-4 mr-1" />
-                  <span>每日30分鐘</span>
-                </div>
-              </div>
-
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border-l-4 border-blue-900">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <Target className="w-5 h-5 text-blue-900" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">平衡訓練</p>
-                      <p className="text-sm text-gray-600">單腳站立、串聯步行 • 10分鐘</p>
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium">
-                    開始
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-green-50 rounded-xl border-l-4 border-green-600">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                      <Dumbbell className="w-5 h-5 text-green-600" />
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">肌力訓練</p>
-                      <p className="text-sm text-gray-600">坐立訓練、腿部強化 • 15分鐘</p>
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 bg-green-600 text-white rounded-lg text-sm font-medium">
-                    開始
-                  </button>
-                </div>
-
-                <div className="flex items-center justify-between p-4 bg-purple-50 rounded-xl border-l-4 border-purple-600">
-                  <div className="flex items-center">
-                    <div className="w-10 h-10 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                      <div className="w-5 h-5 text-purple-600">🧘‍♀️</div>
-                    </div>
-                    <div>
-                      <p className="font-medium text-gray-900">柔韌性訓練</p>
-                      <p className="text-sm text-gray-600">伸展運動、放鬆 • 5分鐘</p>
-                    </div>
-                  </div>
-                  <button className="px-4 py-2 bg-purple-600 text-white rounded-lg text-sm font-medium">
-                    開始
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Weekly Schedule */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">本週訓練計劃</h2>
-              <div className="space-y-2">
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">星期一</p>
-                    <p className="text-sm text-gray-600">平衡 + 肌力訓練</p>
-                  </div>
-                  <span className="text-green-600 font-medium">✓ 已完成</span>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">星期二</p>
-                    <p className="text-sm text-gray-600">柔韌性 + 放鬆</p>
-                  </div>
-                  <span className="text-green-600 font-medium">✓ 已完成</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-900">
-                  <div>
-                    <p className="font-medium text-gray-900">星期三</p>
-                    <p className="text-sm text-gray-600">全面訓練</p>
-                  </div>
-                  <span className="text-blue-900 font-medium">今日</span>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                  <div>
-                    <p className="font-medium text-gray-900">星期四</p>
-                    <p className="text-sm text-gray-600">平衡專項</p>
-                  </div>
-                  <span className="text-gray-500">待完成</span>
-                </div>
-              </div>
-            </div>
-          </>
-        ) : (
+        );
+      case 'workout':
+        return <ExerciseProgramScreen />;
+      case 'diet':
+        return (
           <>
             {/* Personalized Diet Plan */}
             <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
@@ -414,7 +281,56 @@ const AssessmentScreen: React.FC = () => {
               </div>
             </div>
           </>
-        )}
+        );
+      default:
+        return null;
+    }
+  };
+
+  return (
+    <div className="min-h-full bg-gray-50">
+      {/* Header */}
+      <div className="bg-white px-4 py-6 border-b">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">Rehab 復康中心</h1>
+        <p className="text-gray-600">個人化復康計劃，改善您的健康狀況</p>
+      </div>
+
+      {/* Tab Navigation */}
+      <div className="flex bg-white border-b">
+        <button
+          onClick={() => setActiveTab('overview')}
+          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+            activeTab === 'overview'
+              ? 'text-blue-900 border-b-2 border-blue-900'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          總覽
+        </button>
+        <button
+          onClick={() => setActiveTab('workout')}
+          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+            activeTab === 'workout'
+              ? 'text-blue-900 border-b-2 border-blue-900'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          運動計劃
+        </button>
+        <button
+          onClick={() => setActiveTab('diet')}
+          className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
+            activeTab === 'diet'
+              ? 'text-blue-900 border-b-2 border-blue-900'
+              : 'text-gray-600 hover:text-gray-900'
+          }`}
+        >
+          飲食計劃
+        </button>
+      </div>
+
+      <div className="px-4 py-6">
+        {renderScreen()}
       </div>
     </div>
   );

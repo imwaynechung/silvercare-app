@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
 
-const ProgramScreen: React.FC = () => {
+const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<1 | 2 | 3>(1);
@@ -559,4 +559,4 @@ const ProgramScreen: React.FC = () => {
   );
 };
 
-export default ProgramScreen;
+export default ExerciseProgramScreen;
