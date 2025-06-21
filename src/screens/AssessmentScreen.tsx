@@ -12,7 +12,7 @@ const AssessmentScreen: React.FC = () => {
 
   if (showDetails) {
     return (
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1 bg-gray-50 overflow-y-auto">
         {/* Header */}
         <div className="bg-white px-4 py-3 border-b flex items-center">
           <button 
@@ -24,7 +24,7 @@ const AssessmentScreen: React.FC = () => {
           <h1 className="text-lg font-semibold text-gray-900">健康檢測內容</h1>
         </div>
 
-        <div className="px-4 py-6">
+        <div className="px-4 py-6 pb-20">
           {/* Hero Image */}
           <div className="mb-6">
             <img 
@@ -36,10 +36,10 @@ const AssessmentScreen: React.FC = () => {
 
           {/* Title and Description */}
           <div className="mb-6">
-            <h2 className="text-2xl font-bold text-blue-600 mb-4">長者跌倒風險檢測</h2>
+            <h2 className="text-2xl font-bold text-blue-900 mb-4">長者跌倒風險檢測</h2>
             <p className="text-gray-600 mb-4">主要識別的狀況</p>
             
-            <div className="bg-blue-600 text-white px-4 py-2 rounded-lg inline-block mb-6">
+            <div className="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-6">
               跌倒風險機率
             </div>
           </div>
@@ -62,14 +62,14 @@ const AssessmentScreen: React.FC = () => {
             <div className="grid grid-cols-2 gap-6">
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <FileText className="w-8 h-8 text-blue-600" />
+                  <FileText className="w-8 h-8 text-blue-900" />
                 </div>
                 <p className="font-medium text-gray-900 mb-1">自我檢測問卷 x1</p>
               </div>
 
               <div className="text-center">
                 <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <div className="w-8 h-8 text-blue-600">🏃‍♂️</div>
+                  <div className="w-8 h-8 text-blue-900">🏃‍♂️</div>
                 </div>
                 <p className="font-medium text-gray-900 mb-1">智能動態檢測 x4</p>
               </div>
@@ -79,7 +79,7 @@ const AssessmentScreen: React.FC = () => {
           {/* Start Button */}
           <button
             onClick={() => setShowAssessment(true)}
-            className="w-full bg-blue-600 text-white py-4 rounded-2xl font-medium text-lg"
+            className="w-full bg-blue-900 text-white py-4 rounded-2xl font-medium text-lg"
           >
             開始檢測
           </button>
@@ -89,14 +89,14 @@ const AssessmentScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1 bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-6 border-b">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">健康檢測</h1>
         <p className="text-gray-600">追蹤您的進度並識別改善領域</p>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 pb-20">
         {/* Current Risk Level */}
         <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
           <div className="flex items-center justify-between mb-4">
@@ -139,7 +139,7 @@ const AssessmentScreen: React.FC = () => {
               </button>
               <button 
                 onClick={() => setShowAssessment(true)}
-                className="flex-1 bg-blue-600 text-white py-3 rounded-xl font-medium"
+                className="flex-1 bg-blue-900 text-white py-3 rounded-xl font-medium"
               >
                 開始檢測
               </button>
@@ -192,7 +192,7 @@ const AssessmentScreen: React.FC = () => {
           <div className="space-y-3">
             <div className="flex items-start">
               <div className="w-6 h-6 bg-blue-100 rounded-full flex items-center justify-center mr-3 mt-0.5">
-                <TrendingUp className="w-3 h-3 text-blue-600" />
+                <TrendingUp className="w-3 h-3 text-blue-900" />
               </div>
               <div>
                 <p className="font-medium text-gray-900">繼續每日平衡運動</p>

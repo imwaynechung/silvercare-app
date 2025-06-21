@@ -28,18 +28,18 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
               onClick={() => onTabChange(tab.id)}
               className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-colors min-w-0 ${
                 isActive
-                  ? 'text-blue-600'
+                  ? 'text-blue-900'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
             >
               {tab.id === 'dashboard' && isActive ? (
-                <div className="w-10 h-10 bg-blue-600 rounded-full flex items-center justify-center mb-1">
+                <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center mb-1">
                   <Icon className="w-5 h-5 text-white" />
                 </div>
               ) : (
-                <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-600' : 'text-gray-600'}`} />
+                <Icon className={`w-5 h-5 mb-1 ${isActive ? 'text-blue-900' : 'text-gray-600'}`} />
               )}
-              <span className={`text-xs font-medium truncate ${isActive ? 'text-blue-600' : 'text-gray-600'}`}>
+              <span className={`text-xs font-medium truncate ${isActive ? 'text-blue-900' : 'text-gray-600'}`}>
                 {tab.label}
               </span>
             </button>

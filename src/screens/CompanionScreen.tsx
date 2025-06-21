@@ -13,7 +13,7 @@ const CompanionScreen: React.FC = () => {
   };
 
   return (
-    <div className="flex-1 bg-gray-50 flex flex-col">
+    <div className="flex-1 bg-gray-50 flex flex-col overflow-hidden">
       {/* Header */}
       <div className="bg-white p-4 border-b">
         <h1 className="text-xl font-bold text-gray-900 mb-1">AI Companion</h1>
@@ -26,7 +26,7 @@ const CompanionScreen: React.FC = () => {
           onClick={() => setActiveTab('chat')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             activeTab === 'chat'
-              ? 'text-blue-600 border-b-2 border-blue-600'
+              ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
@@ -36,7 +36,7 @@ const CompanionScreen: React.FC = () => {
           onClick={() => setActiveTab('tips')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             activeTab === 'tips'
-              ? 'text-blue-600 border-b-2 border-blue-600'
+              ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
@@ -47,12 +47,12 @@ const CompanionScreen: React.FC = () => {
       {activeTab === 'chat' ? (
         <>
           {/* Chat Messages */}
-          <div className="flex-1 p-4 overflow-y-auto">
+          <div className="flex-1 p-4 overflow-y-auto pb-20">
             <div className="space-y-4">
               {/* AI Message */}
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Heart className="w-4 h-4 text-blue-600" />
+                  <Heart className="w-4 h-4 text-blue-900" />
                 </div>
                 <div className="flex-1">
                   <div className="bg-white rounded-lg p-3 shadow-sm">
@@ -65,7 +65,7 @@ const CompanionScreen: React.FC = () => {
               {/* User Message */}
               <div className="flex items-start justify-end">
                 <div className="flex-1 max-w-xs">
-                  <div className="bg-blue-600 rounded-lg p-3">
+                  <div className="bg-blue-900 rounded-lg p-3">
                     <p className="text-white">I'm feeling good! A bit tired after the exercises though.</p>
                   </div>
                   <p className="text-xs text-gray-500 mt-1 text-right">9:32 AM</p>
@@ -75,7 +75,7 @@ const CompanionScreen: React.FC = () => {
               {/* AI Message */}
               <div className="flex items-start">
                 <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Heart className="w-4 h-4 text-blue-600" />
+                  <Heart className="w-4 h-4 text-blue-900" />
                 </div>
                 <div className="flex-1">
                   <div className="bg-white rounded-lg p-3 shadow-sm">
@@ -87,7 +87,7 @@ const CompanionScreen: React.FC = () => {
 
               {/* Quick Responses */}
               <div className="flex flex-wrap gap-2 mt-4">
-                <button className="px-3 py-2 bg-blue-100 text-blue-700 rounded-full text-sm">
+                <button className="px-3 py-2 bg-blue-100 text-blue-900 rounded-full text-sm">
                   Yes, show me stretches
                 </button>
                 <button className="px-3 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">
@@ -109,7 +109,7 @@ const CompanionScreen: React.FC = () => {
                   value={message}
                   onChange={(e) => setMessage(e.target.value)}
                   placeholder="Type your message..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+                  className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
                   onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
                 />
               </div>
@@ -118,7 +118,7 @@ const CompanionScreen: React.FC = () => {
               </button>
               <button
                 onClick={handleSendMessage}
-                className="p-2 bg-blue-600 rounded-full"
+                className="p-2 bg-blue-900 rounded-full"
               >
                 <Send className="w-5 h-5 text-white" />
               </button>
@@ -126,9 +126,9 @@ const CompanionScreen: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="flex-1 p-4 overflow-y-auto">
+        <div className="flex-1 p-4 overflow-y-auto pb-20">
           {/* Today's Tip */}
-          <div className="bg-gradient-to-r from-blue-500 to-blue-600 rounded-xl p-6 mb-6 text-white">
+          <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-xl p-6 mb-6 text-white">
             <div className="flex items-center mb-3">
               <Lightbulb className="w-6 h-6 mr-2" />
               <h2 className="text-lg font-semibold">Today's Tip</h2>
@@ -200,7 +200,7 @@ const CompanionScreen: React.FC = () => {
             <div className="bg-white rounded-xl p-4 shadow-sm">
               <div className="flex items-start">
                 <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Heart className="w-5 h-5 text-blue-600" />
+                  <Heart className="w-5 h-5 text-blue-900" />
                 </div>
                 <div className="flex-1">
                   <h3 className="font-semibold text-gray-900 mb-1">Social Connection</h3>

@@ -7,7 +7,7 @@ const ProgramScreen: React.FC = () => {
 
   if (showProgramDetail) {
     return (
-      <div className="flex-1 bg-gray-50">
+      <div className="flex-1 bg-gray-50 overflow-y-auto">
         {/* Header */}
         <div className="bg-gradient-to-r from-purple-600 to-purple-700 px-4 pt-12 pb-8 rounded-b-3xl">
           <div className="flex items-center mb-6">
@@ -33,7 +33,7 @@ const ProgramScreen: React.FC = () => {
           <p className="text-purple-100">歡迎來到 GOFA Rehab</p>
         </div>
 
-        <div className="px-4 -mt-6 relative z-10">
+        <div className="px-4 -mt-6 relative z-10 pb-20">
           {/* Program Card */}
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
             <div className="relative">
@@ -83,7 +83,7 @@ const ProgramScreen: React.FC = () => {
   }
 
   return (
-    <div className="flex-1 bg-gray-50">
+    <div className="flex-1 bg-gray-50 overflow-y-auto">
       {/* Header */}
       <div className="bg-white px-4 py-6 border-b">
         <h1 className="text-2xl font-bold text-gray-900 mb-2">訓練計劃</h1>
@@ -96,7 +96,7 @@ const ProgramScreen: React.FC = () => {
           onClick={() => setActiveTab('today')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             activeTab === 'today'
-              ? 'text-blue-600 border-b-2 border-blue-600'
+              ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
@@ -106,7 +106,7 @@ const ProgramScreen: React.FC = () => {
           onClick={() => setActiveTab('programs')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
             activeTab === 'programs'
-              ? 'text-blue-600 border-b-2 border-blue-600'
+              ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
@@ -114,7 +114,7 @@ const ProgramScreen: React.FC = () => {
         </button>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 pb-20">
         {activeTab === 'today' ? (
           <>
             {/* Today's Program */}
@@ -128,17 +128,17 @@ const ProgramScreen: React.FC = () => {
               </div>
 
               <div className="space-y-3">
-                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border-l-4 border-blue-600">
+                <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border-l-4 border-blue-900">
                   <div className="flex items-center">
                     <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                      <Play className="w-5 h-5 text-blue-600" />
+                      <Play className="w-5 h-5 text-blue-900" />
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">平衡訓練</p>
                       <p className="text-sm text-gray-600">單腳站立 • 10分鐘</p>
                     </div>
                   </div>
-                  <button className="px-4 py-2 bg-blue-600 text-white rounded-lg text-sm font-medium">
+                  <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium">
                     開始
                   </button>
                 </div>
@@ -181,7 +181,7 @@ const ProgramScreen: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-xl font-bold text-blue-600">5</span>
+                    <span className="text-xl font-bold text-blue-900">5</span>
                   </div>
                   <p className="text-sm font-medium text-gray-900">課程</p>
                   <p className="text-xs text-gray-600">已完成</p>
