@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft } from 'lucide-react';
 
 const ProgramScreen: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'today' | 'programs'>('today');
+  const [activeTab, setActiveTab] = useState<'myTraining' | 'programs'>('myTraining');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
 
   if (showProgramDetail) {
@@ -93,14 +93,14 @@ const ProgramScreen: React.FC = () => {
       {/* Tab Navigation */}
       <div className="flex bg-white border-b">
         <button
-          onClick={() => setActiveTab('today')}
+          onClick={() => setActiveTab('myTraining')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'today'
+            activeTab === 'myTraining'
               ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          今日
+          我的訓練
         </button>
         <button
           onClick={() => setActiveTab('programs')}
@@ -115,7 +115,7 @@ const ProgramScreen: React.FC = () => {
       </div>
 
       <div className="px-4 py-6">
-        {activeTab === 'today' ? (
+        {activeTab === 'myTraining' ? (
           <>
             {/* Today's Program */}
             <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">

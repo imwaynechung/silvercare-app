@@ -9,10 +9,10 @@ interface TabNavigationProps {
 const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange }) => {
   const tabs = [
     { id: 'today', label: '今日', icon: Calendar },
-    { id: 'assessment', label: '復康計劃', icon: Brain },
+    { id: 'companion', label: 'AI健康助理', icon: MessageCircle },
     { id: 'dashboard', label: '首頁', icon: Home },
-    { id: 'program', label: '自我評估', icon: Dumbbell },
-    { id: 'family', label: '記錄', icon: Users },
+    { id: 'program', label: '訓練計劃', icon: Dumbbell },
+    { id: 'assessment', label: '自我評估', icon: Brain },
   ];
 
   return (
