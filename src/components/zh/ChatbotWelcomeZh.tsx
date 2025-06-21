@@ -1,15 +1,12 @@
 import React from 'react';
 import { motion } from 'framer-motion';
-import { ArrowRight, Shield, Clock, CheckCircle, TrendingUp, ArrowLeft, Bell, Heart } from 'lucide-react';
-import { useNavigate } from 'react-router-dom';
+import { ArrowRight, Shield, Clock, CheckCircle, TrendingUp } from 'lucide-react';
 
 interface WelcomeProps {
   onStart: () => void;
 }
 
 const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
-  const navigate = useNavigate();
-
   // Mock last assessment data
   const lastAssessment = {
     date: '2025年1月15日',
@@ -19,52 +16,34 @@ const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
   };
 
   return (
-    <div className="min-h-full bg-gray-50">
-      {/* Header with gradient background matching ProgramScreen */}
-      <div className="bg-gradient-to-r from-blue-800 to-blue-900 px-4 pt-12 pb-8 rounded-b-3xl">
-        <div className="flex items-center mb-6">
-          <button 
-            onClick={() => navigate('/')}
-            className="mr-3 p-2 bg-white/20 rounded-full"
-          >
-            <ArrowLeft className="w-5 h-5 text-white" />
-          </button>
-          <div className="flex items-center">
-            <img 
-              src="https://iili.io/3rSv1St.png" 
-              alt="GOFA Logo" 
-              className="h-8 w-auto mr-2"
-            />
-          </div>
-        </div>
-
-        <div className="flex items-center mb-4">
-          <h2 className="text-2xl font-bold text-white mr-4">您好，健樂</h2>
-          <div className="bg-white/20 rounded-full p-3">
-            <div className="w-16 h-16 bg-white rounded-full overflow-hidden">
-              <img 
-                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
-                alt="User Avatar" 
-                className="w-full h-full object-cover"
-              />
-            </div>
-          </div>
-          <div className="ml-auto">
-            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
-              <Bell className="w-4 h-4 text-white" />
-            </button>
-          </div>
-        </div>
-        <p className="text-blue-100">歡迎來到 GOFA 銀齡樂</p>
-      </div>
-
-      <div className="px-4 -mt-6 relative z-10 pb-6">
-        {/* Last Assessment Score Card - overlapping header */}
+    <div className="min-h-full bg-gradient-to-br from-blue-50 to-indigo-50 py-8 px-4">
+      <div className="max-w-md mx-auto">
         <motion.div 
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.6 }}
+          className="text-center mb-8"
+        >
+          <img 
+            src="https://iili.io/3rSv1St.png" 
+            alt="跌倒風險評估標誌" 
+            className="h-16 mx-auto mb-6"
+          />
+          <h1 className="text-2xl font-bold text-gray-900 mb-4">
+            跌倒風險評估
+          </h1>
+          <p className="text-lg text-gray-600 mb-6">
+            感謝您邁出預防跌倒的重要一步。
+            接下來的10分鐘，我們將為您進行全面評估。
+          </p>
+        </motion.div>
+
+        {/* Last Assessment Score */}
+        <motion.div 
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
           transition={{ delay: 0.2, duration: 0.6 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-6"
+          className="bg-white/95 backdrop-blur-xl rounded-xl shadow-lg p-6 mb-6"
         >
           <h2 className="text-lg font-semibold mb-4" style={{ color: '#08449E' }}>
             上次評估結果
@@ -91,12 +70,11 @@ const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
           </div>
         </motion.div>
 
-        {/* Three Simple Steps Section */}
         <motion.div 
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.3, duration: 0.6 }}
-          className="bg-white rounded-xl shadow-lg p-6 mb-8"
+          className="bg-white/95 backdrop-blur-xl rounded-xl shadow-lg p-6 mb-8"
         >
           <h2 className="text-xl font-semibold mb-6" style={{ color: '#08449E' }}>
             三個簡單步驟，開始您的評估之旅
@@ -135,7 +113,6 @@ const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
           </div>
         </motion.div>
 
-        {/* Start Assessment Button */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
