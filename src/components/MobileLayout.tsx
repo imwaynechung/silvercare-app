@@ -12,6 +12,17 @@ const MobileLayout: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
+    // Hide address bar on mount
+    const hideAddressBar = () => {
+      if (window.innerHeight < window.outerHeight) {
+        setTimeout(() => {
+          window.scrollTo(0, 1);
+        }, 0);
+      }
+    };
+
+    hideAddressBar();
+
     // Track page view safely
     try {
       if (typeof gtag !== 'undefined') {
@@ -23,6 +34,27 @@ const MobileLayout: React.FC = () => {
     } catch (e) {
       console.warn('Analytics not available:', e);
     }
+
+    // Prevent pull-to-refresh and zoom
+    const preventDefaultTouch = (e: TouchEvent) => {
+      if (e.touches.length > 1) {
+        e.preventDefault();
+      }
+    };
+
+    const preventZoom = (e: TouchEvent) => {
+      if (e.scale !== 1) {
+        e.preventDefault();
+      }
+    };
+
+    document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
+    document.addEventListener('touchmove', preventZoom, { passive: false });
+
+    return () => {
+      document.removeEventListener('touchstart', preventDefaultTouch);
+      document.removeEventListener('touchmove', preventZoom);
+    };
   }, []);
 
   const handleTabChange = (tab: string) => {
@@ -67,7 +99,7 @@ const MobileLayout: React.FC = () => {
             <p className="text-gray-600 mb-4">頁面載入時發生錯誤</p>
             <button
               onClick={() => window.location.reload()}
-              className="bg-blue-900 text-white px-6 py-2 rounded-lg"
+              className="bg-blue-900 text-white px-6 py-2 rounded-lg btn-mobile"
             >
               重新載入
             </button>
@@ -79,7 +111,7 @@ const MobileLayout: React.FC = () => {
 
   if (error) {
     return (
-      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 to-blue-900 text-white max-w-md mx-auto p-4">
+      <div className="h-screen-mobile flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 to-blue-900 text-white max-w-md mx-auto p-4">
         <img 
           src="https://iili.io/3rSv1St.png" 
           alt="銀齡樂" 
@@ -89,7 +121,7 @@ const MobileLayout: React.FC = () => {
         <p className="text-blue-100 mb-8 text-center">{error}</p>
         <button
           onClick={() => window.location.reload()}
-          className="bg-white text-blue-900 px-6 py-3 rounded-lg font-medium"
+          className="bg-white text-blue-900 px-6 py-3 rounded-lg font-medium btn-mobile"
         >
           重新載入
         </button>
@@ -97,17 +129,17 @@ const MobileLayout: React.FC = () => {
     );
   }
 
-  // Render immediately without any loading state
+  // Render immediately without any loading state - optimized for mobile
   return (
-    <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative overflow-hidden">
-      {/* Main Content - with proper padding for fixed navigation */}
-      <div className="flex-1 overflow-y-auto pb-20 smooth-scroll">
-        <div className="fade-in">
+    <div className="mobile-screen flex flex-col bg-gray-50 max-w-md mx-auto relative prevent-scroll">
+      {/* Main Content - with proper padding for fixed navigation and address bar hiding */}
+      <div className="flex-1 mobile-scroll pb-20">
+        <div className="fade-in h-full">
           {renderScreen()}
         </div>
       </div>
       
-      {/* Bottom Navigation - Fixed */}
+      {/* Bottom Navigation - Fixed with safe area */}
       <TabNavigation activeTab={activeTab} onTabChange={handleTabChange} />
     </div>
   );

@@ -2,31 +2,44 @@
 @tailwind components;
 @tailwind utilities;
 
-/* Mobile-first responsive design */
+/* Mobile-first responsive design with address bar hiding */
 @layer base {
   html {
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
+    height: 100%;
+    height: 100dvh;
+    overflow: hidden;
   }
   
   body {
-    font-family: system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+    font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
     line-height: 1.5;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow-x: hidden;
+    height: 100%;
+    height: 100dvh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
   }
   
   * {
     box-sizing: border-box;
   }
   
-  /* Prevent zoom on input focus for iOS */
-  input, select, textarea {
+  /* Prevent zoom on input focus for iOS and hide address bar */
+  input, select, textarea, button {
     font-size: 16px !important;
     border-radius: 0;
     -webkit-appearance: none;
+    touch-action: manipulation;
   }
   
   /* Safe area handling */
@@ -37,18 +50,29 @@
   .safe-area-top {
     padding-top: env(safe-area-inset-top);
   }
+
+  /* Full height containers */
+  #root {
+    height: 100vh;
+    height: 100dvh;
+    width: 100%;
+    overflow: hidden;
+    position: relative;
+  }
 }
 
 @layer components {
   /* Mobile-optimized button styles */
   .btn-mobile {
     min-height: 44px;
+    min-width: 44px;
     padding: 12px 16px;
     font-size: 16px;
-    border-radius: 8px;
+    border-radius: 12px;
     font-weight: 500;
     transition: all 0.2s ease;
     -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
   }
   
   .btn-mobile:active {
@@ -60,6 +84,8 @@
     border-radius: 16px;
     box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
     overflow: hidden;
+    -webkit-transform: translateZ(0);
+    transform: translateZ(0);
   }
   
   /* Mobile navigation styles */
@@ -73,6 +99,25 @@
     padding: 8px 16px;
     padding-bottom: calc(8px + env(safe-area-inset-bottom));
     z-index: 50;
+    -webkit-backdrop-filter: blur(10px);
+    backdrop-filter: blur(10px);
+  }
+
+  /* Full height mobile screens */
+  .mobile-screen {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    position: relative;
+  }
+
+  /* Scrollable content areas */
+  .mobile-scroll {
+    height: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    -webkit-overflow-scrolling: touch;
+    overscroll-behavior: contain;
   }
 }
 
@@ -86,6 +131,7 @@
     overflow: hidden;
     position: fixed;
     width: 100%;
+    height: 100%;
   }
   
   /* Smooth scrolling for mobile */
@@ -102,6 +148,27 @@
   
   .hide-scrollbar::-webkit-scrollbar {
     display: none;
+  }
+
+  /* Full viewport height utilities */
+  .h-screen-mobile {
+    height: 100vh;
+    height: 100dvh;
+  }
+
+  .min-h-screen-mobile {
+    min-height: 100vh;
+    min-height: 100dvh;
+  }
+
+  /* Prevent address bar showing */
+  .prevent-scroll {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    overflow: hidden;
   }
 }
 
@@ -127,6 +194,17 @@
     font-size: 1.25rem;
     line-height: 1.75rem;
   }
+
+  /* Mobile-specific spacing */
+  .mobile-padding {
+    padding: 16px;
+  }
+
+  /* Mobile button sizing */
+  button, .btn {
+    min-height: 44px;
+    min-width: 44px;
+  }
 }
 
 /* iOS specific fixes */
@@ -134,6 +212,19 @@
   .ios-fix {
     -webkit-touch-callout: none;
     -webkit-user-select: none;
+  }
+
+  /* iOS address bar hiding */
+  body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  #root {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
   }
 }
 
@@ -173,4 +264,38 @@ textarea:focus-visible {
 #root {
   opacity: 1;
   transition: none;
+}
+
+/* Hide address bar on mobile browsers */
+@media screen and (max-width: 768px) {
+  html, body {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+  }
+
+  #root {
+    height: 100vh;
+    height: 100dvh;
+    overflow: hidden;
+  }
+
+  /* Prevent pull-to-refresh */
+  body {
+    overscroll-behavior: none;
+    -webkit-overflow-scrolling: touch;
+  }
+}
+
+/* Landscape orientation fixes */
+@media screen and (orientation: landscape) and (max-height: 500px) {
+  .nav-mobile {
+    padding: 4px 16px;
+    padding-bottom: calc(4px + env(safe-area-inset-bottom));
+  }
 }

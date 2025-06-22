@@ -26,7 +26,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 min-w-0 touch-manipulation ${
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 min-w-0 touch-manipulation btn-mobile ${
                 isActive
                   ? 'text-blue-900'
                   : 'text-gray-600 hover:text-gray-900'

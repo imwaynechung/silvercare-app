@@ -4,14 +4,16 @@ import { Heart, TrendingUp, Calendar, User, Bell, CheckCircle, Utensils, Dumbbel
 const DashboardScreen: React.FC = () => {
   useEffect(() => {
     // Track dashboard view
-    gtag('event', 'page_view', {
-      page_title: 'Dashboard',
-      page_location: window.location.href
-    });
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'page_view', {
+        page_title: 'Dashboard',
+        page_location: window.location.href
+      });
+    }
   }, []);
 
   return (
-    <div className="min-h-full bg-gray-50">
+    <div className="min-h-full bg-gray-50 mobile-scroll">
       {/* Header with proper GOFA logo and photo avatar */}
       <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-8 pb-4 rounded-b-3xl safe-area-top">
         <div className="flex items-center justify-between mb-4">
@@ -24,7 +26,7 @@ const DashboardScreen: React.FC = () => {
             />
           </div>
           <div className="flex items-center space-x-3">
-            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center touch-manipulation">
+            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center touch-manipulation btn-mobile">
               <Bell className="w-4 h-4 text-white" />
             </button>
           </div>

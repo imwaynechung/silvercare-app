@@ -3,13 +3,18 @@
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="https://iili.io/3rSv1St.png" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     
-    <!-- Mobile-specific meta tags -->
+    <!-- Enhanced Mobile Viewport - Hide address bar -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
+    
+    <!-- Mobile-specific meta tags for hiding address bar -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="銀齡樂" />
+    <meta name="theme-color" content="#08449E" />
+    <meta name="msapplication-navbutton-color" content="#08449E" />
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
     <!-- Browser Compatibility -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -54,11 +59,9 @@
     <meta name="geo.position" content="22.396428;114.109497" />
     <meta name="ICBM" content="22.396428, 114.109497" />
     
-    <!-- Theme Color for Mobile -->
-    <meta name="theme-color" content="#08449E" />
-    
     <!-- iOS Specific -->
     <link rel="apple-touch-icon" href="https://iili.io/3rSv1St.png" />
+    <link rel="apple-touch-startup-image" href="https://iili.io/3rSv1St.png" />
     
     <!-- Structured Data -->
     <script type="application/ld+json">
@@ -77,38 +80,53 @@
       }
     </script>
 
-    <!-- Critical CSS for immediate rendering -->
+    <!-- Critical CSS for immediate rendering and mobile optimization -->
     <style>
-      /* Prevent zoom on input focus */
-      input, select, textarea {
+      /* Prevent zoom on input focus and hide address bar */
+      input, select, textarea, button {
         font-size: 16px !important;
+        -webkit-appearance: none;
+        border-radius: 0;
       }
       
-      /* Prevent horizontal scroll */
+      /* Prevent horizontal scroll and optimize for mobile */
       html, body {
         overflow-x: hidden;
         width: 100%;
         margin: 0;
         padding: 0;
-        font-family: system-ui, -apple-system, sans-serif;
+        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        height: 100%;
+        position: fixed;
+        top: 0;
+        left: 0;
+        right: 0;
+        bottom: 0;
       }
       
-      /* Safe area handling for iOS */
+      /* Safe area handling for iOS notch */
       body {
         padding-top: env(safe-area-inset-top);
         padding-bottom: env(safe-area-inset-bottom);
         padding-left: env(safe-area-inset-left);
         padding-right: env(safe-area-inset-right);
+        background-color: #f8fafc;
       }
 
-      /* Ensure root element takes full height */
+      /* Ensure root element takes full height and hides address bar */
       #root {
-        min-height: 100vh;
+        height: 100vh;
+        height: 100dvh; /* Dynamic viewport height for mobile */
         width: 100%;
         opacity: 1;
+        position: relative;
+        overflow: hidden;
       }
 
-      /* Mobile optimization */
+      /* Mobile optimization and touch handling */
       * {
         -webkit-tap-highlight-color: transparent;
         -webkit-touch-callout: none;
@@ -117,9 +135,17 @@
         box-sizing: border-box;
       }
 
-      input, textarea, select {
+      /* Allow text selection for inputs */
+      input, textarea, select, [contenteditable] {
         -webkit-user-select: text;
         user-select: text;
+      }
+
+      /* Hide address bar on scroll */
+      body.hide-address-bar {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
       }
 
       /* Immediate fade-in for content */
@@ -130,14 +156,72 @@
       @keyframes fadeIn {
         from {
           opacity: 0;
+          transform: translateY(10px);
         }
         to {
           opacity: 1;
+          transform: translateY(0);
         }
       }
+
+      /* Loading state prevention */
+      .no-loading {
+        opacity: 1 !important;
+        visibility: visible !important;
+      }
+
+      /* Mobile-specific button styles */
+      button, .btn {
+        min-height: 44px;
+        min-width: 44px;
+        touch-action: manipulation;
+      }
+
+      /* Prevent pull-to-refresh */
+      body {
+        overscroll-behavior: none;
+      }
+
+      /* Hide scrollbars but keep functionality */
+      ::-webkit-scrollbar {
+        display: none;
+      }
+      
+      * {
+        -ms-overflow-style: none;
+        scrollbar-width: none;
+      }
     </style>
+
+    <!-- Address bar hiding script -->
+    <script>
+      // Hide address bar immediately
+      (function() {
+        function hideAddressBar() {
+          if (window.innerHeight < window.outerHeight) {
+            setTimeout(function() {
+              window.scrollTo(0, 1);
+            }, 0);
+          }
+        }
+        
+        // Hide on load
+        window.addEventListener('load', hideAddressBar);
+        
+        // Hide on orientation change
+        window.addEventListener('orientationchange', function() {
+          setTimeout(hideAddressBar, 500);
+        });
+        
+        // Hide on resize
+        window.addEventListener('resize', hideAddressBar);
+        
+        // Immediate hide
+        hideAddressBar();
+      })();
+    </script>
   </head>
-  <body>
+  <body class="no-loading">
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
   </body>
