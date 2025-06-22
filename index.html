@@ -229,7 +229,11 @@
         }
       }
     </style>
-
+  </head>
+  <body class="no-loading">
+    <div id="root"></div>
+    <script type="module" src="/src/main.tsx"></script>
+    
     <!-- Address bar hiding script - CRITICAL -->
     <script>
       // Aggressive address bar hiding for mobile
@@ -285,9 +289,5 @@
         }
       })();
     </script>
-  </head>
-  <body class="no-loading">
-    <div id="root"></div>
-    <script type="module" src="/src/main.tsx"></script>
   </body>
 </html>
