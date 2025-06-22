@@ -76,22 +76,22 @@ const DashboardScreen: React.FC = () => {
 
         {/* Most Popular Health Assessments */}
         <div className="mb-6">
-          <h2 className="text-lg font-bold text-blue-900 mb-4">復康中心</h2>
+          <h2 className="text-lg font-bold text-blue-900 mb-4">跌倒風險評估</h2>
           
           <div className="bg-white rounded-2xl shadow-lg overflow-hidden card-mobile">
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
-                alt="Rehabilitation Program" 
+                src="https://seniorhelpers.com.au/wp-content/uploads/2021/06/Fall-Prevention-for-Older-Adults.jpg" 
+                alt="Fall Risk Assessment" 
                 className="w-full h-48 object-cover"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
               <div className="absolute bottom-4 left-4 text-white">
-                <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
-                <p className="text-sm opacity-90">運動訓練 + 營養指導</p>
+                <h3 className="text-xl font-bold mb-1">個人化跌倒風險評估</h3>
+                <p className="text-sm opacity-90">AI智能分析 + 專業建議</p>
               </div>
               <button className="absolute bottom-4 right-4 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium btn-mobile">
-                開始復康
+                開始評估
               </button>
             </div>
           </div>
