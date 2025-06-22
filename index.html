@@ -60,9 +60,6 @@
     <!-- iOS Specific -->
     <link rel="apple-touch-icon" href="https://iili.io/3rSv1St.png" />
     
-    <!-- Polyfills for older browsers -->
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=default,es2015,es2016,es2017,IntersectionObserver"></script>
-    
     <!-- Structured Data -->
     <script type="application/ld+json">
       {
@@ -80,7 +77,7 @@
       }
     </script>
 
-    <!-- Mobile-specific styles -->
+    <!-- Critical CSS for immediate rendering -->
     <style>
       /* Prevent zoom on input focus */
       input, select, textarea {
@@ -93,6 +90,7 @@
         width: 100%;
         margin: 0;
         padding: 0;
+        font-family: system-ui, -apple-system, sans-serif;
       }
       
       /* Safe area handling for iOS */
@@ -103,7 +101,7 @@
         padding-right: env(safe-area-inset-right);
       }
       
-      /* Loading screen */
+      /* Simplified loading screen */
       .loading-screen {
         position: fixed;
         top: 0;
@@ -152,16 +150,31 @@
         -webkit-touch-callout: none;
         -webkit-user-select: none;
         user-select: none;
+        box-sizing: border-box;
       }
 
       input, textarea, select {
         -webkit-user-select: text;
         user-select: text;
       }
+
+      /* Immediate fade-in for content */
+      .fade-in {
+        animation: fadeIn 0.3s ease-out;
+      }
+
+      @keyframes fadeIn {
+        from {
+          opacity: 0;
+        }
+        to {
+          opacity: 1;
+        }
+      }
     </style>
   </head>
   <body>
-    <!-- Loading Screen -->
+    <!-- Simplified Loading Screen -->
     <div id="loading-screen" class="loading-screen">
       <img src="https://iili.io/3rSv1St.png" alt="銀齡樂" class="loading-logo" />
       <h2 style="margin: 0 0 20px 0; font-size: 24px;">銀齡樂</h2>

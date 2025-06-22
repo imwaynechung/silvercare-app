@@ -144,11 +144,11 @@
   }
 }
 
-/* Loading animation */
+/* Immediate loading animation */
 @keyframes fadeIn {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(10px);
   }
   to {
     opacity: 1;
@@ -157,7 +157,7 @@
 }
 
 .fade-in {
-  animation: fadeIn 0.5s ease-out;
+  animation: fadeIn 0.3s ease-out;
 }
 
 /* Improved focus styles for accessibility */
@@ -167,4 +167,10 @@ select:focus-visible,
 textarea:focus-visible {
   outline: 2px solid #08449E;
   outline-offset: 2px;
+}
+
+/* Ensure content is immediately visible */
+#root {
+  opacity: 1;
+  transition: none;
 }

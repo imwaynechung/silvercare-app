@@ -4,76 +4,44 @@ import { createRoot } from 'react-dom/client';
 import App from './App.tsx';
 import './index.css';
 
-// Enhanced browser compatibility check with better mobile support
+// Simplified browser compatibility check
 const isCompatible = () => {
   try {
-    // Check for basic modern browser features
-    if (!window.fetch || !window.Promise || !Array.from) {
-      return false;
-    }
-
-    // Check for React-required features
-    if (!window.requestAnimationFrame || !window.cancelAnimationFrame) {
-      return false;
-    }
-
-    const ua = navigator.userAgent.toLowerCase();
-    
-    // Check if running on iOS
-    if (/iphone|ipad|ipod/.test(ua)) {
-      const version = parseInt(ua.match(/os (\d+)_/)?.[1] || '0');
-      return version >= 10; // iOS 10+ (more lenient)
-    }
-    
-    // Check if running on Android
-    if (/android/.test(ua)) {
-      const version = parseInt(ua.match(/android (\d+)/)?.[1] || '0');
-      return version >= 5; // Android 5+ (more lenient)
-    }
-    
-    // Check desktop browsers with more lenient requirements
-    const browser = 
-      /edge/.test(ua) ? 'edge' :
-      /chrome/.test(ua) ? 'chrome' :
-      /firefox/.test(ua) ? 'firefox' :
-      /safari/.test(ua) ? 'safari' :
-      /opera/.test(ua) ? 'opera' : '';
-        
-    const minVersions = {
-      chrome: 60,  // More lenient
-      firefox: 55, // More lenient
-      safari: 10,  // More lenient
-      edge: 16,    // More lenient
-      opera: 47    // More lenient
-    };
-        
-    if (browser && minVersions[browser]) {
-      const version = parseInt(ua.match(new RegExp(`${browser}\\/([\\d]+)`))?.[1] || '0');
-      return version >= minVersions[browser];
-    }
-    
-    return true; // Allow unknown browsers to try
+    // Basic feature detection
+    return !!(
+      window.fetch && 
+      window.Promise && 
+      Array.from && 
+      window.requestAnimationFrame
+    );
   } catch (error) {
     console.error('Compatibility check failed:', error);
-    return true; // If check fails, allow the app to try loading
+    return true; // Allow app to try loading anyway
   }
 };
 
-// Enhanced error handling
+// Enhanced error handling with user-friendly messages
 window.addEventListener('error', (event) => {
   console.error('Application error:', event.error);
-  // Show user-friendly error message
+  hideLoadingScreen();
   showErrorMessage('應用程式發生錯誤，請重新整理頁面。');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
-  // Show user-friendly error message
+  hideLoadingScreen();
   showErrorMessage('載入時發生問題，請重新整理頁面。');
 });
 
 function showErrorMessage(message: string) {
+  // Remove any existing error messages
+  const existingError = document.querySelector('.error-message');
+  if (existingError) {
+    existingError.remove();
+  }
+
   const errorDiv = document.createElement('div');
+  errorDiv.className = 'error-message';
   errorDiv.style.cssText = `
     position: fixed;
     top: 0;
@@ -111,12 +79,20 @@ function hideLoadingScreen() {
     loadingScreen.style.opacity = '0';
     loadingScreen.style.transition = 'opacity 0.5s ease-out';
     setTimeout(() => {
-      loadingScreen.style.display = 'none';
+      if (loadingScreen.parentNode) {
+        loadingScreen.parentNode.removeChild(loadingScreen);
+      }
     }, 500);
   }
 }
 
+// Force hide loading screen after maximum wait time
+setTimeout(() => {
+  hideLoadingScreen();
+}, 10000); // 10 seconds maximum
+
 if (!isCompatible()) {
+  hideLoadingScreen();
   document.body.innerHTML = `
     <div style="padding: 20px; text-align: center; font-family: system-ui, -apple-system, sans-serif; background: #08449E; color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center;">
       <img src="https://iili.io/3rSv1St.png" alt="銀齡樂" style="width: 80px; height: 80px; margin: 0 auto 20px;" />
@@ -136,7 +112,7 @@ if (!isCompatible()) {
       throw new Error('Root element not found');
     }
 
-    // Create React root and render app
+    // Create React root and render app immediately
     const reactRoot = createRoot(root);
     
     // Render the app
@@ -146,36 +122,27 @@ if (!isCompatible()) {
       </StrictMode>
     );
 
-    // Hide loading screen after a short delay to ensure app is rendered
+    // Hide loading screen after React renders
     setTimeout(() => {
       hideLoadingScreen();
-    }, 2000);
+    }, 1000);
 
     // Also hide loading screen when the app is fully loaded
-    window.addEventListener('load', () => {
+    if (document.readyState === 'complete') {
       setTimeout(() => {
         hideLoadingScreen();
-      }, 1000);
-    });
+      }, 500);
+    } else {
+      window.addEventListener('load', () => {
+        setTimeout(() => {
+          hideLoadingScreen();
+        }, 500);
+      });
+    }
 
   } catch (error) {
     console.error('Failed to render app:', error);
     hideLoadingScreen();
-    
-    document.body.innerHTML = `
-      <div style="padding: 20px; text-align: center; font-family: system-ui, -apple-system, sans-serif; background: #08449E; color: white; min-height: 100vh; display: flex; flex-direction: column; justify-content: center;">
-        <img src="https://iili.io/3rSv1St.png" alt="銀齡樂" style="width: 80px; height: 80px; margin: 0 auto 20px;" />
-        <h1 style="color: white; font-size: 24px; margin-bottom: 16px;">載入錯誤</h1>
-        <p style="color: rgba(255,255,255,0.9); font-size: 16px; line-height: 1.5; margin-bottom: 16px;">
-          應用程式載入時發生錯誤，請重新整理頁面或稍後再試。
-        </p>
-        <button onclick="window.location.reload()" style="background: white; color: #08449E; border: none; padding: 12px 24px; border-radius: 8px; font-size: 16px; font-weight: bold; cursor: pointer;">
-          重新載入
-        </button>
-        <p style="color: rgba(255,255,255,0.7); font-size: 12px; margin-top: 20px;">
-          錯誤詳情: ${error.message}
-        </p>
-      </div>
-    `;
+    showErrorMessage('應用程式載入時發生錯誤，請重新整理頁面或稍後再試。');
   }
 }
