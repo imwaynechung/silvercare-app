@@ -24,12 +24,18 @@ function AppContent() {
   const { language, showBetaQuizPrompt, showLeadCapture } = useLanguage();
 
   useEffect(() => {
-    // Send page view to Google Analytics
-    gtag('event', 'page_view', {
-      page_path: location.pathname + location.search + location.hash,
-      page_title: document.title,
-      page_location: window.location.href
-    });
+    try {
+      // Send page view to Google Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'page_view', {
+          page_path: location.pathname + location.search + location.hash,
+          page_title: document.title,
+          page_location: window.location.href
+        });
+      }
+    } catch (error) {
+      console.warn('Analytics tracking failed:', error);
+    }
   }, [location]);
 
   // Only show language selector on specific routes

@@ -9,40 +9,105 @@ import CompanionScreen from '../screens/CompanionScreen';
 const MobileLayout: React.FC = () => {
   const [activeTab, setActiveTab] = useState('dashboard');
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Simulate app initialization
+    // Track page view
+    try {
+      gtag('event', 'page_view', {
+        page_title: 'Mobile App Dashboard',
+        page_location: window.location.href
+      });
+    } catch (e) {
+      console.warn('Analytics not available:', e);
+    }
+
+    // Simulate app initialization with error handling
     const timer = setTimeout(() => {
-      setIsLoading(false);
+      try {
+        setIsLoading(false);
+      } catch (error) {
+        console.error('App initialization error:', error);
+        setError('應用程式初始化失敗');
+        setIsLoading(false);
+      }
     }, 1500);
 
     return () => clearTimeout(timer);
   }, []);
 
   const handleTabChange = (tab: string) => {
-    if (tab === 'program') {
-      // Navigate to Chinese chatbot for 自我評估
-      navigate('/chatbot-zh');
-      return;
+    try {
+      if (tab === 'program') {
+        // Navigate to Chinese chatbot for 自我評估
+        navigate('/chatbot-zh');
+        return;
+      }
+      setActiveTab(tab);
+    } catch (error) {
+      console.error('Tab change error:', error);
+      setError('導航錯誤');
     }
-    setActiveTab(tab);
   };
 
   const renderScreen = () => {
-    switch (activeTab) {
-      case 'dashboard':
-        return <DashboardScreen />;
-      case 'assessment':
-        return <AssessmentScreen />;
-      case 'companion':
-        return <CompanionScreen />;
-      case 'community':
-        return <CommunityScreen />;
-      default:
-        return <DashboardScreen />;
+    try {
+      switch (activeTab) {
+        case 'dashboard':
+          return <DashboardScreen />;
+        case 'assessment':
+          return <AssessmentScreen />;
+        case 'companion':
+          return <CompanionScreen />;
+        case 'community':
+          return <CommunityScreen />;
+        default:
+          return <DashboardScreen />;
+      }
+    } catch (error) {
+      console.error('Screen render error:', error);
+      return (
+        <div className="h-full flex flex-col items-center justify-center bg-gray-50 p-4">
+          <div className="text-center">
+            <img 
+              src="https://iili.io/3rSv1St.png" 
+              alt="銀齡樂" 
+              className="w-16 h-16 mx-auto mb-4"
+            />
+            <h2 className="text-lg font-bold text-gray-900 mb-2">載入錯誤</h2>
+            <p className="text-gray-600 mb-4">頁面載入時發生錯誤</p>
+            <button
+              onClick={() => window.location.reload()}
+              className="bg-blue-900 text-white px-6 py-2 rounded-lg"
+            >
+              重新載入
+            </button>
+          </div>
+        </div>
+      );
     }
   };
+
+  if (error) {
+    return (
+      <div className="h-screen flex flex-col items-center justify-center bg-gradient-to-br from-blue-800 to-blue-900 text-white max-w-md mx-auto p-4">
+        <img 
+          src="https://iili.io/3rSv1St.png" 
+          alt="銀齡樂" 
+          className="w-20 h-20 mb-6"
+        />
+        <h1 className="text-2xl font-bold mb-2">載入錯誤</h1>
+        <p className="text-blue-100 mb-8 text-center">{error}</p>
+        <button
+          onClick={() => window.location.reload()}
+          className="bg-white text-blue-900 px-6 py-3 rounded-lg font-medium"
+        >
+          重新載入
+        </button>
+      </div>
+    );
+  }
 
   if (isLoading) {
     return (
