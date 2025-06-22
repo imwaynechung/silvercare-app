@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import { X } from 'lucide-react';
 import { useLanguage } from '../../contexts/LanguageContext';
 
@@ -46,11 +45,13 @@ const SimpleLeadCaptureZh: React.FC = () => {
 
     try {
       // Track form submission attempt
-      gtag('event', 'form_submission_start', {
-        event_category: 'engagement',
-        event_label: 'simple_form_zh',
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_start', {
+          event_category: 'engagement',
+          event_label: 'simple_form_zh',
+          language: 'zh'
+        });
+      }
 
       if (!formData.whatsappNumber) {
         alert('請提供WhatsApp號碼以便我們聯絡您。');
@@ -64,104 +65,45 @@ const SimpleLeadCaptureZh: React.FC = () => {
         return;
       }
 
-      // Only check for existing email if an email is provided
-      if (formData.email) {
-        const { data: existingUser, error: selectError } = await supabase
-          .from('registrations')
-          .select('email')
-          .eq('email', formData.email)
-          .limit(1)
-          .maybeSingle();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email || null,
+        relation: formData.relation,
+        whatsapp_number: formData.whatsappNumber,
+        status: 'pending',
+        concerns: concerns,
+        created_at: new Date().toISOString()
+      };
 
-        if (selectError && selectError.code !== 'PGRST116') {
-          console.error('Error checking existing user:', selectError);
-          alert('系統暫時無法處理您的請求，請稍後再試。');
-          return;
-        }
-
-        if (existingUser) {
-          alert('此電郵地址已經註冊。如需協助，請聯絡我們的客戶服務團隊。');
-          setFormData(prev => ({ ...prev, email: '' }));
-          return;
-        }
-      }
-
-      const { error: dbError } = await supabase
-        .from('registrations')
-        .insert([{
-          first_name: formData.firstName,
-          email: formData.email || null, // Set to null if empty
-          relation: formData.relation,
-          whatsapp_number: formData.whatsappNumber,
-          status: 'pending',
-          concerns: concerns
-        }]);
-
-      if (dbError) throw dbError;
-
-      // Send internal notification
-      const internalEmailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-internal-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email || '無電郵地址',
-          whatsappNumber: formData.whatsappNumber,
-          userType: formData.relation,
-          language: 'zh'
-        })
-      });
-
-      if (!internalEmailResponse.ok) {
-        console.error('Failed to send internal notification');
-      }
-
-      // Only send confirmation email if email is provided
-      if (formData.email) {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            email: formData.email,
-            whatsappNumber: formData.whatsappNumber,
-            relation: formData.relation,
-            language: 'zh',
-            concerns: concerns
-          })
-        });
-
-        if (!response.ok) {
-          console.error('Failed to send confirmation email');
-        }
-      }
+      // Save to localStorage
+      const registrationId = crypto.randomUUID();
+      localStorage.setItem(`registration_${registrationId}`, JSON.stringify(registrationData));
 
       // Track successful submission
-      gtag('event', 'form_submission_success', {
-        event_category: 'engagement',
-        event_label: 'simple_form_complete_zh',
-        relation_type: formData.relation,
-        concerns_count: concerns.length,
-        has_email: !!formData.email,
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_success', {
+          event_category: 'engagement',
+          event_label: 'simple_form_complete_zh',
+          relation_type: formData.relation,
+          concerns_count: concerns.length,
+          has_email: !!formData.email,
+          language: 'zh'
+        });
+      }
 
       setShowLeadCapture(false);
       navigate('/simple-thank-you-zh');
     } catch (error) {
       // Track submission error
-      gtag('event', 'form_submission_error', {
-        event_category: 'engagement',
-        event_label: 'simple_form_error_zh',
-        error_type: error.message,
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_error', {
+          event_category: 'engagement',
+          event_label: 'simple_form_error_zh',
+          error_type: error.message,
+          language: 'zh'
+        });
+      }
 
       console.error('Error processing registration:', error);
       alert('處理您的請求時發生錯誤。請稍後再試。');

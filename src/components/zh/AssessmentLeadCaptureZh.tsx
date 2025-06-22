@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import { Lock, FileText, PieChart as ChartPie, Activity } from 'lucide-react';
 import { useQuizStore } from '../../store/quiz';
 
@@ -145,11 +144,13 @@ const AssessmentLeadCaptureZh: React.FC<AssessmentLeadCaptureProps> = ({ onCompl
 
     try {
       // Track form submission attempt
-      gtag('event', 'form_submission_start', {
-        event_category: 'engagement',
-        event_label: 'assessment_form_zh',
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_start', {
+          event_category: 'engagement',
+          event_label: 'assessment_form_zh',
+          language: 'zh'
+        });
+      }
 
       if (!formData.whatsappNumber) {
         alert('請提供WhatsApp號碼以便我們聯絡您。');
@@ -179,103 +180,48 @@ const AssessmentLeadCaptureZh: React.FC<AssessmentLeadCaptureProps> = ({ onCompl
 
       const reportId = crypto.randomUUID();
       
-      // Use upsert to handle existing emails automatically
-      const { data: registration, error: dbError } = await supabase
-        .from('registrations')
-        .upsert([{
-          first_name: formData.firstName,
-          email: formData.email || null,
-          relation: formData.relation,
-          whatsapp_number: formData.whatsappNumber,
-          status: 'pending',
-          assessment_data: quizStore,
-          report_id: reportId,
-          risk_level: riskResult.level,
-          fall_probability: fallProbability.toFixed(1),
-          concerns: concerns
-        }], {
-          onConflict: 'email',
-          ignoreDuplicates: false
-        })
-        .select()
-        .single();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email || null,
+        relation: formData.relation,
+        whatsapp_number: formData.whatsappNumber,
+        status: 'pending',
+        assessment_data: quizStore,
+        report_id: reportId,
+        risk_level: riskResult.level,
+        fall_probability: fallProbability.toFixed(1),
+        concerns: concerns,
+        created_at: new Date().toISOString()
+      };
 
-      if (dbError) throw dbError;
-
-      // Send internal notification regardless of email
-      const internalEmailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-internal-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email || '無電郵地址',
-          whatsappNumber: formData.whatsappNumber,
-          userType: formData.relation,
-          ageGroup: quizStore.ageGroup,
-          language: 'zh'
-        })
-      });
-
-      if (!internalEmailResponse.ok) {
-        console.error('Failed to send internal notification');
-      }
-
-      // Only send confirmation email if email is provided
-      if (formData.email) {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            email: formData.email,
-            whatsappNumber: formData.whatsappNumber,
-            relation: formData.relation,
-            reportId: registration.report_id,
-            language: 'zh',
-            concerns: concerns,
-            assessmentData: {
-              riskLevel: registration.risk_level,
-              fallProbability: registration.fall_probability,
-              recommendation: registration.risk_level === 'HIGH' ? 
-                '您屬於高風險。強烈建議您諮詢醫生或物理治療師進行全面的跌倒風險評估。' :
-                registration.risk_level === 'INTERMEDIATE' ?
-                '您屬於中等風險。建議進行規律運動和監測，以改善穩定性和力量。' :
-                '您屬於低風險。建議繼續保持規律運動和監測，以維持目前的良好狀態。'
-            }
-          })
-        });
-
-        if (!response.ok) {
-          console.error('Failed to send confirmation email');
-        }
-      }
+      // Save to localStorage
+      localStorage.setItem(`assessment_${reportId}`, JSON.stringify(registrationData));
 
       // Track successful submission
-      gtag('event', 'form_submission_success', {
-        event_category: 'engagement',
-        event_label: 'assessment_complete_zh',
-        relation_type: formData.relation,
-        concerns_count: concerns.length,
-        has_email: !!formData.email,
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_success', {
+          event_category: 'engagement',
+          event_label: 'assessment_complete_zh',
+          relation_type: formData.relation,
+          concerns_count: concerns.length,
+          has_email: !!formData.email,
+          language: 'zh'
+        });
+      }
 
-      navigate(`/thank-you-zh/${registration.report_id}`);
+      navigate(`/thank-you-zh/${reportId}`);
       onComplete();
     } catch (error) {
       // Track submission error
-      gtag('event', 'form_submission_error', {
-        event_category: 'engagement',
-        event_label: 'assessment_error_zh',
-        error_type: error.message,
-        language: 'zh'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_error', {
+          event_category: 'engagement',
+          event_label: 'assessment_error_zh',
+          error_type: error.message,
+          language: 'zh'
+        });
+      }
 
       console.error('Error processing registration:', error);
       alert('處理您的請求時發生錯誤。請稍後再試。');

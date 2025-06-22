@@ -1,7 +1,6 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
-import { supabase } from '../lib/supabase';
 
 const LanguageSelector: React.FC = () => {
   const { 
@@ -17,34 +16,26 @@ const LanguageSelector: React.FC = () => {
 
   const handleUserTypeSelect = async (type: 'caregiver' | 'senior') => {
     try {
-      // Get location data
-      const response = await fetch('https://ipapi.co/json/');
-      const locationData = await response.json();
-
-      // Save to Supabase
-      const { error } = await supabase
-        .from('user_profiles')
-        .insert([{
-          user_type: type,
-          country: locationData.country_name || null,
-          region: locationData.region || null,
-          city: locationData.city || null
-        }]);
-
-      if (error) {
-        console.error('Error saving user profile:', error);
-        // Continue with the flow even if save fails
-      }
+      // Store user profile locally
+      const userProfile = {
+        user_type: type,
+        created_at: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('user_profile', JSON.stringify(userProfile));
 
       // Update context
       setUserType(type);
       setShowUserTypeSelector(false);
 
       // Track in Google Analytics
-      gtag('event', 'user_type_selected', {
-        event_category: 'engagement',
-        event_label: type
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'user_type_selected', {
+          event_category: 'engagement',
+          event_label: type
+        });
+      }
 
       // Navigate to appropriate page
       navigate(language === 'zh' ? '/zh' : '/');

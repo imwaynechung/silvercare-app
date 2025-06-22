@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { supabase } from '../../lib/supabase';
 
 const LeadCapture: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -42,71 +41,29 @@ const LeadCapture: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if email already exists
-      const { data: existingUser, error: selectError } = await supabase
-        .from('registrations')
-        .select('email')
-        .eq('email', formData.email)
-        .single();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email,
+        relation: formData.relation,
+        status: 'pending',
+        concerns: concerns,
+        created_at: new Date().toISOString()
+      };
 
-      if (selectError && selectError.code !== 'PGRST116') {
-        console.error('Error checking existing user:', selectError);
-        alert('系統暫時無法處理您的請求，請稍後再試。');
-        return;
-      }
-
-      if (existingUser) {
-        alert('此電郵地址已經註冊。如需協助，請聯絡我們的客戶服務團隊。');
-        return;
-      }
-
-      // Save to Supabase
-      const { error: dbError } = await supabase
-        .from('registrations')
-        .insert([
-          {
-            first_name: formData.firstName,
-            email: formData.email,
-            relation: formData.relation,
-            status: 'pending',
-            concerns: concerns
-          }
-        ]);
-
-      if (dbError) {
-        if (dbError.code === '23505') {
-          alert('此電郵地址已經註冊。如需協助，請聯絡我們的客戶服務團隊。');
-          return;
-        }
-        throw dbError;
-      }
-
-      // Send email notification through Edge Function
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email,
-          relation: formData.relation,
-          concerns: concerns
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('無法發送確認電郵');
-      }
+      // Save to localStorage
+      const registrationId = crypto.randomUUID();
+      localStorage.setItem(`registration_${registrationId}`, JSON.stringify(registrationData));
 
       // Track successful form submission in Google Analytics
-      gtag('event', 'generate_lead', {
-        event_category: 'engagement',
-        event_label: 'founding_member_registration_zh',
-        relation_type: formData.relation,
-        concerns_count: concerns.length
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'generate_lead', {
+          event_category: 'engagement',
+          event_label: 'founding_member_registration_zh',
+          relation_type: formData.relation,
+          concerns_count: concerns.length
+        });
+      }
 
       alert('感謝您加入我們的創始會員！您是首100名幫助我們塑造長者防跌未來的重要成員之一。');
       

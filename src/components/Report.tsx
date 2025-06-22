@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { AlertTriangle, Home, Shield, Lock } from 'lucide-react';
@@ -23,23 +22,14 @@ const Report: React.FC = () => {
           return;
         }
 
-        const { data, error } = await supabase
-          .from('registrations')
-          .select('*')
-          .eq('report_id', reportId.trim())
-          .maybeSingle();
-
-        if (error) {
-          console.error('Supabase error:', error);
-          throw error;
-        }
-
-        if (!data) {
+        // Try to get data from localStorage
+        const storedData = localStorage.getItem(`assessment_${reportId}`);
+        if (storedData) {
+          const data = JSON.parse(storedData);
+          setAssessmentData(data);
+        } else {
           setError('Report not found');
-          return;
         }
-
-        setAssessmentData(data);
       } catch (err: any) {
         setError(err.message || 'Failed to load report.');
         console.error('Error fetching report:', err);
@@ -123,7 +113,7 @@ const Report: React.FC = () => {
                     <div className="absolute inset-0 flex items-center justify-center">
                       <div className="text-center">
                         <p className="text-3xl font-bold text-gray-900">
-                          {assessmentData.risk_level}
+                          {assessmentData.risk_level || 'N/A'}
                         </p>
                         <p className="text-sm text-gray-500">Risk Level</p>
                       </div>
@@ -141,7 +131,7 @@ const Report: React.FC = () => {
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Email</dt>
-                    <dd className="mt-1 text-lg text-gray-900 break-words">{assessmentData.email}</dd>
+                    <dd className="mt-1 text-lg text-gray-900 break-words">{assessmentData.email || 'Not provided'}</dd>
                   </div>
                   <div>
                     <dt className="text-sm font-medium text-gray-500">Relationship</dt>

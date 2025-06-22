@@ -36,6 +36,36 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     }
   };
 
+  const handleSetUserType = async (type: UserType) => {
+    try {
+      // Store user profile locally instead of database
+      const userProfile = {
+        user_type: type,
+        created_at: new Date().toISOString()
+      };
+      
+      // Save to localStorage
+      localStorage.setItem('user_profile', JSON.stringify(userProfile));
+      
+      // Update state
+      setUserType(type);
+      setShowUserTypeSelector(false);
+      
+      // Track in Google Analytics
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'user_type_selected', {
+          event_category: 'engagement',
+          event_label: type
+        });
+      }
+    } catch (error) {
+      console.error('Error saving user profile:', error);
+      // Still set user type even if save fails
+      setUserType(type);
+      setShowUserTypeSelector(false);
+    }
+  };
+
   return (
     <LanguageContext.Provider 
       value={{ 
@@ -44,7 +74,7 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
         showSelector,
         setShowSelector,
         userType,
-        setUserType,
+        setUserType: handleSetUserType,
         showUserTypeSelector,
         setShowUserTypeSelector,
         showBetaQuizPrompt,

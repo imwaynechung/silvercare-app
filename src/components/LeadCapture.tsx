@@ -1,5 +1,4 @@
 import React, { useState } from 'react';
-import { supabase } from '../lib/supabase';
 
 const LeadCapture: React.FC = () => {
   const [formData, setFormData] = useState({
@@ -42,68 +41,29 @@ const LeadCapture: React.FC = () => {
     setIsSubmitting(true);
 
     try {
-      // Check if email already exists
-      const { data: existingUser, error: selectError } = await supabase
-        .from('registrations')
-        .select('email')
-        .eq('email', formData.email)
-        .single();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email,
+        relation: formData.relation,
+        status: 'pending',
+        concerns: concerns,
+        created_at: new Date().toISOString()
+      };
 
-      if (selectError && selectError.code !== 'PGRST116') {
-        console.error('Error checking existing user:', selectError);
-        alert('An error occurred while checking for an existing user. Please try again.');
-        return;
-      }
-
-      if (existingUser) {
-        alert('This email address has already been registered. Please use a different email or contact our support team for assistance.');
-        setFormData(prev => ({ ...prev, email: '' })); // Clear the email field
-        return;
-      }
-
-      // Save to Supabase
-      const { error: dbError } = await supabase
-        .from('registrations')
-        .insert([
-          {
-            first_name: formData.firstName,
-            email: formData.email,
-            relation: formData.relation,
-            status: 'pending',
-            concerns: concerns
-          }
-        ]);
-
-      if (dbError) {
-        throw dbError;
-      }
-
-      // Send email notification through Edge Function
-      const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email,
-          relation: formData.relation,
-          concerns: concerns
-        })
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to send confirmation email');
-      }
+      // Save to localStorage
+      const registrationId = crypto.randomUUID();
+      localStorage.setItem(`registration_${registrationId}`, JSON.stringify(registrationData));
 
       // Track successful form submission in Google Analytics
-      gtag('event', 'generate_lead', {
-        event_category: 'engagement',
-        event_label: 'founding_member_registration',
-        relation_type: formData.relation,
-        concerns_count: concerns.length
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'generate_lead', {
+          event_category: 'engagement',
+          event_label: 'founding_member_registration',
+          relation_type: formData.relation,
+          concerns_count: concerns.length
+        });
+      }
 
       alert('Thank you for joining our founding community! You\'re one of the first 100 members who will help shape the future of senior fall prevention.');
       

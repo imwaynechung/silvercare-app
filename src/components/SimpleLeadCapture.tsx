@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { X } from 'lucide-react';
 import { useLanguage } from '../contexts/LanguageContext';
 
@@ -50,11 +49,13 @@ const SimpleLeadCapture: React.FC = () => {
 
     try {
       // Track form submission attempt
-      gtag('event', 'form_submission_start', {
-        event_category: 'engagement',
-        event_label: 'simple_form_en',
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_start', {
+          event_category: 'engagement',
+          event_label: 'simple_form_en',
+          language: 'en'
+        });
+      }
 
       if (!formData.whatsappNumber) {
         alert('Please provide your WhatsApp number so we can contact you.');
@@ -68,104 +69,45 @@ const SimpleLeadCapture: React.FC = () => {
         return;
       }
 
-      // Only check for existing email if an email is provided
-      if (formData.email) {
-        const { data: existingUser, error: selectError } = await supabase
-          .from('registrations')
-          .select('email')
-          .eq('email', formData.email)
-          .limit(1)
-          .maybeSingle();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email || null,
+        relation: formData.relation,
+        whatsapp_number: formData.whatsappNumber,
+        status: 'pending',
+        concerns: concerns,
+        created_at: new Date().toISOString()
+      };
 
-        if (selectError && selectError.code !== 'PGRST116') {
-          console.error('Error checking existing user:', selectError);
-          alert('There was an error processing your request. Please try again later.');
-          return;
-        }
-
-        if (existingUser) {
-          alert('This email address has already been registered. Please use a different email or contact our support team for assistance.');
-          setFormData(prev => ({ ...prev, email: '' }));
-          return;
-        }
-      }
-
-      const { error: dbError } = await supabase
-        .from('registrations')
-        .insert([{
-          first_name: formData.firstName,
-          email: formData.email || null,
-          relation: formData.relation,
-          whatsapp_number: formData.whatsappNumber,
-          status: 'pending',
-          concerns: concerns
-        }]);
-
-      if (dbError) throw dbError;
-
-      // Send internal notification
-      const internalEmailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-internal-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email || 'No email provided',
-          whatsappNumber: formData.whatsappNumber,
-          userType: formData.relation,
-          language: 'en'
-        })
-      });
-
-      if (!internalEmailResponse.ok) {
-        console.error('Failed to send internal notification');
-      }
-
-      // Only send confirmation email if email is provided
-      if (formData.email) {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            email: formData.email,
-            whatsappNumber: formData.whatsappNumber,
-            relation: formData.relation,
-            language: 'en',
-            concerns: concerns
-          })
-        });
-
-        if (!response.ok) {
-          console.error('Failed to send confirmation email');
-        }
-      }
+      // Save to localStorage
+      const registrationId = crypto.randomUUID();
+      localStorage.setItem(`registration_${registrationId}`, JSON.stringify(registrationData));
 
       // Track successful submission
-      gtag('event', 'form_submission_success', {
-        event_category: 'engagement',
-        event_label: 'simple_form_complete_en',
-        relation_type: formData.relation,
-        concerns_count: concerns.length,
-        has_email: !!formData.email,
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_success', {
+          event_category: 'engagement',
+          event_label: 'simple_form_complete_en',
+          relation_type: formData.relation,
+          concerns_count: concerns.length,
+          has_email: !!formData.email,
+          language: 'en'
+        });
+      }
 
       setShowLeadCapture(false);
       navigate('/simple-thank-you');
     } catch (error) {
       // Track submission error
-      gtag('event', 'form_submission_error', {
-        event_category: 'engagement',
-        event_label: 'simple_form_error_en',
-        error_type: error.message,
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_error', {
+          event_category: 'engagement',
+          event_label: 'simple_form_error_en',
+          error_type: error.message,
+          language: 'en'
+        });
+      }
 
       console.error('Error processing registration:', error);
       alert('There was an error processing your request. Please try again later.');

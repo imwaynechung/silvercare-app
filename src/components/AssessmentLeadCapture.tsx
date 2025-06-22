@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { supabase } from '../lib/supabase';
 import { Lock, FileText, PieChart as ChartPie, Activity } from 'lucide-react';
 import { useQuizStore } from '../store/quiz';
 
@@ -34,11 +33,13 @@ const AssessmentLeadCapture: React.FC<AssessmentLeadCaptureProps> = ({ onComplet
 
     try {
       // Track form submission attempt
-      gtag('event', 'form_submission_start', {
-        event_category: 'engagement',
-        event_label: 'assessment_form_en',
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_start', {
+          event_category: 'engagement',
+          event_label: 'assessment_form_en',
+          language: 'en'
+        });
+      }
 
       if (!formData.whatsappNumber) {
         alert('Please provide your WhatsApp number so we can contact you.');
@@ -54,91 +55,45 @@ const AssessmentLeadCapture: React.FC<AssessmentLeadCaptureProps> = ({ onComplet
 
       const reportId = crypto.randomUUID();
       
-      // Use upsert to handle existing emails automatically
-      const { data: registration, error: dbError } = await supabase
-        .from('registrations')
-        .upsert([{
-          first_name: formData.firstName,
-          email: formData.email || null, // Set to null if empty
-          relation: formData.relation,
-          whatsapp_number: formData.whatsappNumber,
-          status: 'pending',
-          assessment_data: quizStore,
-          report_id: reportId
-        }], {
-          onConflict: 'email',
-          ignoreDuplicates: false
-        })
-        .select()
-        .single();
+      // Store data locally instead of database
+      const registrationData = {
+        first_name: formData.firstName,
+        email: formData.email || null,
+        relation: formData.relation,
+        whatsapp_number: formData.whatsappNumber,
+        status: 'pending',
+        assessment_data: quizStore,
+        report_id: reportId,
+        created_at: new Date().toISOString()
+      };
 
-      if (dbError) throw dbError;
-
-      // Send internal notification
-      const internalEmailResponse = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-internal-email`, {
-        method: 'POST',
-        headers: {
-          'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          firstName: formData.firstName,
-          email: formData.email || 'No email provided',
-          whatsappNumber: formData.whatsappNumber,
-          userType: formData.relation,
-          ageGroup: quizStore.ageGroup,
-          language: 'en'
-        })
-      });
-
-      if (!internalEmailResponse.ok) {
-        console.error('Failed to send internal notification');
-      }
-
-      // Only send confirmation email if email is provided
-      if (formData.email) {
-        const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/send-email`, {
-          method: 'POST',
-          headers: {
-            'Authorization': `Bearer ${import.meta.env.VITE_SUPABASE_ANON_KEY}`,
-            'Content-Type': 'application/json'
-          },
-          body: JSON.stringify({
-            firstName: formData.firstName,
-            email: formData.email,
-            whatsappNumber: formData.whatsappNumber,
-            relation: formData.relation,
-            reportId: registration.report_id,
-            language: 'en'
-          })
-        });
-
-        if (!response.ok) {
-          console.error('Failed to send confirmation email');
-        }
-      }
-
+      // Save to localStorage
+      localStorage.setItem(`assessment_${reportId}`, JSON.stringify(registrationData));
       localStorage.setItem('assessmentSignup', 'completed');
 
       // Track successful submission
-      gtag('event', 'form_submission_success', {
-        event_category: 'engagement',
-        event_label: 'assessment_complete_en',
-        relation_type: formData.relation,
-        has_email: !!formData.email,
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_success', {
+          event_category: 'engagement',
+          event_label: 'assessment_complete_en',
+          relation_type: formData.relation,
+          has_email: !!formData.email,
+          language: 'en'
+        });
+      }
       
-      navigate(`/thank-you/${registration.report_id}`);
+      navigate(`/thank-you/${reportId}`);
       onComplete();
     } catch (error) {
       // Track submission error
-      gtag('event', 'form_submission_error', {
-        event_category: 'engagement',
-        event_label: 'assessment_error_en',
-        error_type: error.message,
-        language: 'en'
-      });
+      if (typeof gtag !== 'undefined') {
+        gtag('event', 'form_submission_error', {
+          event_category: 'engagement',
+          event_label: 'assessment_error_en',
+          error_type: error.message,
+          language: 'en'
+        });
+      }
 
       console.error('Error processing registration:', error);
       alert('There was an error processing your request. Please try again later.');

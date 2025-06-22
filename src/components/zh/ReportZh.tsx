@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from 'react';
 import { useParams } from 'react-router-dom';
-import { supabase } from '../../lib/supabase';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import { AlertTriangle, Home, Shield, Heart } from 'lucide-react';
@@ -23,23 +22,14 @@ const ReportZh: React.FC = () => {
           return;
         }
 
-        const { data, error } = await supabase
-          .from('registrations')
-          .select('*')
-          .eq('report_id', reportId.trim())
-          .maybeSingle();
-
-        if (error) {
-          console.error('Supabase error:', error);
-          throw error;
-        }
-
-        if (!data) {
+        // Try to get data from localStorage
+        const storedData = localStorage.getItem(`assessment_${reportId}`);
+        if (storedData) {
+          const data = JSON.parse(storedData);
+          setAssessmentData(data);
+        } else {
           setError('找不到報告');
-          return;
         }
-
-        setAssessmentData(data);
       } catch (err: any) {
         setError(err.message || '無法載入報告。');
         console.error('Error fetching report:', err);
@@ -312,10 +302,12 @@ const ReportZh: React.FC = () => {
                 className="inline-block px-8 py-3 text-white rounded-lg transition-colors"
                 style={{ backgroundColor: '#08449E' }}
                 onClick={() => {
-                  gtag('event', 'video_click', {
-                    event_category: 'engagement',
-                    event_label: 'report_video_zh'
-                  });
+                  if (typeof gtag !== 'undefined') {
+                    gtag('event', 'video_click', {
+                      event_category: 'engagement',
+                      event_label: 'report_video_zh'
+                    });
+                  }
                 }}
               >
                 觀看介紹影片
