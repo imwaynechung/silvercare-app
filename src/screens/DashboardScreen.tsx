@@ -1,14 +1,22 @@
-import React from 'react';
-import { Heart, TrendingUp, Calendar, AlertCircle, User, Bell, Play, CheckCircle, Utensils, Dumbbell } from 'lucide-react';
+import React, { useEffect } from 'react';
+import { Heart, TrendingUp, Calendar, User, Bell, CheckCircle, Utensils, Dumbbell } from 'lucide-react';
 
 const DashboardScreen: React.FC = () => {
+  useEffect(() => {
+    // Track dashboard view
+    gtag('event', 'page_view', {
+      page_title: 'Dashboard',
+      page_location: window.location.href
+    });
+  }, []);
+
   return (
     <div className="min-h-full bg-gray-50">
-      {/* Reduced Header with proper GOFA logo and photo avatar */}
-      <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-8 pb-4 rounded-b-3xl">
+      {/* Header with proper GOFA logo and photo avatar */}
+      <div className="bg-gradient-to-r from-blue-900 to-blue-800 px-4 pt-8 pb-4 rounded-b-3xl safe-area-top">
         <div className="flex items-center justify-between mb-4">
           <div className="flex items-center">
-            {/* Use proper GOFA logo from chatbot-zh */}
+            {/* Use proper GOFA logo */}
             <img 
               src="https://iili.io/3rSv1St.png" 
               alt="GOFA Logo" 
@@ -16,7 +24,7 @@ const DashboardScreen: React.FC = () => {
             />
           </div>
           <div className="flex items-center space-x-3">
-            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center">
+            <button className="w-8 h-8 bg-white/20 rounded-full flex items-center justify-center touch-manipulation">
               <Bell className="w-4 h-4 text-white" />
             </button>
           </div>
@@ -39,9 +47,9 @@ const DashboardScreen: React.FC = () => {
       </div>
 
       <div className="px-4 -mt-2 relative z-10 pb-6">
-        {/* Weekly Progress Stats - Added below header */}
+        {/* Weekly Progress Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
-          <div className="bg-white rounded-xl p-4 shadow-lg">
+          <div className="bg-white rounded-xl p-4 shadow-lg card-mobile">
             <div className="flex items-center justify-between mb-2">
               <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
                 <TrendingUp className="w-5 h-5 text-green-600" />
@@ -52,7 +60,7 @@ const DashboardScreen: React.FC = () => {
             <p className="text-sm text-gray-600">復康進度</p>
           </div>
 
-          <div className="bg-white rounded-xl p-4 shadow-lg">
+          <div className="bg-white rounded-xl p-4 shadow-lg card-mobile">
             <div className="flex items-center justify-between mb-2">
               <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center">
                 <Calendar className="w-5 h-5 text-blue-900" />
@@ -68,7 +76,7 @@ const DashboardScreen: React.FC = () => {
         <div className="mb-6">
           <h2 className="text-lg font-bold text-blue-900 mb-4">復康中心</h2>
           
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden">
+          <div className="bg-white rounded-2xl shadow-lg overflow-hidden card-mobile">
             <div className="relative">
               <img 
                 src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
@@ -80,7 +88,7 @@ const DashboardScreen: React.FC = () => {
                 <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
                 <p className="text-sm opacity-90">運動訓練 + 營養指導</p>
               </div>
-              <button className="absolute bottom-4 right-4 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              <button className="absolute bottom-4 right-4 bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium btn-mobile">
                 開始復康
               </button>
             </div>
@@ -91,8 +99,8 @@ const DashboardScreen: React.FC = () => {
         <div className="mb-6">
           <h2 className="text-lg font-bold text-blue-900 mb-4">個人化計劃</h2>
           
-          <div className="flex space-x-4 overflow-x-auto pb-4">
-            <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden">
+          <div className="flex space-x-4 overflow-x-auto pb-4 hide-scrollbar">
+            <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden card-mobile">
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=150&fit=crop" 
@@ -117,7 +125,7 @@ const DashboardScreen: React.FC = () => {
               </div>
             </div>
 
-            <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden">
+            <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden card-mobile">
               <div className="relative">
                 <img 
                   src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=150&fit=crop" 
@@ -145,7 +153,7 @@ const DashboardScreen: React.FC = () => {
         </div>
 
         {/* Today's Activities */}
-        <div className="bg-white rounded-2xl shadow-lg p-4 mb-6">
+        <div className="bg-white rounded-2xl shadow-lg p-4 mb-6 card-mobile">
           <h2 className="text-lg font-bold text-gray-900 mb-4">今日活動</h2>
           
           <div className="space-y-3">
@@ -159,7 +167,7 @@ const DashboardScreen: React.FC = () => {
                   <p className="text-sm text-gray-600">15分鐘 • 中級</p>
                 </div>
               </div>
-              <button className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              <button className="bg-blue-900 text-white px-4 py-2 rounded-lg text-sm font-medium btn-mobile">
                 開始
               </button>
             </div>
@@ -174,7 +182,7 @@ const DashboardScreen: React.FC = () => {
                   <p className="text-sm text-gray-600">記錄今日飲食</p>
                 </div>
               </div>
-              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium">
+              <button className="bg-green-600 text-white px-4 py-2 rounded-lg text-sm font-medium btn-mobile">
                 記錄
               </button>
             </div>
@@ -189,7 +197,7 @@ const DashboardScreen: React.FC = () => {
                   <p className="text-sm text-gray-600">5分鐘 • 今日到期</p>
                 </div>
               </div>
-              <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium">
+              <button className="bg-gray-200 text-gray-700 px-4 py-2 rounded-lg text-sm font-medium btn-mobile">
                 進行
               </button>
             </div>
