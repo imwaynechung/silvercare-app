@@ -15,18 +15,29 @@ window.addEventListener('unhandledrejection', (event) => {
   showErrorMessage('載入時發生問題，請重新整理頁面。');
 });
 
-// Mobile address bar hiding functionality
+// Aggressive mobile address bar hiding functionality
 function hideAddressBar() {
   // Force scroll to hide address bar on mobile
   if (window.innerHeight < window.outerHeight) {
     setTimeout(() => {
       window.scrollTo(0, 1);
     }, 0);
+    
+    setTimeout(() => {
+      window.scrollTo(0, 0);
+    }, 100);
   }
   
   // Set viewport height to hide address bar
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
+  
+  // Force body dimensions
+  document.body.style.height = '100vh';
+  document.body.style.height = '100dvh';
+  document.body.style.overflow = 'hidden';
+  document.body.style.position = 'fixed';
+  document.body.style.width = '100%';
   
   // Add class to body to prevent scrolling
   document.body.classList.add('hide-address-bar');
@@ -34,7 +45,7 @@ function hideAddressBar() {
 
 // Initialize mobile optimizations
 function initMobileOptimizations() {
-  // Hide address bar
+  // Hide address bar aggressively
   hideAddressBar();
   
   // Prevent zoom on double tap
@@ -47,7 +58,7 @@ function initMobileOptimizations() {
     lastTouchEnd = now;
   }, false);
   
-  // Prevent pull-to-refresh
+  // Prevent pull-to-refresh and zoom
   document.addEventListener('touchstart', (event) => {
     if (event.touches.length > 1) {
       event.preventDefault();
@@ -60,7 +71,7 @@ function initMobileOptimizations() {
     }
   }, { passive: false });
   
-  // Handle orientation changes
+  // Handle orientation changes aggressively
   window.addEventListener('orientationchange', () => {
     setTimeout(() => {
       hideAddressBar();
@@ -68,6 +79,9 @@ function initMobileOptimizations() {
       document.body.style.height = '100vh';
       document.body.style.height = '100dvh';
     }, 500);
+    
+    // Additional attempt after longer delay
+    setTimeout(hideAddressBar, 1000);
   });
   
   // Handle resize events
@@ -79,6 +93,15 @@ function initMobileOptimizations() {
   window.addEventListener('contextmenu', (e) => {
     e.preventDefault();
   });
+  
+  // Continuous monitoring for mobile browsers
+  if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+    setInterval(() => {
+      if (window.innerHeight !== window.screen.height) {
+        hideAddressBar();
+      }
+    }, 2000);
+  }
 }
 
 function showErrorMessage(message: string) {
@@ -149,14 +172,27 @@ try {
     const updateVH = () => {
       const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
+      
+      // Force body dimensions again
+      document.body.style.height = '100vh';
+      document.body.style.height = '100dvh';
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     };
     
     updateVH();
     window.addEventListener('resize', updateVH);
     window.addEventListener('orientationchange', () => {
       setTimeout(updateVH, 500);
+      setTimeout(updateVH, 1000);
     });
   }, 100);
+
+  // Final aggressive attempt after everything loads
+  setTimeout(() => {
+    hideAddressBar();
+  }, 2000);
 
 } catch (error) {
   console.error('Failed to render app:', error);

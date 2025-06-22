@@ -12,13 +12,27 @@ const MobileLayout: React.FC = () => {
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Hide address bar on mount
+    // Aggressive address bar hiding on mount
     const hideAddressBar = () => {
-      if (window.innerHeight < window.outerHeight) {
-        setTimeout(() => {
-          window.scrollTo(0, 1);
-        }, 0);
-      }
+      // Multiple strategies for different browsers
+      setTimeout(() => {
+        window.scrollTo(0, 1);
+      }, 0);
+      
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
+      
+      // Force viewport height
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      
+      // Force body dimensions
+      document.body.style.height = '100vh';
+      document.body.style.height = '100dvh';
+      document.body.style.overflow = 'hidden';
+      document.body.style.position = 'fixed';
+      document.body.style.width = '100%';
     };
 
     hideAddressBar();
@@ -51,9 +65,17 @@ const MobileLayout: React.FC = () => {
     document.addEventListener('touchstart', preventDefaultTouch, { passive: false });
     document.addEventListener('touchmove', preventZoom, { passive: false });
 
+    // Continuous address bar hiding for mobile
+    const interval = setInterval(() => {
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        hideAddressBar();
+      }
+    }, 3000);
+
     return () => {
       document.removeEventListener('touchstart', preventDefaultTouch);
       document.removeEventListener('touchmove', preventZoom);
+      clearInterval(interval);
     };
   }, []);
 

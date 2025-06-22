@@ -14,7 +14,6 @@
     <meta name="apple-mobile-web-app-title" content="銀齡樂" />
     <meta name="theme-color" content="#08449E" />
     <meta name="msapplication-navbutton-color" content="#08449E" />
-    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     
     <!-- Browser Compatibility -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
@@ -99,7 +98,8 @@
         -webkit-text-size-adjust: 100%;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        height: 100%;
+        height: 100vh;
+        height: 100dvh;
         position: fixed;
         top: 0;
         left: 0;
@@ -119,7 +119,7 @@
       /* Ensure root element takes full height and hides address bar */
       #root {
         height: 100vh;
-        height: 100dvh; /* Dynamic viewport height for mobile */
+        height: 100dvh;
         width: 100%;
         opacity: 1;
         position: relative;
@@ -191,33 +191,98 @@
         -ms-overflow-style: none;
         scrollbar-width: none;
       }
+
+      /* Force full height on mobile browsers */
+      @media screen and (max-width: 768px) {
+        html, body {
+          height: 100vh !important;
+          height: 100dvh !important;
+          overflow: hidden !important;
+          position: fixed !important;
+          top: 0 !important;
+          left: 0 !important;
+          right: 0 !important;
+          bottom: 0 !important;
+        }
+
+        #root {
+          height: 100vh !important;
+          height: 100dvh !important;
+          overflow: hidden !important;
+        }
+
+        /* Prevent pull-to-refresh */
+        body {
+          overscroll-behavior: none !important;
+          -webkit-overflow-scrolling: touch !important;
+        }
+      }
+
+      /* iOS Safari specific fixes */
+      @supports (-webkit-touch-callout: none) {
+        html, body {
+          height: -webkit-fill-available;
+        }
+
+        #root {
+          height: -webkit-fill-available;
+        }
+      }
     </style>
 
-    <!-- Address bar hiding script -->
+    <!-- Address bar hiding script - CRITICAL -->
     <script>
-      // Hide address bar immediately
+      // Aggressive address bar hiding for mobile
       (function() {
+        let isHiding = false;
+        
         function hideAddressBar() {
-          if (window.innerHeight < window.outerHeight) {
-            setTimeout(function() {
-              window.scrollTo(0, 1);
-            }, 0);
-          }
+          if (isHiding) return;
+          isHiding = true;
+          
+          // Multiple strategies for hiding address bar
+          setTimeout(() => {
+            window.scrollTo(0, 1);
+            isHiding = false;
+          }, 0);
+          
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+          
+          // Set viewport height to hide address bar
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+          
+          // Force body height
+          document.body.style.height = '100vh';
+          document.body.style.height = '100dvh';
+          
+          // Add class to prevent scrolling
+          document.body.classList.add('hide-address-bar');
         }
         
-        // Hide on load
-        window.addEventListener('load', hideAddressBar);
+        // Hide immediately
+        hideAddressBar();
         
-        // Hide on orientation change
-        window.addEventListener('orientationchange', function() {
+        // Hide on various events
+        window.addEventListener('load', hideAddressBar);
+        window.addEventListener('resize', hideAddressBar);
+        window.addEventListener('orientationchange', () => {
           setTimeout(hideAddressBar, 500);
         });
         
-        // Hide on resize
-        window.addEventListener('resize', hideAddressBar);
+        // Hide on touch events
+        document.addEventListener('touchstart', hideAddressBar, { once: true });
         
-        // Immediate hide
-        hideAddressBar();
+        // Continuous monitoring for mobile browsers
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+          setInterval(() => {
+            if (window.innerHeight !== window.screen.height) {
+              hideAddressBar();
+            }
+          }, 1000);
+        }
       })();
     </script>
   </head>
