@@ -7,13 +7,11 @@ import './index.css';
 // Enhanced error handling with user-friendly messages
 window.addEventListener('error', (event) => {
   console.error('Application error:', event.error);
-  hideLoadingScreen();
   showErrorMessage('應用程式發生錯誤，請重新整理頁面。');
 });
 
 window.addEventListener('unhandledrejection', (event) => {
   console.error('Unhandled promise rejection:', event.reason);
-  hideLoadingScreen();
   showErrorMessage('載入時發生問題，請重新整理頁面。');
 });
 
@@ -56,25 +54,6 @@ function showErrorMessage(message: string) {
   document.body.appendChild(errorDiv);
 }
 
-// Hide loading screen function
-function hideLoadingScreen() {
-  const loadingScreen = document.getElementById('loading-screen');
-  if (loadingScreen) {
-    loadingScreen.style.opacity = '0';
-    loadingScreen.style.transition = 'opacity 0.5s ease-out';
-    setTimeout(() => {
-      if (loadingScreen.parentNode) {
-        loadingScreen.parentNode.removeChild(loadingScreen);
-      }
-    }, 500);
-  }
-}
-
-// Force hide loading screen after maximum wait time
-setTimeout(() => {
-  hideLoadingScreen();
-}, 5000); // 5 seconds maximum
-
 try {
   const root = document.getElementById('root');
   if (!root) {
@@ -84,33 +63,14 @@ try {
   // Create React root and render app immediately
   const reactRoot = createRoot(root);
   
-  // Render the app with error boundary
+  // Render the app with error boundary - NO LOADING SCREEN
   reactRoot.render(
     <StrictMode>
       <App />
     </StrictMode>
   );
 
-  // Hide loading screen after React renders
-  setTimeout(() => {
-    hideLoadingScreen();
-  }, 1000);
-
-  // Also hide loading screen when the app is fully loaded
-  if (document.readyState === 'complete') {
-    setTimeout(() => {
-      hideLoadingScreen();
-    }, 500);
-  } else {
-    window.addEventListener('load', () => {
-      setTimeout(() => {
-        hideLoadingScreen();
-      }, 500);
-    });
-  }
-
 } catch (error) {
   console.error('Failed to render app:', error);
-  hideLoadingScreen();
   showErrorMessage('應用程式載入時發生錯誤，請重新整理頁面或稍後再試。');
 }
