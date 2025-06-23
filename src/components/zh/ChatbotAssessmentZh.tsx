@@ -4,7 +4,7 @@ import { useQuizStore } from '../../store/quiz';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, TrendingUp, Heart } from 'lucide-react';
 import LoadingAnimation from '../LoadingAnimation';
-import AssessmentLeadCaptureZh from './AssessmentLeadCaptureZh';
+import ResultsZh from './ResultsZh';
 import ChatbotWelcomeZh from './ChatbotWelcomeZh';
 import PhysicalAssessmentInstructionsZh from './PhysicalAssessmentInstructionsZh';
 
@@ -12,7 +12,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(true);
   const [step, setStep] = useState(0);
   const [showFrailtyPrompt, setShowFrailtyPrompt] = useState(false);
-  const [showLeadCapture, setShowLeadCapture] = useState(false);
+  const [showResults, setShowResults] = useState(false);
   const [isLoading, setIsLoading] = useState(false);
   const [currentPhysicalTest, setCurrentPhysicalTest] = useState<
     'sitToStand' | 'tandemStance' | 'tandemWalk' | 'singleLeg' | null
@@ -96,7 +96,12 @@ const ChatbotAssessmentZh: React.FC = () => {
   };
 
   const handlePhysicalAssessmentComplete = () => {
-    setShowLeadCapture(true);
+    setIsLoading(true);
+    // Simulate processing time
+    setTimeout(() => {
+      setIsLoading(false);
+      setShowResults(true);
+    }, 2000);
   };
 
   const checkAllInitialScreeningNo = () => {
@@ -182,7 +187,17 @@ const ChatbotAssessmentZh: React.FC = () => {
     return (
       <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
         <div className="flex-1 overflow-y-auto pb-32">
-          <AssessmentLeadCaptureZh onComplete={() => {}} />
+          <ResultsZh state={quizStore} />
+        </div>
+      </div>
+    );
+  }
+
+  if (showResults) {
+    return (
+      <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
+        <div className="flex-1 overflow-y-auto">
+          <ResultsZh state={quizStore} />
         </div>
       </div>
     );

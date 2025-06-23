@@ -1,10 +1,10 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { QuizState, AGE_GROUPS } from '../../types';
 import { Home, Lock } from 'lucide-react';
 import { Chart as ChartJS, ArcElement, Tooltip, Legend } from 'chart.js';
 import { Doughnut } from 'react-chartjs-2';
 import LoadingAnimation from '../LoadingAnimation';
-import AssessmentLeadCaptureZh from './AssessmentLeadCaptureZh';
 
 ChartJS.register(ArcElement, Tooltip, Legend);
 
@@ -13,40 +13,7 @@ interface ResultsProps {
 }
 
 const ResultsZh: React.FC<ResultsProps> = ({ state }) => {
-  const [isLoading, setIsLoading] = useState(true);
-  const [showSignup, setShowSignup] = useState(false);
-  const [hasSignedUp, setHasSignedUp] = useState(false);
-
-  useEffect(() => {
-    // Check if user has already signed up
-    const signupStatus = localStorage.getItem('assessmentSignup');
-    if (signupStatus === 'completed') {
-      setHasSignedUp(true);
-    }
-
-    // Simulate loading time
-    const timer = setTimeout(() => {
-      setIsLoading(false);
-      if (signupStatus !== 'completed') {
-        setShowSignup(true);
-      }
-    }, 5000);
-
-    return () => clearTimeout(timer);
-  }, []);
-
-  const handleSignupComplete = () => {
-    setShowSignup(false);
-    setHasSignedUp(true);
-  };
-
-  if (isLoading) {
-    return <LoadingAnimation />;
-  }
-
-  if (showSignup) {
-    return <AssessmentLeadCaptureZh onComplete={handleSignupComplete} />;
-  }
+  const navigate = useNavigate();
 
   const calculateRiskLevel = () => {
     // Check for frailty first - if yes, immediately return HIGH risk
@@ -161,7 +128,22 @@ const ResultsZh: React.FC<ResultsProps> = ({ state }) => {
   };
 
   const handleRestart = () => {
-    window.location.reload();
+    navigate('/chatbot-zh');
+  };
+
+  const handleGenerateReversalPlan = () => {
+    // Track reversal plan generation
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'reversal_plan_generate', {
+        event_category: 'engagement',
+        event_label: 'generate_reversal_plan_zh',
+        risk_level: riskLevel,
+        language: 'zh'
+      });
+    }
+    
+    // Navigate to home page or specific reversal plan page
+    navigate('/');
   };
 
   const ageGroupTranslations = {
@@ -270,43 +252,93 @@ const ResultsZh: React.FC<ResultsProps> = ({ state }) => {
       </div>
 
       <div className="mt-8 bg-white rounded-xl shadow-lg overflow-hidden">
-        <div className="relative">
-          <div className="p-6 filter blur-sm">
-            <h2 className="text-xl font-bold mb-4">個人化建議</h2>
-            <p className="text-gray-600 mb-6">
-              根據您的評估結果獲取詳細的3個月改善計劃：
-            </p>
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div className="bg-blue-50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">運動計劃</h3>
-                <ul className="text-gray-600 space-y-2">
-                  <li>• 個人化平衡訓練</li>
-                  <li>• 肌力訓練計劃</li>
-                  <li>• 進度追蹤</li>
-                </ul>
-              </div>
-              <div className="bg-green-50 p-4 rounded-lg">
-                <h3 className="font-semibold mb-2">安全建議</h3>
-                <ul className="text-gray-600 space-y-2">
-                  <li>• 家居改善指南</li>
-                  <li>• 日常活動調整</li>
-                  <li>• 風險預防策略</li>
-                </ul>
-              </div>
+        <div className="p-6">
+          <h2 className="text-xl font-bold mb-4">個人化建議</h2>
+          <p className="text-gray-600 mb-6">
+            根據您的評估結果，我們為您制定了詳細的3個月改善計劃：
+          </p>
+          <div className="grid sm:grid-cols-2 gap-4 mb-6">
+            <div className="bg-blue-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">運動計劃</h3>
+              <ul className="text-gray-600 space-y-2">
+                <li>• 個人化平衡訓練</li>
+                <li>• 肌力訓練計劃</li>
+                <li>• 進度追蹤</li>
+              </ul>
+            </div>
+            <div className="bg-green-50 p-4 rounded-lg">
+              <h3 className="font-semibold mb-2">安全建議</h3>
+              <ul className="text-gray-600 space-y-2">
+                <li>• 家居改善指南</li>
+                <li>• 日常活動調整</li>
+                <li>• 風險預防策略</li>
+              </ul>
             </div>
           </div>
-          <div className="absolute inset-0 flex items-center justify-center bg-black/50">
-            <div className="text-center">
-              <div className="inline-flex items-center justify-center w-12 h-12 rounded-full bg-white mb-4">
-                <Lock className="w-6 h-6 text-blue-600" />
-              </div>
-              <h3 className="text-xl font-bold text-white mb-2">解鎖完整結果</h3>
-              <p className="text-white/80 mb-4 max-w-sm mx-auto">
-                解鎖個人化3個月計劃 (可大幅降低 30% 跌倒風險) 、詳細見解，以及AI跌倒風險評估，以更準確、更詳細地了解您的跌倒風險。
+          
+          {/* Frailty Risk Section */}
+          {state.hasFrailty && (
+            <div className="bg-orange-50 p-4 rounded-lg mb-6 border-l-4 border-orange-500">
+              <h3 className="font-semibold text-orange-800 mb-2">體弱風險提示</h3>
+              <p className="text-orange-700 text-sm">
+                您的評估顯示存在體弱徵狀，建議尋求專業醫療建議並在進行任何運動前諮詢醫生。
               </p>
-              <button className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors">
-                立即解鎖
-              </button>
+            </div>
+          )}
+          
+          <div className="text-center">
+            <button
+              onClick={handleGenerateReversalPlan}
+              className="bg-blue-600 text-white px-8 py-3 rounded-full font-medium hover:bg-blue-700 transition-colors mb-4"
+            >
+              生成逆轉計劃
+            </button>
+            <p className="text-sm text-gray-600">
+              個人化3個月計劃可大幅降低30%跌倒風險
+            </p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Additional Information */}
+      <div className="mt-6 bg-blue-50 rounded-xl p-6">
+        <h3 className="text-lg font-bold text-blue-900 mb-3">關於您的評估結果</h3>
+        <div className="space-y-3 text-sm text-blue-800">
+          <div className="flex items-start">
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2"></div>
+            <p>此評估基於國際認可的跌倒風險評估標準</p>
+          </div>
+          <div className="flex items-start">
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2"></div>
+            <p>建議每3-6個月重新評估一次</p>
+          </div>
+          <div className="flex items-start">
+            <div className="w-2 h-2 bg-blue-600 rounded-full mr-3 mt-2"></div>
+            <p>如有任何健康疑慮，請諮詢專業醫療人員</p>
+          </div>
+        </div>
+      </div>
+      
+      {/* Action Buttons */}
+      <div className="mt-6 flex gap-4">
+        <button
+          onClick={handleRestart}
+          className="flex-1 bg-gray-200 text-gray-700 py-3 rounded-lg font-medium hover:bg-gray-300 transition-colors"
+        >
+          重新評估
+        </button>
+        <button
+          onClick={() => navigate('/')}
+          className="flex-1 bg-blue-600 text-white py-3 rounded-lg font-medium hover:bg-blue-700 transition-colors"
+        >
+          返回首頁
+        </button>
+      </div>
+    </div>
+  );
+};
+
+export default ResultsZh;
             </div>
           </div>
         </div>
