@@ -1,21 +1,126 @@
-import React, { useState } from 'react';
-import { MessageCircle, Heart, Lightbulb, Calendar, Clock, Send, Mic, Bot } from 'lucide-react';
+import React, { useState, useRef, useEffect } from 'react';
+import { MessageCircle, Heart, Lightbulb, Calendar, Clock, Send, Mic, Bot, User } from 'lucide-react';
+
+interface Message {
+  id: string;
+  text: string;
+  sender: 'user' | 'bot';
+  timestamp: Date;
+}
 
 const CompanionScreen: React.FC = () => {
   const [message, setMessage] = useState('');
+  const [messages, setMessages] = useState<Message[]>([
+    {
+      id: '1',
+      text: '早安，健樂！今天感覺如何？我注意到您昨天完成了平衡訓練，做得很好！',
+      sender: 'bot',
+      timestamp: new Date(Date.now() - 30 * 60 * 1000) // 30 minutes ago
+    }
+  ]);
   const [activeTab, setActiveTab] = useState<'chat' | 'tips'>('chat');
+  const [isTyping, setIsTyping] = useState(false);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
 
-  const handleSendMessage = () => {
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [messages]);
+
+  const quickResponses = [
+    '好的，教我伸展',
+    '我的進度如何？',
+    '設定提醒',
+    '今天的運動計劃',
+    '我感覺很好',
+    '有點累'
+  ];
+
+  const handleSendMessage = async () => {
     if (message.trim()) {
-      // Handle message sending logic here
+      const userMessage: Message = {
+        id: Date.now().toString(),
+        text: message.trim(),
+        sender: 'user',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, userMessage]);
       setMessage('');
+      setIsTyping(true);
+
+      // Simulate bot response
+      setTimeout(() => {
+        const botResponse = generateBotResponse(userMessage.text);
+        const botMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: botResponse,
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        setMessages(prev => [...prev, botMessage]);
+        setIsTyping(false);
+      }, 1000 + Math.random() * 2000);
+    }
+  };
+
+  const handleQuickResponse = (response: string) => {
+    setMessage(response);
+    setTimeout(() => handleSendMessage(), 100);
+  };
+
+  const generateBotResponse = (userMessage: string): string => {
+    const lowerMessage = userMessage.toLowerCase();
+    
+    if (lowerMessage.includes('伸展') || lowerMessage.includes('運動')) {
+      return '很好！我為您推薦幾個簡單的伸展運動：\n\n1. 頸部轉動 - 慢慢左右轉動頭部\n2. 肩膀聳動 - 向上提肩膀，然後放鬆\n3. 腳踝轉動 - 坐著轉動腳踝\n\n每個動作做5-10次，記得動作要緩慢。需要我詳細說明任何一個動作嗎？';
+    }
+    
+    if (lowerMessage.includes('進度') || lowerMessage.includes('表現')) {
+      return '您的進度很棒！本週您已經：\n\n✅ 完成了5次平衡訓練\n✅ 運動時間達75分鐘\n✅ 達成83%的目標\n\n比上週進步了15%！繼續保持這個節奏，您會越來越強壯的。';
+    }
+    
+    if (lowerMessage.includes('提醒') || lowerMessage.includes('設定')) {
+      return '我可以為您設定以下提醒：\n\n🔔 每日運動提醒\n🔔 服藥時間提醒\n🔔 喝水提醒\n🔔 休息提醒\n\n您想設定哪種提醒呢？';
+    }
+    
+    if (lowerMessage.includes('累') || lowerMessage.includes('疲勞')) {
+      return '感到疲累是正常的，這表示您的身體在努力工作！建議您：\n\n💧 多喝水補充水分\n🛋️ 適當休息15-20分鐘\n🧘‍♀️ 做一些深呼吸放鬆\n\n如果持續感到不適，請諮詢您的醫生。';
+    }
+    
+    if (lowerMessage.includes('好') || lowerMessage.includes('不錯')) {
+      return '太好了！保持這種積極的心態很重要。既然您感覺良好，要不要嘗試今天的推薦運動？或者我可以分享一些健康小貼士給您。';
+    }
+    
+    if (lowerMessage.includes('計劃') || lowerMessage.includes('今天')) {
+      return '今天為您安排的活動：\n\n🏃‍♀️ 平衡力訓練 (15分鐘)\n📝 營養記錄\n⚖️ 每週評估\n\n您想從哪一項開始呢？我可以引導您完成。';
+    }
+    
+    // Default responses
+    const defaultResponses = [
+      '我明白您的意思。請告訴我更多詳情，我會盡力幫助您。',
+      '這是一個很好的問題。根據您的情況，我建議您可以嘗試一些簡單的運動。',
+      '感謝您的分享。保持積極的心態對健康很重要。有什麼我可以幫助您的嗎？',
+      '我會記住這個資訊。如果您有任何關於運動或健康的問題，隨時可以問我。'
+    ];
+    
+    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
+  };
+
+  const handleKeyPress = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handleSendMessage();
     }
   };
 
   return (
     <div className="min-h-full bg-gray-50 flex flex-col">
       {/* Header */}
-      <div className="bg-gradient-to-r from-blue-800 to-blue-900 p-4 text-white">
+      <div className="bg-gradient-to-r from-blue-800 to-blue-900 p-4 text-white flex-shrink-0">
         <div className="flex items-center mb-2">
           <div className="w-10 h-10 bg-white/20 rounded-full flex items-center justify-center mr-3">
             <Bot className="w-6 h-6 text-white" />
@@ -28,7 +133,7 @@ const CompanionScreen: React.FC = () => {
       </div>
 
       {/* Tab Navigation */}
-      <div className="flex bg-white border-b">
+      <div className="flex bg-white border-b flex-shrink-0">
         <button
           onClick={() => setActiveTab('chat')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
@@ -54,86 +159,124 @@ const CompanionScreen: React.FC = () => {
       {activeTab === 'chat' ? (
         <>
           {/* Chat Messages */}
-          <div className="flex-1 p-4 overflow-y-auto pb-24">
-            <div className="space-y-4">
-              {/* AI Message */}
-              <div className="flex items-start">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Bot className="w-4 h-4 text-blue-900" />
+          <div className="flex-1 overflow-y-auto p-4 pb-4">
+            <div className="space-y-4 max-w-4xl mx-auto">
+              {messages.map((msg) => (
+                <div key={msg.id} className={`flex items-start ${msg.sender === 'user' ? 'justify-end' : ''}`}>
+                  {msg.sender === 'bot' && (
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3 flex-shrink-0">
+                      <Bot className="w-4 h-4 text-blue-900" />
+                    </div>
+                  )}
+                  <div className={`flex-1 max-w-xs sm:max-w-md ${msg.sender === 'user' ? 'order-1' : ''}`}>
+                    <div className={`rounded-lg p-3 ${
+                      msg.sender === 'user' 
+                        ? 'bg-blue-900 text-white ml-auto' 
+                        : 'bg-white shadow-sm'
+                    }`}>
+                      <p className={`${msg.sender === 'user' ? 'text-white' : 'text-gray-900'} whitespace-pre-line`}>
+                        {msg.text}
+                      </p>
+                    </div>
+                    <p className={`text-xs text-gray-500 mt-1 ${msg.sender === 'user' ? 'text-right' : ''}`}>
+                      {msg.timestamp.toLocaleTimeString('zh-HK', { 
+                        hour: '2-digit', 
+                        minute: '2-digit' 
+                      })}
+                    </p>
+                  </div>
+                  {msg.sender === 'user' && (
+                    <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center ml-3 flex-shrink-0">
+                      <User className="w-4 h-4 text-gray-600" />
+                    </div>
+                  )}
                 </div>
-                <div className="flex-1">
+              ))}
+
+              {/* Typing Indicator */}
+              {isTyping && (
+                <div className="flex items-start">
+                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                    <Bot className="w-4 h-4 text-blue-900" />
+                  </div>
                   <div className="bg-white rounded-lg p-3 shadow-sm">
-                    <p className="text-gray-900">早安，健樂！今天感覺如何？我注意到您昨天完成了平衡訓練，做得很好！</p>
+                    <div className="flex space-x-1">
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
+                      <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
+                    </div>
                   </div>
-                  <p className="text-xs text-gray-500 mt-1">上午9:30</p>
                 </div>
-              </div>
+              )}
 
-              {/* User Message */}
-              <div className="flex items-start justify-end">
-                <div className="flex-1 max-w-xs">
-                  <div className="bg-blue-900 rounded-lg p-3">
-                    <p className="text-white">感覺不錯！不過運動後有點累。</p>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1 text-right">上午9:32</p>
-                </div>
-              </div>
-
-              {/* AI Message */}
-              <div className="flex items-start">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                  <Bot className="w-4 h-4 text-blue-900" />
-                </div>
-                <div className="flex-1">
-                  <div className="bg-white rounded-lg p-3 shadow-sm">
-                    <p className="text-gray-900">這很正常！運動後感到疲累表示您的肌肉在工作。記得要多喝水，需要時可以休息。要我為您推薦一些恢復性的伸展運動嗎？</p>
-                  </div>
-                  <p className="text-xs text-gray-500 mt-1">上午9:33</p>
-                </div>
-              </div>
-
-              {/* Quick Responses */}
-              <div className="flex flex-wrap gap-2 mt-4">
-                <button className="px-3 py-2 bg-blue-100 text-blue-900 rounded-full text-sm">
-                  好的，教我伸展
-                </button>
-                <button className="px-3 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">
-                  我的進度如何？
-                </button>
-                <button className="px-3 py-2 bg-gray-100 text-gray-700 rounded-full text-sm">
-                  設定提醒
-                </button>
-              </div>
+              <div ref={messagesEndRef} />
             </div>
+
+            {/* Quick Responses */}
+            {messages.length <= 1 && (
+              <div className="max-w-4xl mx-auto mt-4">
+                <p className="text-sm text-gray-600 mb-3">快速回覆：</p>
+                <div className="flex flex-wrap gap-2">
+                  {quickResponses.map((response, index) => (
+                    <button
+                      key={index}
+                      onClick={() => handleQuickResponse(response)}
+                      className="px-3 py-2 bg-blue-100 text-blue-900 rounded-full text-sm hover:bg-blue-200 transition-colors"
+                    >
+                      {response}
+                    </button>
+                  ))}
+                </div>
+              </div>
+            )}
           </div>
 
-          {/* Message Input */}
-          <div className="bg-white border-t p-4">
-            <div className="flex items-center space-x-2">
-              <div className="flex-1 relative">
-                <input
-                  type="text"
-                  value={message}
-                  onChange={(e) => setMessage(e.target.value)}
-                  placeholder="輸入您的訊息..."
-                  className="w-full px-4 py-2 border border-gray-300 rounded-full focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent"
-                  onKeyPress={(e) => e.key === 'Enter' && handleSendMessage()}
-                />
+          {/* Message Input - Fixed at bottom */}
+          <div className="bg-white border-t p-4 flex-shrink-0">
+            <div className="max-w-4xl mx-auto">
+              <div className="flex items-end space-x-2">
+                <div className="flex-1 relative">
+                  <textarea
+                    value={message}
+                    onChange={(e) => setMessage(e.target.value)}
+                    onKeyPress={handleKeyPress}
+                    placeholder="輸入您的訊息..."
+                    className="w-full px-4 py-3 border border-gray-300 rounded-2xl focus:outline-none focus:ring-2 focus:ring-blue-900 focus:border-transparent resize-none"
+                    rows={1}
+                    style={{ minHeight: '48px', maxHeight: '120px' }}
+                    onInput={(e) => {
+                      const target = e.target as HTMLTextAreaElement;
+                      target.style.height = 'auto';
+                      target.style.height = Math.min(target.scrollHeight, 120) + 'px';
+                    }}
+                  />
+                </div>
+                <button 
+                  className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
+                  onClick={() => {
+                    // Voice input functionality could be added here
+                    alert('語音輸入功能即將推出');
+                  }}
+                >
+                  <Mic className="w-5 h-5 text-gray-600" />
+                </button>
+                <button
+                  onClick={handleSendMessage}
+                  disabled={!message.trim()}
+                  className={`p-3 rounded-full transition-colors ${
+                    message.trim() 
+                      ? 'bg-blue-900 hover:bg-blue-800 text-white' 
+                      : 'bg-gray-200 text-gray-400 cursor-not-allowed'
+                  }`}
+                >
+                  <Send className="w-5 h-5" />
+                </button>
               </div>
-              <button className="p-2 bg-gray-100 rounded-full">
-                <Mic className="w-5 h-5 text-gray-600" />
-              </button>
-              <button
-                onClick={handleSendMessage}
-                className="p-2 bg-blue-900 rounded-full"
-              >
-                <Send className="w-5 h-5 text-white" />
-              </button>
             </div>
           </div>
         </>
       ) : (
-        <div className="flex-1 p-4 overflow-y-auto pb-24">
+        <div className="flex-1 overflow-y-auto p-4 pb-24">
           {/* Today's Tip */}
           <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-xl p-6 mb-6 text-white">
             <div className="flex items-center mb-3">
