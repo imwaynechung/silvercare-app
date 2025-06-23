@@ -169,7 +169,10 @@ const ChatbotAssessmentZh: React.FC = () => {
     return (
       <div className="h-screen flex flex-col bg-gray-50 max-w-md mx-auto relative">
         <div className="flex-1 overflow-y-auto pb-32">
-          <ChatbotWelcomeZh onStart={() => setShowWelcome(false)} />
+          <ChatbotWelcomeZh 
+            onStart={() => setShowWelcome(false)} 
+            onBack={() => navigate('/')}
+          />
         </div>
       </div>
     );
