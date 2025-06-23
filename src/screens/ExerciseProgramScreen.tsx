@@ -7,6 +7,15 @@ const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
+  const [todaysLesson, setTodaysLesson] = useState<{
+    title: string;
+    description: string;
+    duration: number;
+    planName: string;
+    stage: string;
+    lessonNumber: number;
+    imageUrl: string;
+  } | null>(null);
   const [levelPlans, setLevelPlans] = useState<{
     level1: LessonPlan | null;
     level2: LessonPlan | null;
@@ -20,6 +29,34 @@ const ExerciseProgramScreen: React.FC = () => {
       try {
         const plans = await LessonPlanService.getLevelBasedPlans();
         setLevelPlans(plans);
+        
+        // Set today's lesson from the first available plan
+        if (plans.level1) {
+          // If we have detailed lesson data, use the first lesson
+          if (plans.level1.lessonsData && plans.level1.lessonsData.length > 0) {
+            const firstLesson = plans.level1.lessonsData[0];
+            setTodaysLesson({
+              title: firstLesson.title.zh,
+              description: firstLesson.description.zh,
+              duration: firstLesson.duration,
+              planName: plans.level1.title.zh_Hant,
+              stage: '第一階段',
+              lessonNumber: 1,
+              imageUrl: firstLesson.thumbImageUrl || firstLesson.imageUrl
+            });
+          } else {
+            // Fallback to mock lesson data
+            setTodaysLesson({
+              title: '基礎坐式平衡訓練',
+              description: '練習坐姿平衡，提升核心穩定性和身體控制能力',
+              duration: 15,
+              planName: plans.level1.title.zh_Hant,
+              stage: '第一階段',
+              lessonNumber: 1,
+              imageUrl: plans.level1.planImage
+            });
+          }
+        }
       } catch (error) {
         console.error('Failed to fetch lesson plans:', error);
       } finally {
@@ -237,21 +274,38 @@ const ExerciseProgramScreen: React.FC = () => {
           {activeTab === 'today' ? (
             <>
               {/* Today's Lesson */}
-              <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-2xl p-6 mb-6 text-white">
+              <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
+                {todaysLesson?.imageUrl && (
+                  <div className="absolute inset-0 opacity-20">
+                    <img 
+                      src={todaysLesson.imageUrl} 
+                      alt="Today's lesson background" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div>
                     <h2 className="text-xl font-bold">今日課程</h2>
-                    <p className="text-blue-100">第一階段 - 課程 3</p>
+                    <p className="text-blue-100">
+                      {todaysLesson?.stage || '第一階段'} - 課程 {todaysLesson?.lessonNumber || 1}
+                    </p>
                   </div>
                   <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                     <Play className="w-8 h-8 text-white" />
                   </div>
                 </div>
-                <h3 className="text-lg font-semibold mb-2">基礎坐式平衡訓練</h3>
-                <p className="text-blue-100 mb-4">練習坐姿平衡，提升核心穩定性</p>
+                <h3 className="text-lg font-semibold mb-2">
+                  {todaysLesson?.title || '基礎坐式平衡訓練'}
+                </h3>
+                <p className="text-blue-100 mb-4">
+                  {todaysLesson?.description || '練習坐姿平衡，提升核心穩定性'}
+                </p>
                 <div className="flex items-center text-sm text-blue-100">
                   <Clock className="w-4 h-4 mr-1" />
-                  <span>預計時間：15分鐘</span>
+                  <span>預計時間：{todaysLesson?.duration || 15}分鐘</span>
+                </div>
                 </div>
               </div>
 
@@ -287,8 +341,12 @@ const ExerciseProgramScreen: React.FC = () => {
                         <span className="text-gray-600 font-bold">2</span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">坐式平衡練習</p>
-                        <p className="text-sm text-gray-600">核心穩定、姿勢控制 • 10分鐘</p>
+                        <p className="font-medium text-gray-900">
+                          {todaysLesson?.title || '坐式平衡練習'}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          核心穩定、姿勢控制 • {Math.max((todaysLesson?.duration || 15) - 5, 8)}分鐘
+                        </p>
                       </div>
                     </div>
                     <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
@@ -340,6 +398,17 @@ const ExerciseProgramScreen: React.FC = () => {
                   </div>
                 </div>
               </div>
+
+              {/* Current Plan Info */}
+              {todaysLesson && (
+                <div className="bg-blue-50 rounded-2xl p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">當前計劃</h3>
+                  <p className="text-blue-800 font-medium">{todaysLesson.planName}</p>
+                  <p className="text-blue-600 text-sm mt-1">
+                    專為初學者設計的基礎訓練，循序漸進提升平衡能力
+                  </p>
+                </div>
+              )}
             </>
           ) : (
             <>
