@@ -118,7 +118,7 @@ const AssessmentScreen: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
+                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop"
                   alt="Rehabilitation Program" 
                   className="w-full h-48 object-cover"
                 />
