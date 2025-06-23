@@ -1,10 +1,34 @@
 import React, { useState } from 'react';
 import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
+import { LessonPlanService } from '../services/lessonPlanService';
+import { LessonPlan } from '../types/lessonPlan';
 
 const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
   const [selectedMonth, setSelectedMonth] = useState<1 | 2 | 3>(1);
+  const [levelPlans, setLevelPlans] = useState<{
+    level1: LessonPlan | null;
+    level2: LessonPlan | null;
+    level3: LessonPlan | null;
+  }>({ level1: null, level2: null, level3: null });
+  const [loading, setLoading] = useState(false);
+
+  React.useEffect(() => {
+    const fetchLevelPlans = async () => {
+      setLoading(true);
+      try {
+        const plans = await LessonPlanService.getLevelBasedPlans();
+        setLevelPlans(plans);
+      } catch (error) {
+        console.error('Failed to fetch lesson plans:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLevelPlans();
+  }, []);
 
   if (showProgramDetail) {
     return (
@@ -58,18 +82,32 @@ const ExerciseProgramScreen: React.FC = () => {
               {selectedMonth === 1 && (
                 <>
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3">
-                      <span className="text-green-600 font-bold">基</span>
+                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                      {levelPlans.level1?.planImage ? (
+                        <img 
+                          src={levelPlans.level1.planImage} 
+                          alt="Level 1" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-green-600 font-bold">基</span>
+                      )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">第一個月 - 基礎建立</h3>
-                      <p className="text-gray-600">建立運動習慣，學習基本動作</p>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {levelPlans.level1?.title.zh_Hant || '第一個月 - 基礎建立'}
+                      </h3>
+                      <p className="text-gray-600">
+                        {levelPlans.level1?.description.zh_Hant || '建立運動習慣，學習基本動作'}
+                      </p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-4 bg-green-50 rounded-xl">
-                      <div className="text-2xl font-bold text-green-600">12</div>
+                      <div className="text-2xl font-bold text-green-600">
+                        {levelPlans.level1?.duration || 12}
+                      </div>
                       <div className="text-sm text-gray-600">課程</div>
                     </div>
                     <div className="text-center p-4 bg-blue-50 rounded-xl">
@@ -109,18 +147,32 @@ const ExerciseProgramScreen: React.FC = () => {
               {selectedMonth === 2 && (
                 <>
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                      <span className="text-orange-600 font-bold">中</span>
+                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                      {levelPlans.level2?.planImage ? (
+                        <img 
+                          src={levelPlans.level2.planImage} 
+                          alt="Level 2" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-orange-600 font-bold">中</span>
+                      )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">第二個月 - 進階訓練</h3>
-                      <p className="text-gray-600">增加難度，提升穩定性</p>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {levelPlans.level2?.title.zh_Hant || '第二個月 - 進階訓練'}
+                      </h3>
+                      <p className="text-gray-600">
+                        {levelPlans.level2?.description.zh_Hant || '增加難度，提升穩定性'}
+                      </p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-4 bg-orange-50 rounded-xl">
-                      <div className="text-2xl font-bold text-orange-600">12</div>
+                      <div className="text-2xl font-bold text-orange-600">
+                        {levelPlans.level2?.duration || 12}
+                      </div>
                       <div className="text-sm text-gray-600">課程</div>
                     </div>
                     <div className="text-center p-4 bg-blue-50 rounded-xl">
@@ -160,18 +212,32 @@ const ExerciseProgramScreen: React.FC = () => {
               {selectedMonth === 3 && (
                 <>
                   <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-3">
-                      <span className="text-purple-600 font-bold">高</span>
+                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
+                      {levelPlans.level3?.planImage ? (
+                        <img 
+                          src={levelPlans.level3.planImage} 
+                          alt="Level 3" 
+                          className="w-full h-full object-cover"
+                        />
+                      ) : (
+                        <span className="text-purple-600 font-bold">高</span>
+                      )}
                     </div>
                     <div>
-                      <h3 className="text-xl font-bold text-gray-900">第三個月 - 高級挑戰</h3>
-                      <p className="text-gray-600">綜合訓練，鞏固成果</p>
+                      <h3 className="text-xl font-bold text-gray-900">
+                        {levelPlans.level3?.title.zh_Hant || '第三個月 - 高級挑戰'}
+                      </h3>
+                      <p className="text-gray-600">
+                        {levelPlans.level3?.description.zh_Hant || '綜合訓練，鞏固成果'}
+                      </p>
                     </div>
                   </div>
                   
                   <div className="grid grid-cols-2 gap-4 mb-6">
                     <div className="text-center p-4 bg-purple-50 rounded-xl">
-                      <div className="text-2xl font-bold text-purple-600">12</div>
+                      <div className="text-2xl font-bold text-purple-600">
+                        {levelPlans.level3?.duration || 12}
+                      </div>
                       <div className="text-sm text-gray-600">課程</div>
                     </div>
                     <div className="text-center p-4 bg-blue-50 rounded-xl">
@@ -413,13 +479,20 @@ const ExerciseProgramScreen: React.FC = () => {
 
             {/* Month Programs */}
             <div className="space-y-4">
+              {loading && (
+                <div className="text-center py-8">
+                  <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mx-auto mb-2"></div>
+                  <p className="text-gray-600">載入訓練計劃中...</p>
+                </div>
+              )}
+              
               <div 
                 className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer"
                 onClick={() => setShowProgramDetail(true)}
               >
                 <div className="relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
+                    src={levelPlans.level1?.planImage || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop"} 
                     alt="Month 1 Training" 
                     className="w-full h-32 object-cover"
                   />
@@ -431,8 +504,12 @@ const ExerciseProgramScreen: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">基礎建立階段</h3>
-                  <p className="text-sm text-gray-600 mb-3">建立運動習慣，學習基本平衡和坐立動作</p>
+                  <h3 className="font-bold text-gray-900 mb-1">
+                    {levelPlans.level1?.title.zh_Hant || '基礎建立階段'}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {levelPlans.level1?.description.zh_Hant || '建立運動習慣，學習基本平衡和坐立動作'}
+                  </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-sm text-gray-600">
                       <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
@@ -452,7 +529,7 @@ const ExerciseProgramScreen: React.FC = () => {
               >
                 <div className="relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=200&fit=crop" 
+                    src={levelPlans.level2?.planImage || "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=200&fit=crop"} 
                     alt="Month 2 Training" 
                     className="w-full h-32 object-cover"
                   />
@@ -464,8 +541,12 @@ const ExerciseProgramScreen: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">進階訓練階段</h3>
-                  <p className="text-sm text-gray-600 mb-3">增加難度，動態平衡和串聯步行訓練</p>
+                  <h3 className="font-bold text-gray-900 mb-1">
+                    {levelPlans.level2?.title.zh_Hant || '進階訓練階段'}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {levelPlans.level2?.description.zh_Hant || '增加難度，動態平衡和串聯步行訓練'}
+                  </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-sm text-gray-600">
                       <Play className="w-4 h-4 mr-1 text-blue-600" />
@@ -481,7 +562,7 @@ const ExerciseProgramScreen: React.FC = () => {
               <div className="bg-white rounded-2xl shadow-lg overflow-hidden opacity-75">
                 <div className="relative">
                   <img 
-                    src="https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=400&h=200&fit=crop" 
+                    src={levelPlans.level3?.planImage || "https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=400&h=200&fit=crop"} 
                     alt="Month 3 Training" 
                     className="w-full h-32 object-cover"
                   />
@@ -496,8 +577,12 @@ const ExerciseProgramScreen: React.FC = () => {
                   </div>
                 </div>
                 <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">高級挑戰階段</h3>
-                  <p className="text-sm text-gray-600 mb-3">複合動作訓練，功能性運動和習慣維持</p>
+                  <h3 className="font-bold text-gray-900 mb-1">
+                    {levelPlans.level3?.title.zh_Hant || '高級挑戰階段'}
+                  </h3>
+                  <p className="text-sm text-gray-600 mb-3">
+                    {levelPlans.level3?.description.zh_Hant || '複合動作訓練，功能性運動和習慣維持'}
+                  </p>
                   <div className="flex items-center justify-between">
                     <div className="flex items-center text-sm text-gray-500">
                       <Lock className="w-4 h-4 mr-1" />
@@ -509,6 +594,36 @@ const ExerciseProgramScreen: React.FC = () => {
             </div>
 
             {/* Expected Improvements */}
+            <div className="bg-blue-50 rounded-2xl p-6 shadow-lg mt-6">
+              <h2 className="text-lg font-bold text-gray-900 mb-4">訓練計劃詳情</h2>
+              {levelPlans.level1 && (
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
+                    <span className="text-sm text-gray-700">
+                      第一級：{levelPlans.level1.lessons.length} 個課程
+                    </span>
+                  </div>
+                  {levelPlans.level2 && (
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">
+                        第二級：{levelPlans.level2.lessons.length} 個課程
+                      </span>
+                    </div>
+                  )}
+                  {levelPlans.level3 && (
+                    <div className="flex items-center">
+                      <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
+                      <span className="text-sm text-gray-700">
+                        第三級：{levelPlans.level3.lessons.length} 個課程
+                      </span>
+                    </div>
+                  )}
+                </div>
+              )}
+            </div>
+
             <div className="bg-white rounded-2xl p-6 shadow-lg mt-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">預期改善效果</h2>
               <div className="space-y-4">
