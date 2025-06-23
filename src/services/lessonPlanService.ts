@@ -70,41 +70,12 @@ export class LessonPlanService {
     try {
       const allPlans = await this.getAllLessonPlans();
       
-      // Search for level-based plans using multiple criteria
-      const level1 = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 1') ||
-        plan.planName.toLowerCase().includes('level1') ||
-        plan.title?.en?.toLowerCase().includes('level 1') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('level 1') ||
-        plan.title?.zh_Hans?.toLowerCase().includes('level 1')
-      ) || null;
-
-      const level2 = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 2') ||
-        plan.planName.toLowerCase().includes('level2') ||
-        plan.title?.en?.toLowerCase().includes('level 2') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('level 2') ||
-        plan.title?.zh_Hans?.toLowerCase().includes('level 2')
-      ) || null;
-
-      const level3 = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 3') ||
-        plan.planName.toLowerCase().includes('level3') ||
-        plan.title?.en?.toLowerCase().includes('level 3') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('level 3') ||
-        plan.title?.zh_Hans?.toLowerCase().includes('level 3')
-      ) || null;
-
-      // If no level-specific plans found, use first 3 plans as fallback
-      if (!level1 && !level2 && !level3 && allPlans.length >= 3) {
-        return {
-          level1: allPlans[0],
-          level2: allPlans[1],
-          level3: allPlans[2]
-        };
-      }
-
-      return { level1, level2, level3 };
+      // Use first 3 plans from all available plans
+      return {
+        level1: allPlans[0] || null,
+        level2: allPlans[1] || null,
+        level3: allPlans[2] || null
+      };
     } catch (error) {
       console.error('Failed to fetch level-based plans:', error);
       return this.getMockLevelPlans();
