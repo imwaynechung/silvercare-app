@@ -339,12 +339,3 @@ const ResultsZh: React.FC<ResultsProps> = ({ state }) => {
 };
 
 export default ResultsZh;
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
-  );
-};
-
-export default ResultsZh;
