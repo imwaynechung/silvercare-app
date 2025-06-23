@@ -30,7 +30,6 @@ export interface LessonPlan {
 }
 
 export interface LessonData {
-  id: string;
   groupByTypes: string[];
   modifyDatetime: {
     _nanoseconds: number;
