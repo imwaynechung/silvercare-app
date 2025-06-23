@@ -6,7 +6,7 @@ import { LessonPlan } from '../types/lessonPlan';
 const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
-  const [selectedMonth, setSelectedMonth] = useState<1 | 2 | 3>(1);
+  const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
   const [levelPlans, setLevelPlans] = useState<{
     level1: LessonPlan | null;
     level2: LessonPlan | null;
@@ -30,279 +30,165 @@ const ExerciseProgramScreen: React.FC = () => {
     fetchLevelPlans();
   }, []);
 
-  if (showProgramDetail) {
+  const handlePlanClick = async (plan: LessonPlan) => {
+    setLoading(true);
+    try {
+      // Fetch detailed plan with lessons data
+      const detailedPlan = await LessonPlanService.getLessonPlan(plan.id);
+      setSelectedPlan(detailedPlan);
+      setShowProgramDetail(true);
+    } catch (error) {
+      console.error('Failed to fetch plan details:', error);
+      // Fallback to basic plan data
+      setSelectedPlan(plan);
+      setShowProgramDetail(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showProgramDetail && selectedPlan) {
     return (
       <div className="min-h-full bg-gray-50">
         {/* Header */}
-        <div className="bg-gradient-to-r from-blue-800 to-blue-900 px-4 pt-12 pb-8 rounded-b-3xl">
-          <div className="flex items-center mb-6">
-            <button 
-              onClick={() => setShowProgramDetail(false)}
-              className="mr-3 p-2 bg-white/20 rounded-full"
-            >
-              <ArrowLeft className="w-5 h-5 text-white" />
-            </button>
-            <h1 className="text-xl font-semibold text-white">個人化運動計劃詳情</h1>
-          </div>
-
-          <div className="flex items-center mb-4">
-            <h2 className="text-2xl font-bold text-white mr-4">3個月改善計劃</h2>
-            <div className="bg-white/20 rounded-full p-3">
-              <div className="w-16 h-16 bg-white rounded-full flex items-center justify-center">
-                <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Target className="text-blue-900 w-6 h-6" />
-                </div>
-              </div>
-            </div>
-          </div>
-          <p className="text-blue-100">循序漸進，從基礎到進階</p>
+        <div className="bg-white px-4 py-3 border-b flex items-center">
+          <button 
+            onClick={() => {
+              setShowProgramDetail(false);
+              setSelectedPlan(null);
+            }}
+            className="mr-3 p-2 hover:bg-gray-100 rounded-full"
+          >
+            <ArrowLeft className="w-5 h-5 text-gray-600" />
+          </button>
+          <h1 className="text-lg font-semibold text-gray-900">計劃詳情</h1>
         </div>
 
-        <div className="px-4 -mt-6 relative z-10 pb-6">
-          {/* Month Selection */}
-          <div className="flex bg-white rounded-2xl shadow-lg p-2 mb-6">
-            {[1, 2, 3].map((month) => (
-              <button
-                key={month}
-                onClick={() => setSelectedMonth(month as 1 | 2 | 3)}
-                className={`flex-1 py-3 px-4 rounded-xl font-medium transition-colors ${
-                  selectedMonth === month
-                    ? 'bg-blue-900 text-white'
-                    : 'text-gray-600 hover:text-gray-900'
-                }`}
-              >
-                第{month}個月
-              </button>
-            ))}
-          </div>
+        <div className="px-4 py-6">
+          {/* Plan Header */}
+          <div className="mb-6">
+            <img 
+              src={selectedPlan.planImage} 
+              alt={selectedPlan.title.zh_Hant} 
+              className="w-full h-48 object-cover rounded-2xl mb-4"
+            />
+            <h2 className="text-2xl font-bold text-blue-900 mb-2">
+              {selectedPlan.title.zh_Hant}
+            </h2>
+            <p className="text-gray-600 mb-4">
+              {selectedPlan.description.zh_Hant}
+            </p>
+            
+            <div className="flex flex-wrap gap-2 mb-4">
+              {selectedPlan.targetAreas.map((area, index) => (
+                <span 
+                  key={index}
+                  className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                >
+                  {area}
+                </span>
+              ))}
+            </div>
 
-          {/* Month Details */}
-          <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
-            <div className="p-6">
-              {selectedMonth === 1 && (
-                <>
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-green-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
-                      {levelPlans.level1?.planImage ? (
-                        <img 
-                          src={levelPlans.level1.planImage} 
-                          alt="Level 1" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-green-600 font-bold">基</span>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {levelPlans.level1?.title.zh_Hant || '第一個月 - 基礎建立'}
-                      </h3>
-                      <p className="text-gray-600">
-                        {levelPlans.level1?.description.zh_Hant || '建立運動習慣，學習基本動作'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-center p-4 bg-green-50 rounded-xl">
-                      <div className="text-2xl font-bold text-green-600">
-                        {levelPlans.level1?.duration || 12}
-                      </div>
-                      <div className="text-sm text-gray-600">課程</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-xl">
-                      <div className="text-2xl font-bold text-blue-600">15分鐘</div>
-                      <div className="text-sm text-gray-600">每課時長</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 1-4：基礎平衡</p>
-                        <p className="text-sm text-gray-600">靜態平衡、雙腳站立</p>
-                      </div>
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 5-8：坐立訓練</p>
-                        <p className="text-sm text-gray-600">椅子坐立、腿部力量</p>
-                      </div>
-                      <CheckCircle className="w-5 h-5 text-green-600" />
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg border-l-4 border-blue-900">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 9-12：柔韌性</p>
-                        <p className="text-sm text-gray-600">伸展運動、關節活動</p>
-                      </div>
-                      <Play className="w-5 h-5 text-blue-900" />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {selectedMonth === 2 && (
-                <>
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-orange-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
-                      {levelPlans.level2?.planImage ? (
-                        <img 
-                          src={levelPlans.level2.planImage} 
-                          alt="Level 2" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-orange-600 font-bold">中</span>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {levelPlans.level2?.title.zh_Hant || '第二個月 - 進階訓練'}
-                      </h3>
-                      <p className="text-gray-600">
-                        {levelPlans.level2?.description.zh_Hant || '增加難度，提升穩定性'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-center p-4 bg-orange-50 rounded-xl">
-                      <div className="text-2xl font-bold text-orange-600">
-                        {levelPlans.level2?.duration || 12}
-                      </div>
-                      <div className="text-sm text-gray-600">課程</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-xl">
-                      <div className="text-2xl font-bold text-blue-600">20分鐘</div>
-                      <div className="text-sm text-gray-600">每課時長</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 1-4：動態平衡</p>
-                        <p className="text-sm text-gray-600">單腳站立、重心轉移</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 5-8：串聯步行</p>
-                        <p className="text-sm text-gray-600">腳跟對腳尖、直線行走</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 9-12：阻力訓練</p>
-                        <p className="text-sm text-gray-600">彈力帶、輕量負重</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-                  </div>
-                </>
-              )}
-
-              {selectedMonth === 3 && (
-                <>
-                  <div className="flex items-center mb-4">
-                    <div className="w-12 h-12 bg-purple-100 rounded-full flex items-center justify-center mr-3 overflow-hidden">
-                      {levelPlans.level3?.planImage ? (
-                        <img 
-                          src={levelPlans.level3.planImage} 
-                          alt="Level 3" 
-                          className="w-full h-full object-cover"
-                        />
-                      ) : (
-                        <span className="text-purple-600 font-bold">高</span>
-                      )}
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-bold text-gray-900">
-                        {levelPlans.level3?.title.zh_Hant || '第三個月 - 高級挑戰'}
-                      </h3>
-                      <p className="text-gray-600">
-                        {levelPlans.level3?.description.zh_Hant || '綜合訓練，鞏固成果'}
-                      </p>
-                    </div>
-                  </div>
-                  
-                  <div className="grid grid-cols-2 gap-4 mb-6">
-                    <div className="text-center p-4 bg-purple-50 rounded-xl">
-                      <div className="text-2xl font-bold text-purple-600">
-                        {levelPlans.level3?.duration || 12}
-                      </div>
-                      <div className="text-sm text-gray-600">課程</div>
-                    </div>
-                    <div className="text-center p-4 bg-blue-50 rounded-xl">
-                      <div className="text-2xl font-bold text-blue-600">25分鐘</div>
-                      <div className="text-sm text-gray-600">每課時長</div>
-                    </div>
-                  </div>
-
-                  <div className="space-y-3">
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 1-4：複合動作</p>
-                        <p className="text-sm text-gray-600">多方向平衡、協調訓練</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-                    
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 5-8：功能性訓練</p>
-                        <p className="text-sm text-gray-600">日常動作模擬、實用技能</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-
-                    <div className="flex items-center justify-between p-3 bg-gray-50 rounded-lg">
-                      <div>
-                        <p className="font-medium text-gray-900">課程 9-12：維持訓練</p>
-                        <p className="text-sm text-gray-600">長期維持、習慣養成</p>
-                      </div>
-                      <Lock className="w-5 h-5 text-gray-400" />
-                    </div>
-                  </div>
-                </>
-              )}
+            <div className="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-6">
+              {selectedPlan.duration} 個課程
             </div>
           </div>
 
-          {/* Progress Overview */}
-          <div className="bg-white rounded-2xl shadow-lg p-6">
-            <h3 className="text-lg font-bold text-gray-900 mb-4">整體進度</h3>
-            <div className="grid grid-cols-3 gap-4">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-xl font-bold text-green-600">12</span>
-                </div>
-                <p className="text-sm font-medium text-gray-900">已完成</p>
-                <p className="text-xs text-gray-600">第一個月</p>
+          {/* Plan Statistics */}
+          <div className="grid grid-cols-3 gap-4 mb-6">
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-2xl font-bold text-blue-900">{selectedPlan.duration}</div>
+              <div className="text-sm text-gray-600">課程數量</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-2xl font-bold text-green-600">
+                {selectedPlan.lessonsData ? selectedPlan.lessonsData.reduce((total, lesson) => total + lesson.duration, 0) : selectedPlan.duration * 15}
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-xl font-bold text-blue-600">8</span>
-                </div>
-                <p className="text-sm font-medium text-gray-900">進行中</p>
-                <p className="text-xs text-gray-600">第二個月</p>
+              <div className="text-sm text-gray-600">總分鐘</div>
+            </div>
+            <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+              <div className="text-2xl font-bold text-purple-600">
+                {selectedPlan.tags.length}
               </div>
-              <div className="text-center">
-                <div className="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                  <span className="text-xl font-bold text-gray-400">0</span>
-                </div>
-                <p className="text-sm font-medium text-gray-900">待開始</p>
-                <p className="text-xs text-gray-600">第三個月</p>
-              </div>
+              <div className="text-sm text-gray-600">訓練類型</div>
             </div>
           </div>
+
+          {/* Lessons List */}
+          <div className="mb-6">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">課程內容</h3>
+            
+            {selectedPlan.lessonsData && selectedPlan.lessonsData.length > 0 ? (
+              <div className="grid grid-cols-2 gap-4">
+                {selectedPlan.lessonsData.map((lesson, index) => (
+                  <div key={lesson.id || index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div className="relative">
+                      <img 
+                        src={lesson.thumbImageUrl || lesson.imageUrl} 
+                        alt={lesson.title.zh} 
+                        className="w-full h-24 object-cover"
+                      />
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                        {lesson.duration}分鐘
+                      </div>
+                      <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
+                        第{index + 1}課
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                        {lesson.title.zh}
+                      </h4>
+                      <p className="text-xs text-gray-600 line-clamp-2">
+                        {lesson.description.zh}
+                      </p>
+                      <div className="flex items-center mt-2">
+                        <div className="flex items-center text-xs text-gray-500">
+                          <Star className="w-3 h-3 mr-1 text-yellow-500" />
+                          <span>強度 {lesson.intensity}/10</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            ) : (
+              // Fallback for plans without detailed lesson data
+              <div className="grid grid-cols-2 gap-4">
+                {Array.from({ length: selectedPlan.duration }, (_, index) => (
+                  <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                    <div className="relative">
+                      <div className="w-full h-24 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                        <Play className="w-8 h-8 text-blue-600" />
+                      </div>
+                      <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                        15分鐘
+                      </div>
+                      <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
+                        第{index + 1}課
+                      </div>
+                    </div>
+                    <div className="p-3">
+                      <h4 className="font-medium text-gray-900 text-sm mb-1">
+                        課程 {index + 1}
+                      </h4>
+                      <p className="text-xs text-gray-600">
+                        {selectedPlan.planDescription}
+                      </p>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+
+          {/* Start Button */}
+          <button
+            className="w-full bg-blue-900 text-white py-4 rounded-2xl font-medium text-lg"
+          >
+            開始訓練計劃
+          </button>
         </div>
       </div>
     );
@@ -312,8 +198,8 @@ const ExerciseProgramScreen: React.FC = () => {
     <div className="min-h-full bg-gray-50">
       {/* Header */}
       <div className="bg-white px-4 py-6 border-b">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">個人化運動計劃</h1>
-        <p className="text-gray-600">3個月循序漸進改善計劃，每月12課程</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">運動計劃</h1>
+        <p className="text-gray-600">3階段循序漸進訓練計劃</p>
       </div>
 
       {/* Tab Navigation */}
@@ -336,7 +222,7 @@ const ExerciseProgramScreen: React.FC = () => {
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          3個月計劃
+          訓練計劃
         </button>
       </div>
 
@@ -348,17 +234,17 @@ const ExerciseProgramScreen: React.FC = () => {
               <div className="flex items-center justify-between mb-4">
                 <div>
                   <h2 className="text-xl font-bold">今日課程</h2>
-                  <p className="text-blue-100">第二個月 - 課程 8</p>
+                  <p className="text-blue-100">第一階段 - 課程 3</p>
                 </div>
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
                   <Play className="w-8 h-8 text-white" />
                 </div>
               </div>
-              <h3 className="text-lg font-semibold mb-2">串聯步行進階訓練</h3>
-              <p className="text-blue-100 mb-4">練習腳跟對腳尖步行，提升動態平衡能力</p>
+              <h3 className="text-lg font-semibold mb-2">基礎坐式平衡訓練</h3>
+              <p className="text-blue-100 mb-4">練習坐姿平衡，提升核心穩定性</p>
               <div className="flex items-center text-sm text-blue-100">
                 <Clock className="w-4 h-4 mr-1" />
-                <span>預計時間：20分鐘</span>
+                <span>預計時間：15分鐘</span>
               </div>
             </div>
 
@@ -368,7 +254,7 @@ const ExerciseProgramScreen: React.FC = () => {
                 <h2 className="text-lg font-semibold text-gray-900">課程內容</h2>
                 <div className="flex items-center text-sm text-gray-600">
                   <Target className="w-4 h-4 mr-1" />
-                  <span>中級難度</span>
+                  <span>初級難度</span>
                 </div>
               </div>
 
@@ -380,7 +266,7 @@ const ExerciseProgramScreen: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">熱身運動</p>
-                      <p className="text-sm text-gray-600">關節活動、輕度伸展 • 5分鐘</p>
+                      <p className="text-sm text-gray-600">關節活動、輕度伸展 • 3分鐘</p>
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium">
@@ -394,8 +280,8 @@ const ExerciseProgramScreen: React.FC = () => {
                       <span className="text-gray-600 font-bold">2</span>
                     </div>
                     <div>
-                      <p className="font-medium text-gray-900">串聯步行練習</p>
-                      <p className="text-sm text-gray-600">腳跟對腳尖、直線行走 • 10分鐘</p>
+                      <p className="font-medium text-gray-900">坐式平衡練習</p>
+                      <p className="text-sm text-gray-600">核心穩定、姿勢控制 • 10分鐘</p>
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
@@ -410,7 +296,7 @@ const ExerciseProgramScreen: React.FC = () => {
                     </div>
                     <div>
                       <p className="font-medium text-gray-900">放鬆伸展</p>
-                      <p className="text-sm text-gray-600">肌肉放鬆、深呼吸 • 5分鐘</p>
+                      <p className="text-sm text-gray-600">肌肉放鬆、深呼吸 • 2分鐘</p>
                     </div>
                   </div>
                   <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
@@ -426,21 +312,21 @@ const ExerciseProgramScreen: React.FC = () => {
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
                   <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-xl font-bold text-green-600">7</span>
+                    <span className="text-xl font-bold text-green-600">5</span>
                   </div>
                   <p className="text-sm font-medium text-gray-900">課程</p>
                   <p className="text-xs text-gray-600">已完成</p>
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-xl font-bold text-blue-600">140</span>
+                    <span className="text-xl font-bold text-blue-600">75</span>
                   </div>
                   <p className="text-sm font-medium text-gray-900">分鐘</p>
                   <p className="text-xs text-gray-600">運動時間</p>
                 </div>
                 <div className="text-center">
                   <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
-                    <span className="text-xl font-bold text-purple-600">88%</span>
+                    <span className="text-xl font-bold text-purple-600">83%</span>
                   </div>
                   <p className="text-sm font-medium text-gray-900">目標</p>
                   <p className="text-xs text-gray-600">已達成</p>
@@ -450,34 +336,36 @@ const ExerciseProgramScreen: React.FC = () => {
           </>
         ) : (
           <>
-            {/* 3-Month Program Overview */}
+            {/* Training Programs Overview */}
             <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-6 text-white">
               <div className="flex items-center mb-4">
                 <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
                   <Award className="w-8 h-8 text-white" />
                 </div>
                 <div>
-                  <h2 className="text-xl font-bold">3個月改善計劃</h2>
+                  <h2 className="text-xl font-bold">3階段訓練計劃</h2>
                   <p className="text-green-100">循序漸進，從基礎到進階</p>
                 </div>
               </div>
               <div className="grid grid-cols-3 gap-4">
                 <div className="text-center">
-                  <div className="text-2xl font-bold">36</div>
+                  <div className="text-2xl font-bold">
+                    {(levelPlans.level1?.duration || 0) + (levelPlans.level2?.duration || 0) + (levelPlans.level3?.duration || 0)}
+                  </div>
                   <div className="text-green-100 text-sm">總課程</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">20</div>
+                  <div className="text-2xl font-bold">5</div>
                   <div className="text-green-100 text-sm">已完成</div>
                 </div>
                 <div className="text-center">
-                  <div className="text-2xl font-bold">56%</div>
+                  <div className="text-2xl font-bold">14%</div>
                   <div className="text-green-100 text-sm">完成度</div>
                 </div>
               </div>
             </div>
 
-            {/* Month Programs */}
+            {/* Training Plans */}
             <div className="space-y-4">
               {loading && (
                 <div className="text-center py-8">
@@ -486,144 +374,122 @@ const ExerciseProgramScreen: React.FC = () => {
                 </div>
               )}
               
-              <div 
-                className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer"
-                onClick={() => setShowProgramDetail(true)}
-              >
-                <div className="relative">
-                  <img 
-                    src={levelPlans.level1?.planImage || "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop"} 
-                    alt="Month 1 Training" 
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="absolute top-3 right-3 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    12/12 完成
-                  </div>
-                  <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    第一個月
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    {levelPlans.level1?.title.zh_Hant || '基礎建立階段'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    {levelPlans.level1?.description.zh_Hant || '建立運動習慣，學習基本平衡和坐立動作'}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <CheckCircle className="w-4 h-4 mr-1 text-green-600" />
-                      <span>已完成</span>
-                    </div>
-                    <div className="flex items-center text-sm text-green-600">
-                      <TrendingUp className="w-4 h-4 mr-1" />
-                      <span>平衡力提升 15%</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div 
-                className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer"
-                onClick={() => setShowProgramDetail(true)}
-              >
-                <div className="relative">
-                  <img 
-                    src={levelPlans.level2?.planImage || "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=200&fit=crop"} 
-                    alt="Month 2 Training" 
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="absolute top-3 right-3 bg-blue-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    8/12 進行中
-                  </div>
-                  <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    第二個月
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    {levelPlans.level2?.title.zh_Hant || '進階訓練階段'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    {levelPlans.level2?.description.zh_Hant || '增加難度，動態平衡和串聯步行訓練'}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-600">
-                      <Play className="w-4 h-4 mr-1 text-blue-600" />
-                      <span>進行中</span>
-                    </div>
-                    <div className="w-24 bg-gray-200 rounded-full h-2">
-                      <div className="bg-blue-600 h-2 rounded-full" style={{ width: '67%' }}></div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              <div className="bg-white rounded-2xl shadow-lg overflow-hidden opacity-75">
-                <div className="relative">
-                  <img 
-                    src={levelPlans.level3?.planImage || "https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=400&h=200&fit=crop"} 
-                    alt="Month 3 Training" 
-                    className="w-full h-32 object-cover"
-                  />
-                  <div className="absolute top-3 right-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    0/12 待開始
-                  </div>
-                  <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                    第三個月
-                  </div>
-                  <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
-                    <Lock className="w-8 h-8 text-white" />
-                  </div>
-                </div>
-                <div className="p-4">
-                  <h3 className="font-bold text-gray-900 mb-1">
-                    {levelPlans.level3?.title.zh_Hant || '高級挑戰階段'}
-                  </h3>
-                  <p className="text-sm text-gray-600 mb-3">
-                    {levelPlans.level3?.description.zh_Hant || '複合動作訓練，功能性運動和習慣維持'}
-                  </p>
-                  <div className="flex items-center justify-between">
-                    <div className="flex items-center text-sm text-gray-500">
-                      <Lock className="w-4 h-4 mr-1" />
-                      <span>完成第二個月後解鎖</span>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            {/* Expected Improvements */}
-            <div className="bg-blue-50 rounded-2xl p-6 shadow-lg mt-6">
-              <h2 className="text-lg font-bold text-gray-900 mb-4">訓練計劃詳情</h2>
               {levelPlans.level1 && (
-                <div className="space-y-3">
-                  <div className="flex items-center">
-                    <div className="w-3 h-3 bg-green-500 rounded-full mr-3"></div>
-                    <span className="text-sm text-gray-700">
-                      第一級：{levelPlans.level1.lessons.length} 個課程
-                    </span>
+                <div 
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+                  onClick={() => handlePlanClick(levelPlans.level1!)}
+                >
+                  <div className="relative">
+                    <img 
+                      src={levelPlans.level1.planImage} 
+                      alt="Stage 1 Training" 
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="absolute top-3 right-3 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      5/12 進行中
+                    </div>
+                    <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      第一階段
+                    </div>
                   </div>
-                  {levelPlans.level2 && (
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-orange-500 rounded-full mr-3"></div>
-                      <span className="text-sm text-gray-700">
-                        第二級：{levelPlans.level2.lessons.length} 個課程
-                      </span>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      {levelPlans.level1.title.zh_Hant}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {levelPlans.level1.description.zh_Hant}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm text-gray-600">
+                        <Play className="w-4 h-4 mr-1 text-green-600" />
+                        <span>進行中</span>
+                      </div>
+                      <div className="w-24 bg-gray-200 rounded-full h-2">
+                        <div className="bg-green-600 h-2 rounded-full" style={{ width: '42%' }}></div>
+                      </div>
                     </div>
-                  )}
-                  {levelPlans.level3 && (
-                    <div className="flex items-center">
-                      <div className="w-3 h-3 bg-purple-500 rounded-full mr-3"></div>
-                      <span className="text-sm text-gray-700">
-                        第三級：{levelPlans.level3.lessons.length} 個課程
-                      </span>
+                  </div>
+                </div>
+              )}
+
+              {levelPlans.level2 && (
+                <div 
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-75"
+                  onClick={() => handlePlanClick(levelPlans.level2!)}
+                >
+                  <div className="relative">
+                    <img 
+                      src={levelPlans.level2.planImage} 
+                      alt="Stage 2 Training" 
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="absolute top-3 right-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      0/12 待開始
                     </div>
-                  )}
+                    <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      第二階段
+                    </div>
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <Lock className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      {levelPlans.level2.title.zh_Hant}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {levelPlans.level2.description.zh_Hant}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Lock className="w-4 h-4 mr-1" />
+                        <span>完成第一階段後解鎖</span>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              )}
+
+              {levelPlans.level3 && (
+                <div 
+                  className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-75"
+                  onClick={() => handlePlanClick(levelPlans.level3!)}
+                >
+                  <div className="relative">
+                    <img 
+                      src={levelPlans.level3.planImage} 
+                      alt="Stage 3 Training" 
+                      className="w-full h-32 object-cover"
+                    />
+                    <div className="absolute top-3 right-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      0/12 待開始
+                    </div>
+                    <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                      第三階段
+                    </div>
+                    <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                      <Lock className="w-8 h-8 text-white" />
+                    </div>
+                  </div>
+                  <div className="p-4">
+                    <h3 className="font-bold text-gray-900 mb-1">
+                      {levelPlans.level3.title.zh_Hant}
+                    </h3>
+                    <p className="text-sm text-gray-600 mb-3">
+                      {levelPlans.level3.description.zh_Hant}
+                    </p>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center text-sm text-gray-500">
+                        <Lock className="w-4 h-4 mr-1" />
+                        <span>完成第二階段後解鎖</span>
+                      </div>
+                    </div>
+                  </div>
                 </div>
               )}
             </div>
 
+            {/* Expected Improvements */}
             <div className="bg-white rounded-2xl p-6 shadow-lg mt-6">
               <h2 className="text-lg font-bold text-gray-900 mb-4">預期改善效果</h2>
               <div className="space-y-4">
