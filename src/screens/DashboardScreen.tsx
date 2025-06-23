@@ -48,7 +48,7 @@ const DashboardScreen: React.FC = () => {
         <p className="text-blue-100 text-sm">歡迎回到銀齡樂</p>
       </div>
 
-      <div className="px-4 -mt-2 relative z-10 pb-6">
+      <div className="px-4 -mt-2 relative z-10 pb-24">
         {/* Weekly Progress Stats */}
         <div className="grid grid-cols-2 gap-4 mb-6">
           <div className="bg-white rounded-xl p-4 shadow-lg card-mobile">

@@ -155,7 +155,7 @@ const MobileLayout: React.FC = () => {
   return (
     <div className="mobile-screen flex flex-col bg-gray-50 max-w-md mx-auto relative prevent-scroll">
       {/* Main Content - with proper padding for fixed navigation and address bar hiding */}
-      <div className="flex-1 mobile-scroll pb-20">
+      <div className="flex-1 mobile-scroll">
         <div className="fade-in h-full">
           {renderScreen()}
         </div>

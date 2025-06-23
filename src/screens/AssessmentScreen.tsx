@@ -329,7 +329,7 @@ const AssessmentScreen: React.FC = () => {
         </button>
       </div>
 
-      <div className="px-4 py-6">
+      <div className="px-4 py-6 pb-24">
         {renderScreen()}
       </div>
     </div>
