@@ -159,7 +159,7 @@ const CompanionScreen: React.FC = () => {
       {activeTab === 'chat' ? (
         <>
           {/* Chat Messages */}
-          <div className="flex-1 overflow-y-auto p-4 pb-4" style={{ paddingBottom: '120px' }}>
+          <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: '140px' }}>
             <div className="space-y-4 max-w-4xl mx-auto">
               {messages.map((msg) => (
                 <div key={msg.id} className={`flex items-start ${msg.sender === 'user' ? 'justify-end' : ''}`}>
@@ -232,7 +232,7 @@ const CompanionScreen: React.FC = () => {
           </div>
 
           {/* Message Input - Fixed at bottom */}
-          <div className="fixed bottom-0 left-0 right-0 bg-white border-t p-4 flex-shrink-0 max-w-md mx-auto z-50">
+          <div className="fixed bottom-16 left-0 right-0 bg-white border-t p-4 flex-shrink-0 max-w-md mx-auto z-50 safe-area-bottom">
             <div className="max-w-4xl mx-auto">
               <div className="flex items-end space-x-2">
                 <div className="flex-1 relative">
@@ -276,7 +276,7 @@ const CompanionScreen: React.FC = () => {
           </div>
         </>
       ) : (
-        <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: '120px' }}>
+        <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: '100px' }}>
           {/* Today's Tip */}
           <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-xl p-6 mb-6 text-white">
             <div className="flex items-center mb-3">
