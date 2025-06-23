@@ -148,10 +148,10 @@ const ChatbotAssessment: React.FC<ChatbotAssessmentProps> = ({ onComplete }) => 
   }
 
   return (
-    <div className="min-h-screen bg-white">
+    <div className="h-screen bg-white flex flex-col max-w-md mx-auto">
       <div className="max-w-3xl mx-auto">
         {/* Header */}
-        <div className="px-4 py-3 border-b">
+        <div className="px-4 py-3 border-b flex-shrink-0">
           <div className="flex justify-between items-center mb-2">
             <h2 className="text-xl font-bold text-gray-900">
               {questions[step].title}
@@ -172,7 +172,7 @@ const ChatbotAssessment: React.FC<ChatbotAssessmentProps> = ({ onComplete }) => 
         </div>
 
         {/* Content */}
-        <div className="px-4 py-4">
+        <div className="flex-1 overflow-y-auto px-4 py-4 pb-20">
           {showFrailtyPrompt ? (
             <div className="bg-yellow-50 p-6 rounded-lg mb-4">
               <div className="flex items-start gap-3">
@@ -290,7 +290,7 @@ const ChatbotAssessment: React.FC<ChatbotAssessmentProps> = ({ onComplete }) => 
 
         {/* Footer Navigation - Fixed at bottom */}
         {!showFrailtyPrompt && (
-          <div className="sticky bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex justify-between items-center">
+          <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex justify-between items-center max-w-md mx-auto">
             {step > 0 && (
               <button
                 onClick={handleBack}

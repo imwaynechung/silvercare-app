@@ -212,7 +212,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   const currentTitle = step === 3 ? "體能評估" : questions[step]?.title;
 
   return (
-    <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative overflow-hidden">
+    <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative">
       {/* Header with GOFA logo and branding */}
       <div className="bg-white px-4 py-3 border-b flex-shrink-0">
         <div className="flex items-center justify-between mb-3">
@@ -246,8 +246,8 @@ const ChatbotAssessmentZh: React.FC = () => {
       </div>
 
       {/* Main Content - Scrollable with proper padding */}
-      <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-4 pb-20">
+      <div className="flex-1 overflow-y-auto pb-20">
+        <div className="px-4 py-4">
           <h3 className="text-xl font-bold text-gray-900 mb-4">{currentTitle}</h3>
           
           {showFrailtyPrompt ? (
@@ -355,7 +355,7 @@ const ChatbotAssessmentZh: React.FC = () => {
 
       {/* Footer Navigation - Fixed at bottom above tab navigation */}
       {!showFrailtyPrompt && step !== 3 && (
-        <div className="bg-white border-t px-4 py-3 flex justify-between items-center fixed bottom-0 left-0 right-0 max-w-md mx-auto">
+        <div className="bg-white border-t px-4 py-3 flex justify-between items-center fixed bottom-0 left-0 right-0 max-w-md mx-auto z-50">
           {step > 0 && (
             <button
               onClick={handleBack}

@@ -249,7 +249,7 @@ const PhysicalAssessmentInstructions: React.FC<InstructionProps> = ({ test, onCo
   }
 
   return (
-    <div className="min-h-screen flex flex-col bg-white">
+    <div className="h-screen flex flex-col bg-white max-w-md mx-auto">
       <div className="px-4 py-3 border-b">
         <div className="flex justify-between items-center">
           <h3 className="text-lg font-bold">{currentTest.title}</h3>
@@ -267,7 +267,7 @@ const PhysicalAssessmentInstructions: React.FC<InstructionProps> = ({ test, onCo
         </div>
       </div>
 
-      <div className="flex-1 overflow-y-auto px-4 py-3">
+      <div className="flex-1 overflow-y-auto px-4 py-3 pb-20">
         {quizStore.hasFrailty && (
           <div className="mb-3">
             <div className="bg-yellow-50 border-l-4 border-yellow-400 p-2 flex items-center">
@@ -322,7 +322,7 @@ const PhysicalAssessmentInstructions: React.FC<InstructionProps> = ({ test, onCo
         </motion.div>
       </div>
 
-      <div className="sticky bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex justify-between items-center">
+      <div className="fixed bottom-0 left-0 right-0 bg-white border-t px-4 py-3 flex justify-between items-center max-w-md mx-auto z-50">
         <button
           onClick={() => setTutorialStep(prev => Math.max(0, prev - 1))}
           disabled={tutorialStep === 0}
