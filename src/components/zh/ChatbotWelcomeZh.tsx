@@ -7,7 +7,7 @@ interface WelcomeProps {
 }
 
 const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart }) => {
-  // Mock last assessment data
+  // Mock last assessment data - in real app, this would come from API/database
   const lastAssessment = {
     date: '2025年1月15日',
     riskLevel: '低風險',

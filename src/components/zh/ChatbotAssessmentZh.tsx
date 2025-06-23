@@ -7,7 +7,6 @@ import LoadingAnimation from '../LoadingAnimation';
 import AssessmentLeadCaptureZh from './AssessmentLeadCaptureZh';
 import ChatbotWelcomeZh from './ChatbotWelcomeZh';
 import PhysicalAssessmentInstructionsZh from './PhysicalAssessmentInstructionsZh';
-import TabNavigation from '../TabNavigation';
 
 const ChatbotAssessmentZh: React.FC = () => {
   const [showWelcome, setShowWelcome] = useState(true);
@@ -20,14 +19,6 @@ const ChatbotAssessmentZh: React.FC = () => {
   >('sitToStand');
   const navigate = useNavigate();
   const quizStore = useQuizStore();
-
-  // Mock last assessment data - in real app, this would come from API/database
-  const lastAssessment = {
-    date: '2025年1月15日',
-    riskLevel: '低風險',
-    score: 85,
-    color: 'text-green-600'
-  };
 
   useEffect(() => {
     if (!showWelcome) {
@@ -173,7 +164,6 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <ChatbotWelcomeZh onStart={() => setShowWelcome(false)} />
         </div>
-        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -184,7 +174,6 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <LoadingAnimation />
         </div>
-        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -195,7 +184,6 @@ const ChatbotAssessmentZh: React.FC = () => {
         <div className="flex-1 overflow-y-auto pb-32">
           <AssessmentLeadCaptureZh onComplete={() => {}} />
         </div>
-        <TabNavigation activeTab="program" onTabChange={handleTabChange} />
       </div>
     );
   }
@@ -204,7 +192,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   const currentTitle = step === 3 ? "體能評估" : questions[step]?.title;
 
   return (
-    <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative">
+    <div className="h-screen flex flex-col bg-white max-w-md mx-auto relative overflow-hidden">
       {/* Header with GOFA logo and branding */}
       <div className="bg-white px-4 py-3 border-b flex-shrink-0">
         <div className="flex items-center justify-between mb-3">
@@ -225,25 +213,6 @@ const ChatbotAssessmentZh: React.FC = () => {
           </span>
         </div>
 
-        {/* Last Assessment Score */}
-        <div className="bg-gradient-to-r from-green-50 to-green-100 rounded-lg p-3 mb-3">
-          <div className="flex items-center justify-between">
-            <div>
-              <p className="text-sm text-gray-600">上次評估結果</p>
-              <p className="text-xs text-gray-500">{lastAssessment.date}</p>
-            </div>
-            <div className="flex items-center">
-              <div className="text-right mr-2">
-                <p className={`font-bold ${lastAssessment.color}`}>{lastAssessment.riskLevel}</p>
-                <p className="text-sm text-gray-600">分數: {lastAssessment.score}/100</p>
-              </div>
-              <div className="w-10 h-10 bg-green-100 rounded-full flex items-center justify-center">
-                <TrendingUp className="w-5 h-5 text-green-600" />
-              </div>
-            </div>
-          </div>
-        </div>
-
         {/* Progress Bar */}
         <div className="w-full bg-gray-200 rounded-full h-1">
           <motion.div
@@ -258,7 +227,7 @@ const ChatbotAssessmentZh: React.FC = () => {
 
       {/* Main Content - Scrollable with proper padding */}
       <div className="flex-1 overflow-y-auto">
-        <div className="px-4 py-4 pb-40">
+        <div className="px-4 py-4 pb-20">
           <h3 className="text-xl font-bold text-gray-900 mb-4">{currentTitle}</h3>
           
           {showFrailtyPrompt ? (
@@ -393,9 +362,6 @@ const ChatbotAssessmentZh: React.FC = () => {
           </button>
         </div>
       )}
-
-      {/* Bottom Tab Navigation */}
-      <TabNavigation activeTab="program" onTabChange={handleTabChange} />
     </div>
   );
 };
