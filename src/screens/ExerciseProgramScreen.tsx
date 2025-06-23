@@ -32,30 +32,7 @@ const ExerciseProgramScreen: React.FC = () => {
         
         // Set today's lesson from the first available plan
         if (plans.level1) {
-          // If we have detailed lesson data, use the first lesson
-          if (plans.level1.lessonsData && plans.level1.lessonsData.length > 0) {
-            const firstLesson = plans.level1.lessonsData[0];
-            setTodaysLesson({
-              title: firstLesson.title.zh,
-              description: firstLesson.description.zh,
-              duration: firstLesson.duration,
-              planName: plans.level1.title.zh_Hant,
-              stage: '第一階段',
-              lessonNumber: 1,
-              imageUrl: firstLesson.thumbImageUrl || firstLesson.imageUrl
-            });
-          } else {
-            // Fallback to mock lesson data
-            setTodaysLesson({
-              title: '基礎坐式平衡訓練',
-              description: '練習坐姿平衡，提升核心穩定性和身體控制能力',
-              duration: 15,
-              planName: plans.level1.title.zh_Hant,
-              stage: '第一階段',
-              lessonNumber: 1,
-              imageUrl: plans.level1.planImage
-            });
-          }
+          await setTodaysLessonFromPlan(plans.level1);
         }
       } catch (error) {
         console.error('Failed to fetch lesson plans:', error);
@@ -66,6 +43,37 @@ const ExerciseProgramScreen: React.FC = () => {
 
     fetchLevelPlans();
   }, []);
+
+  const setTodaysLessonFromPlan = async (plan: LessonPlan) => {
+    try {
+      // If we have detailed lesson data, use the first lesson
+      if (plan.lessonsData && plan.lessonsData.length > 0) {
+        const firstLesson = plan.lessonsData[0];
+        setTodaysLesson({
+          title: firstLesson.title.zh,
+          description: firstLesson.description.zh,
+          duration: firstLesson.duration,
+          planName: plan.title.zh_Hant,
+          stage: '第一階段',
+          lessonNumber: 1,
+          imageUrl: firstLesson.thumbImageUrl || firstLesson.imageUrl
+        });
+      } else {
+        // Fallback to mock lesson data
+        setTodaysLesson({
+          title: '基礎坐式平衡訓練',
+          description: '練習坐姿平衡，提升核心穩定性和身體控制能力',
+          duration: 15,
+          planName: plan.title.zh_Hant,
+          stage: '第一階段',
+          lessonNumber: 1,
+          imageUrl: plan.planImage
+        });
+      }
+    } catch (error) {
+      console.error('Failed to set today\'s lesson:', error);
+    }
+  };
 
   const handlePlanClick = async (plan: LessonPlan) => {
     setLoading(true);

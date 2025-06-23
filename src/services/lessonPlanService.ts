@@ -30,6 +30,17 @@ export class LessonPlanService {
     }
   }
 
+  static async getLessonDetails(lessonId: string): Promise<LessonData | null> {
+    try {
+      const url = `${API_BASE_URL}/lessons/${lessonId}?clientId=${CLIENT_ID}`;
+      const result = await this.makeRequest(url);
+      return result || null;
+    } catch (error) {
+      console.error('Failed to fetch lesson details:', error);
+      return null;
+    }
+  }
+
   static async getAllLessonPlans(): Promise<LessonPlan[]> {
     try {
       const url = `${API_BASE_URL}/lesson-plans?clientId=${CLIENT_ID}`;
@@ -55,7 +66,29 @@ export class LessonPlanService {
     try {
       const url = `${API_BASE_URL}/lesson-plans/${lessonPlanId}`;
       const result = await this.makeRequest(url);
-      return result || this.getMockData()[0];
+      
+      if (result) {
+        // If lessonsData is not populated, fetch individual lesson details
+        if (!result.lessonsData && result.lessons && result.lessons.length > 0) {
+          console.log('Fetching detailed lesson data for plan:', lessonPlanId);
+          const lessonsData: LessonData[] = [];
+          
+          // Fetch details for each lesson
+          for (const lessonId of result.lessons) {
+            const lessonDetail = await this.getLessonDetails(lessonId);
+            if (lessonDetail) {
+              lessonsData.push(lessonDetail);
+            }
+          }
+          
+          // Add the detailed lesson data to the plan
+          result.lessonsData = lessonsData;
+        }
+        
+        return result;
+      }
+      
+      return this.getMockData()[0];
     } catch (error) {
       console.error('Failed to fetch lesson plan:', error);
       return this.getMockData()[0];
@@ -89,10 +122,15 @@ export class LessonPlanService {
         plan.title?.zh_Hans === '阶段三：站立稳定性训练'
       );
       
+      // Fetch detailed lesson data for each plan if needed
+      const enhancedLevel1 = level1Plan ? await this.getLessonPlan(level1Plan.id) : null;
+      const enhancedLevel2 = level2Plan ? await this.getLessonPlan(level2Plan.id) : null;
+      const enhancedLevel3 = level3Plan ? await this.getLessonPlan(level3Plan.id) : null;
+      
       return {
-        level1: level1Plan || null,
-        level2: level2Plan || null,
-        level3: level3Plan || null
+        level1: enhancedLevel1,
+        level2: enhancedLevel2,
+        level3: enhancedLevel3
       };
     } catch (error) {
       console.error('Failed to fetch level-based plans:', error);
@@ -122,6 +160,47 @@ export class LessonPlanService {
         clientId: "gofa",
         lessons: ["lesson1", "lesson2", "lesson3", "lesson4", "lesson5", "lesson6", "lesson7", "lesson8", "lesson9", "lesson10", "lesson11", "lesson12"],
         duration: 12,
+        lessonsData: [
+          {
+            groupByTypes: ["平衡訓練"],
+            modifyDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            description: {
+              en: "Basic seated balance training to improve core stability and postural control",
+              zh: "基礎坐式平衡訓練，提升核心穩定性和姿勢控制能力"
+            },
+            isIndividual: true,
+            videoURLs: ["https://example.com/video1.mp4"],
+            title: {
+              en: "Seated Balance Foundation",
+              zh: "坐式平衡基礎訓練"
+            },
+            groupByGoals: ["平衡改善", "核心強化"],
+            duration: 15,
+            groupByEquipments: ["椅子"],
+            groupByIntensity: "低",
+            imageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop",
+            modifiedBy: "system",
+            uniqueID: "lesson1",
+            algorithm: "balance_training_v1",
+            groupByStyles: ["坐式訓練"],
+            batch: 1,
+            sync: true,
+            thumbImageUrl: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=200&h=200&fit=crop",
+            intensity: "3",
+            createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            groupByMuscles: ["核心肌群", "背部肌群"],
+            createdBy: "system",
+            groupByTrainers: ["AI教練"],
+            MET: 2.5,
+            status: "active",
+            subtitleUrl: {
+              en: "https://example.com/subtitle_en.vtt",
+              zh: "https://example.com/subtitle_zh.vtt"
+            },
+            videoId: "video1",
+            clientId: "gofa"
+          }
+        ],
         modifyDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
         createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) }
       },

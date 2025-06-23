@@ -57,7 +57,7 @@ export interface LessonData {
   batch: number;
   sync: boolean;
   thumbImageUrl: string;
-  intensity: string;
+  intensity: string | number;
   createDatetime: {
     _nanoseconds: number;
     _seconds: number;
@@ -73,4 +73,5 @@ export interface LessonData {
   };
   videoId: string;
   clientId: string;
+  id?: string;
 }
