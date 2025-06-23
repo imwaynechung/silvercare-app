@@ -403,9 +403,7 @@ const ExerciseProgramScreen: React.FC = () => {
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level1.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {levelPlans.level1.description.zh_Hant}
-                      </p>
+                      <p className="text-sm text-gray-600 mb-3">基礎坐式平衡訓練</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-600">
                           <Play className="w-4 h-4 mr-1 text-green-600" />
@@ -444,9 +442,7 @@ const ExerciseProgramScreen: React.FC = () => {
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level2.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {levelPlans.level2.description.zh_Hant}
-                      </p>
+                      <p className="text-sm text-gray-600 mb-3">坐站轉換動作訓練</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Lock className="w-4 h-4 mr-1" />
@@ -482,9 +478,7 @@ const ExerciseProgramScreen: React.FC = () => {
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level3.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">
-                        {levelPlans.level3.description.zh_Hant}
-                      </p>
+                      <p className="text-sm text-gray-600 mb-3">進階站立平衡訓練</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Lock className="w-4 h-4 mr-1" />
