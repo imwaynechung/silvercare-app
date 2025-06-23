@@ -1,6 +1,6 @@
 import { LessonPlan } from '../types/lessonPlan';
 
-const API_BASE_URL = 'https://uat.gofa.app/api';
+const API_BASE_URL = 'https://www.uat.gofa.app/api';
 const CLIENT_ID = 'gofa';
 
 // Note: In a real implementation, you would need to handle authentication
@@ -70,11 +70,30 @@ export class LessonPlanService {
     try {
       const allPlans = await this.getAllLessonPlans();
       
-      // Use first 3 plans from all available plans
+      // Filter plans by name to find level-specific plans
+      const level1Plan = allPlans.find(plan => 
+        plan.planName.toLowerCase().includes('level 1') || 
+        plan.planName.toLowerCase().includes('beginner') ||
+        plan.planName.toLowerCase().includes('basic')
+      );
+      
+      const level2Plan = allPlans.find(plan => 
+        plan.planName.toLowerCase().includes('level 2') || 
+        plan.planName.toLowerCase().includes('intermediate') ||
+        plan.planName.toLowerCase().includes('advanced')
+      );
+      
+      const level3Plan = allPlans.find(plan => 
+        plan.planName.toLowerCase().includes('level 3') || 
+        plan.planName.toLowerCase().includes('expert') ||
+        plan.planName.toLowerCase().includes('master')
+      );
+      
+      // If no specific level plans found, use first 3 plans
       return {
-        level1: allPlans[0] || null,
-        level2: allPlans[1] || null,
-        level3: allPlans[2] || null
+        level1: level1Plan || allPlans[0] || null,
+        level2: level2Plan || allPlans[1] || null,
+        level3: level3Plan || allPlans[2] || null
       };
     } catch (error) {
       console.error('Failed to fetch level-based plans:', error);
