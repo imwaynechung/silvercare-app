@@ -74,38 +74,25 @@ export class LessonPlanService {
       const level1 = allPlans.find(plan => 
         plan.planName.toLowerCase().includes('level 1') ||
         plan.planName.toLowerCase().includes('level1') ||
-        plan.planName.toLowerCase().includes('beginner') ||
-        plan.planName.toLowerCase().includes('basic') ||
         plan.title?.en?.toLowerCase().includes('level 1') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('初級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('第一級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('基礎') ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('beginner')) ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('level1'))
+        plan.title?.zh_Hant?.toLowerCase().includes('level 1') ||
+        plan.title?.zh_Hans?.toLowerCase().includes('level 1')
       ) || null;
 
       const level2 = allPlans.find(plan => 
         plan.planName.toLowerCase().includes('level 2') ||
         plan.planName.toLowerCase().includes('level2') ||
-        plan.planName.toLowerCase().includes('intermediate') ||
         plan.title?.en?.toLowerCase().includes('level 2') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('中級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('第二級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('進階') ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('intermediate')) ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('level2'))
+        plan.title?.zh_Hant?.toLowerCase().includes('level 2') ||
+        plan.title?.zh_Hans?.toLowerCase().includes('level 2')
       ) || null;
 
       const level3 = allPlans.find(plan => 
         plan.planName.toLowerCase().includes('level 3') ||
         plan.planName.toLowerCase().includes('level3') ||
-        plan.planName.toLowerCase().includes('advanced') ||
         plan.title?.en?.toLowerCase().includes('level 3') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('高級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('第三級') ||
-        plan.title?.zh_Hant?.toLowerCase().includes('專業') ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('advanced')) ||
-        plan.tags?.some(tag => tag.toLowerCase().includes('level3'))
+        plan.title?.zh_Hant?.toLowerCase().includes('level 3') ||
+        plan.title?.zh_Hans?.toLowerCase().includes('level 3')
       ) || null;
 
       // If no level-specific plans found, use first 3 plans as fallback
