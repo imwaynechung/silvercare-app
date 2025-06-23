@@ -70,34 +70,31 @@ export class LessonPlanService {
     try {
       const allPlans = await this.getAllLessonPlans();
       
-      // Filter plans by name to find level-specific plans
+      // Filter plans ONLY for exact level matches
       const level1Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 1') || 
-        plan.planName.toLowerCase().includes('beginner') ||
-        plan.planName.toLowerCase().includes('basic')
+        plan.planName.toLowerCase().includes('level 1')
       );
       
       const level2Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 2') || 
-        plan.planName.toLowerCase().includes('intermediate') ||
-        plan.planName.toLowerCase().includes('advanced')
+        plan.planName.toLowerCase().includes('level 2')
       );
       
       const level3Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 3') || 
-        plan.planName.toLowerCase().includes('expert') ||
-        plan.planName.toLowerCase().includes('master')
+        plan.planName.toLowerCase().includes('level 3')
       );
       
-      // If no specific level plans found, use first 3 plans
       return {
-        level1: level1Plan || allPlans[0] || null,
-        level2: level2Plan || allPlans[1] || null,
-        level3: level3Plan || allPlans[2] || null
+        level1: level1Plan || null,
+        level2: level2Plan || null,
+        level3: level3Plan || null
       };
     } catch (error) {
       console.error('Failed to fetch level-based plans:', error);
-      return this.getMockLevelPlans();
+      return {
+        level1: null,
+        level2: null,
+        level3: null
+      };
     }
   }
 
@@ -173,14 +170,5 @@ export class LessonPlanService {
         createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) }
       }
     ];
-  }
-
-  private static getMockLevelPlans() {
-    const mockData = this.getMockData();
-    return {
-      level1: mockData[0],
-      level2: mockData[1],
-      level3: mockData[2]
-    };
   }
 }
