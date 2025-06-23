@@ -352,7 +352,7 @@ const ChatbotAssessmentZh: React.FC = () => {
 
       {/* Footer Navigation - Fixed at bottom above tab navigation */}
       {!showFrailtyPrompt && step !== 3 && (
-        <div className="bg-white border-t px-4 py-3 flex justify-between items-center absolute bottom-16 left-0 right-0">
+        <div className="bg-white border-t px-4 py-3 flex justify-between items-center fixed bottom-0 left-0 right-0 max-w-md mx-auto">
           {step > 0 && (
             <button
               onClick={handleBack}
