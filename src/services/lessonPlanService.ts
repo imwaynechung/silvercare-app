@@ -5,7 +5,7 @@ const CLIENT_ID = 'gofa';
 
 // Note: In a real implementation, you would need to handle authentication
 // and provide the RevokableToken header
-const REVOKABLE_TOKEN = '1f8ac10f23b833c5b5bce1167bda845cghij'; // This should come from your auth system
+const REVOKABLE_TOKEN = '1f8ac10f23b833c5b5bce1167bda845cghij'; // Wayne's revokable token
 
 export class LessonPlanService {
   private static async makeRequest(url: string): Promise<any> {
