@@ -24,7 +24,7 @@ export class LessonPlanService {
 
       return await response.json();
     } catch (error) {
-      console.error('API request failed:', error);
+      console.warn('API request failed:', error);
       // Return mock data for development when API fails
       return this.getMockData();
     }
