@@ -145,7 +145,6 @@ const ChatbotWelcomeZh: React.FC<WelcomeProps> = ({ onStart, onBack }) => {
             </div>
           </div>
         </motion.div>
-          </h2>
           
         {/* Benefits Section */}
         <motion.div
