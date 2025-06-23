@@ -1,5 +1,6 @@
 import React, { useState, useRef, useEffect } from 'react';
-import { MessageCircle, Heart, Lightbulb, Calendar, Clock, Send, Mic, Bot, User } from 'lucide-react';
+import { MessageCircle, Heart, Lightbulb, Calendar, Clock, Send, Mic, Bot, User, RefreshCw } from 'lucide-react';
+import { AIChatService } from '../services/aiChatService';
 
 interface Message {
   id: string;
@@ -8,18 +9,25 @@ interface Message {
   timestamp: Date;
 }
 
+interface ChatMessage {
+  role: 'system' | 'user' | 'assistant';
+  content: string;
+}
+
 const CompanionScreen: React.FC = () => {
   const [message, setMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([
     {
       id: '1',
-      text: '早安，健樂！今天感覺如何？我注意到您昨天完成了平衡訓練，做得很好！',
+      text: '早安，健樂！今天感覺如何？我是您的AI健康助理，可以為您提供運動、營養和健康方面的建議。有什麼我可以幫助您的嗎？',
       sender: 'bot',
       timestamp: new Date(Date.now() - 30 * 60 * 1000) // 30 minutes ago
     }
   ]);
   const [activeTab, setActiveTab] = useState<'chat' | 'tips'>('chat');
   const [isTyping, setIsTyping] = useState(false);
+  const [dailyTip, setDailyTip] = useState('每天練習「腳跟對腳尖」步行2分鐘。這個簡單的運動可以顯著改善您的平衡力，降低跌倒風險達25%。');
+  const [isGeneratingTip, setIsGeneratingTip] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const scrollToBottom = () => {
@@ -30,14 +38,31 @@ const CompanionScreen: React.FC = () => {
     scrollToBottom();
   }, [messages]);
 
+  useEffect(() => {
+    // Generate a daily tip when component mounts
+    generateDailyTip();
+  }, []);
+
   const quickResponses = [
-    '好的，教我伸展',
-    '我的進度如何？',
-    '設定提醒',
-    '今天的運動計劃',
+    '我想了解運動建議',
+    '如何改善平衡力？',
+    '營養飲食建議',
+    '家居安全貼士',
     '我感覺很好',
-    '有點累'
+    '今天有點累'
   ];
+
+  const generateDailyTip = async () => {
+    setIsGeneratingTip(true);
+    try {
+      const tip = await AIChatService.generateHealthTip();
+      setDailyTip(tip);
+    } catch (error) {
+      console.error('Failed to generate daily tip:', error);
+    } finally {
+      setIsGeneratingTip(false);
+    }
+  };
 
   const handleSendMessage = async () => {
     if (message.trim()) {
@@ -49,65 +74,55 @@ const CompanionScreen: React.FC = () => {
       };
 
       setMessages(prev => [...prev, userMessage]);
+      const currentMessage = message.trim();
       setMessage('');
       setIsTyping(true);
 
-      // Simulate bot response
-      setTimeout(() => {
-        const botResponse = generateBotResponse(userMessage.text);
+      try {
+        // Prepare conversation history for AI
+        const conversationHistory: ChatMessage[] = messages.slice(-5).map(msg => ({
+          role: msg.sender === 'user' ? 'user' : 'assistant',
+          content: msg.text
+        }));
+
+        // Add current user message
+        conversationHistory.push({
+          role: 'user',
+          content: currentMessage
+        });
+
+        // Get AI response
+        const aiResponse = await AIChatService.sendMessage(conversationHistory);
+
         const botMessage: Message = {
           id: (Date.now() + 1).toString(),
-          text: botResponse,
+          text: aiResponse,
           sender: 'bot',
           timestamp: new Date()
         };
+
         setMessages(prev => [...prev, botMessage]);
+      } catch (error) {
+        console.error('Failed to get AI response:', error);
+        
+        // Fallback response
+        const fallbackMessage: Message = {
+          id: (Date.now() + 1).toString(),
+          text: '抱歉，我現在遇到一些技術問題。請稍後再試，或者您可以瀏覽「每日貼士」獲取健康建議。',
+          sender: 'bot',
+          timestamp: new Date()
+        };
+        
+        setMessages(prev => [...prev, fallbackMessage]);
+      } finally {
         setIsTyping(false);
-      }, 1000 + Math.random() * 2000);
+      }
     }
   };
 
   const handleQuickResponse = (response: string) => {
     setMessage(response);
     setTimeout(() => handleSendMessage(), 100);
-  };
-
-  const generateBotResponse = (userMessage: string): string => {
-    const lowerMessage = userMessage.toLowerCase();
-    
-    if (lowerMessage.includes('伸展') || lowerMessage.includes('運動')) {
-      return '很好！我為您推薦幾個簡單的伸展運動：\n\n1. 頸部轉動 - 慢慢左右轉動頭部\n2. 肩膀聳動 - 向上提肩膀，然後放鬆\n3. 腳踝轉動 - 坐著轉動腳踝\n\n每個動作做5-10次，記得動作要緩慢。需要我詳細說明任何一個動作嗎？';
-    }
-    
-    if (lowerMessage.includes('進度') || lowerMessage.includes('表現')) {
-      return '您的進度很棒！本週您已經：\n\n✅ 完成了5次平衡訓練\n✅ 運動時間達75分鐘\n✅ 達成83%的目標\n\n比上週進步了15%！繼續保持這個節奏，您會越來越強壯的。';
-    }
-    
-    if (lowerMessage.includes('提醒') || lowerMessage.includes('設定')) {
-      return '我可以為您設定以下提醒：\n\n🔔 每日運動提醒\n🔔 服藥時間提醒\n🔔 喝水提醒\n🔔 休息提醒\n\n您想設定哪種提醒呢？';
-    }
-    
-    if (lowerMessage.includes('累') || lowerMessage.includes('疲勞')) {
-      return '感到疲累是正常的，這表示您的身體在努力工作！建議您：\n\n💧 多喝水補充水分\n🛋️ 適當休息15-20分鐘\n🧘‍♀️ 做一些深呼吸放鬆\n\n如果持續感到不適，請諮詢您的醫生。';
-    }
-    
-    if (lowerMessage.includes('好') || lowerMessage.includes('不錯')) {
-      return '太好了！保持這種積極的心態很重要。既然您感覺良好，要不要嘗試今天的推薦運動？或者我可以分享一些健康小貼士給您。';
-    }
-    
-    if (lowerMessage.includes('計劃') || lowerMessage.includes('今天')) {
-      return '今天為您安排的活動：\n\n🏃‍♀️ 平衡力訓練 (15分鐘)\n📝 營養記錄\n⚖️ 每週評估\n\n您想從哪一項開始呢？我可以引導您完成。';
-    }
-    
-    // Default responses
-    const defaultResponses = [
-      '我明白您的意思。請告訴我更多詳情，我會盡力幫助您。',
-      '這是一個很好的問題。根據您的情況，我建議您可以嘗試一些簡單的運動。',
-      '感謝您的分享。保持積極的心態對健康很重要。有什麼我可以幫助您的嗎？',
-      '我會記住這個資訊。如果您有任何關於運動或健康的問題，隨時可以問我。'
-    ];
-    
-    return defaultResponses[Math.floor(Math.random() * defaultResponses.length)];
   };
 
   const handleKeyPress = (e: React.KeyboardEvent) => {
@@ -254,7 +269,6 @@ const CompanionScreen: React.FC = () => {
                 <button 
                   className="p-3 bg-gray-100 rounded-full hover:bg-gray-200 transition-colors"
                   onClick={() => {
-                    // Voice input functionality could be added here
                     alert('語音輸入功能即將推出');
                   }}
                 >
@@ -262,9 +276,9 @@ const CompanionScreen: React.FC = () => {
                 </button>
                 <button
                   onClick={handleSendMessage}
-                  disabled={!message.trim()}
+                  disabled={!message.trim() || isTyping}
                   className={`p-3 rounded-full transition-colors ${
-                    message.trim() 
+                    message.trim() && !isTyping
                       ? 'bg-blue-900 hover:bg-blue-800 text-white' 
                       : 'bg-gray-200 text-gray-400 cursor-not-allowed'
                   }`}
@@ -279,14 +293,23 @@ const CompanionScreen: React.FC = () => {
         <div className="flex-1 overflow-y-auto p-4" style={{ paddingBottom: '100px' }}>
           {/* Today's Tip */}
           <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-xl p-6 mb-6 text-white">
-            <div className="flex items-center mb-3">
-              <Lightbulb className="w-6 h-6 mr-2" />
-              <h2 className="text-lg font-semibold">今日貼士</h2>
+            <div className="flex items-center justify-between mb-3">
+              <div className="flex items-center">
+                <Lightbulb className="w-6 h-6 mr-2" />
+                <h2 className="text-lg font-semibold">今日貼士</h2>
+              </div>
+              <button
+                onClick={generateDailyTip}
+                disabled={isGeneratingTip}
+                className="p-2 bg-white/20 rounded-full hover:bg-white/30 transition-colors disabled:opacity-50"
+              >
+                <RefreshCw className={`w-4 h-4 ${isGeneratingTip ? 'animate-spin' : ''}`} />
+              </button>
             </div>
             <p className="text-blue-100 mb-4">
-              每天練習「腳跟對腳尖」步行2分鐘。這個簡單的運動可以顯著改善您的平衡力，降低跌倒風險達25%。
+              {dailyTip}
             </p>
-            <button className="bg-white/20 px-4 py-2 rounded-lg text-sm font-medium">
+            <button className="bg-white/20 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors">
               立即嘗試
             </button>
           </div>
@@ -363,6 +386,23 @@ const CompanionScreen: React.FC = () => {
                   </div>
                 </div>
               </div>
+            </div>
+
+            {/* AI-Powered Health Tips Section */}
+            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-xl p-6 text-white">
+              <div className="flex items-center mb-3">
+                <Bot className="w-6 h-6 mr-2" />
+                <h3 className="text-lg font-semibold">AI個人化建議</h3>
+              </div>
+              <p className="text-green-100 mb-4">
+                想要更個人化的健康建議嗎？在對話中告訴我您的具體需求，我會為您提供專屬的建議！
+              </p>
+              <button 
+                onClick={() => setActiveTab('chat')}
+                className="bg-white/20 px-4 py-2 rounded-lg text-sm font-medium hover:bg-white/30 transition-colors"
+              >
+                開始對話
+              </button>
             </div>
           </div>
         </div>
