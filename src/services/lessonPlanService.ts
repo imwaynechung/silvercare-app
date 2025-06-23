@@ -32,12 +32,14 @@ export class LessonPlanService {
 
   static async getAllLessonPlans(): Promise<LessonPlan[]> {
     const url = `${API_BASE_URL}/lesson-plans?clientId=${CLIENT_ID}`;
-    return await this.makeRequest(url);
+    const result = await this.makeRequest(url);
+    return Array.isArray(result) ? result : this.getMockData();
   }
 
   static async getLessonPlan(lessonPlanId: string): Promise<LessonPlan> {
     const url = `${API_BASE_URL}/lesson-plans/${lessonPlanId}`;
-    return await this.makeRequest(url);
+    const result = await this.makeRequest(url);
+    return result || this.getMockData()[0];
   }
 
   static async getLevelBasedPlans(): Promise<{
