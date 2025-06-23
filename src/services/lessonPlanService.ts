@@ -70,30 +70,29 @@ export class LessonPlanService {
     try {
       const allPlans = await this.getAllLessonPlans();
       
-      // Filter plans by name to find level-specific plans
+      // Filter plans by specific Chinese names
       const level1Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 1') || 
-        plan.planName.toLowerCase().includes('beginner') ||
-        plan.planName.toLowerCase().includes('basic')
+        plan.planName === '階段一：基礎坐式訓練' ||
+        plan.title?.zh_Hant === '階段一：基礎坐式訓練' ||
+        plan.title?.zh_Hans === '阶段一：基础坐式训练'
       );
       
       const level2Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 2') || 
-        plan.planName.toLowerCase().includes('intermediate') ||
-        plan.planName.toLowerCase().includes('advanced')
+        plan.planName === '階段二：坐站過渡訓練' ||
+        plan.title?.zh_Hant === '階段二：坐站過渡訓練' ||
+        plan.title?.zh_Hans === '阶段二：坐站过渡训练'
       );
       
       const level3Plan = allPlans.find(plan => 
-        plan.planName.toLowerCase().includes('level 3') || 
-        plan.planName.toLowerCase().includes('expert') ||
-        plan.planName.toLowerCase().includes('master')
+        plan.planName === '階段三：站立穩定性訓練' ||
+        plan.title?.zh_Hant === '階段三：站立穩定性訓練' ||
+        plan.title?.zh_Hans === '阶段三：站立稳定性训练'
       );
       
-      // If no specific level plans found, use first 3 plans
       return {
-        level1: level1Plan || allPlans[0] || null,
-        level2: level2Plan || allPlans[1] || null,
-        level3: level3Plan || allPlans[2] || null
+        level1: level1Plan || null,
+        level2: level2Plan || null,
+        level3: level3Plan || null
       };
     } catch (error) {
       console.error('Failed to fetch level-based plans:', error);
@@ -104,21 +103,21 @@ export class LessonPlanService {
   private static getMockData(): LessonPlan[] {
     return [
       {
-        id: "mock-level-1",
-        planName: "Balance Training Level 1",
-        planDescription: "Beginner balance and stability exercises for fall prevention",
-        targetAreas: ["Balance", "Core", "Lower Body"],
-        tags: ["Beginner", "Balance", "Fall Prevention"],
+        id: "mock-stage-1",
+        planName: "階段一：基礎坐式訓練",
+        planDescription: "基礎坐式平衡和穩定性訓練，適合初學者建立基本運動習慣",
+        targetAreas: ["平衡", "核心", "下肢"],
+        tags: ["初級", "坐式", "基礎"],
         planImage: "https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop",
         description: {
-          zh_Hans: "专为初学者设计的平衡训练计划，帮助建立基础稳定性和预防跌倒。",
-          en: "Beginner-friendly balance training program designed to build foundational stability and prevent falls.",
-          zh_Hant: "專為初學者設計的平衡訓練計劃，幫助建立基礎穩定性和預防跌倒。"
+          zh_Hans: "专为初学者设计的基础坐式训练计划，帮助建立基本平衡能力和运动习惯。",
+          en: "Basic seated training program designed for beginners to build fundamental balance skills and exercise habits.",
+          zh_Hant: "專為初學者設計的基礎坐式訓練計劃，幫助建立基本平衡能力和運動習慣。"
         },
         title: {
-          zh_Hans: "平衡训练 - 初级",
-          en: "Balance Training - Beginner Level",
-          zh_Hant: "平衡訓練 - 初級"
+          zh_Hans: "阶段一：基础坐式训练",
+          en: "Stage 1: Basic Seated Training",
+          zh_Hant: "階段一：基礎坐式訓練"
         },
         clientId: "gofa",
         lessons: ["lesson1", "lesson2", "lesson3", "lesson4", "lesson5", "lesson6", "lesson7", "lesson8", "lesson9", "lesson10", "lesson11", "lesson12"],
@@ -127,21 +126,21 @@ export class LessonPlanService {
         createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) }
       },
       {
-        id: "mock-level-2",
-        planName: "Balance Training Level 2",
-        planDescription: "Intermediate balance and coordination exercises with dynamic movements",
-        targetAreas: ["Balance", "Coordination", "Strength"],
-        tags: ["Intermediate", "Dynamic", "Coordination"],
+        id: "mock-stage-2",
+        planName: "階段二：坐站過渡訓練",
+        planDescription: "坐站轉換動作訓練，提升功能性動作能力和下肢力量",
+        targetAreas: ["坐站轉換", "下肢力量", "功能性動作"],
+        tags: ["中級", "坐站", "過渡"],
         planImage: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=200&fit=crop",
         description: {
-          zh_Hans: "中级平衡训练计划，包含动态动作和协调性训练，提升整体稳定性。",
-          en: "Intermediate balance training program featuring dynamic movements and coordination exercises to enhance overall stability.",
-          zh_Hant: "中級平衡訓練計劃，包含動態動作和協調性訓練，提升整體穩定性。"
+          zh_Hans: "中级坐站过渡训练计划，专注于提升坐站转换能力和下肢功能性力量。",
+          en: "Intermediate sit-to-stand transition training program focusing on improving transfer abilities and lower limb functional strength.",
+          zh_Hant: "中級坐站過渡訓練計劃，專注於提升坐站轉換能力和下肢功能性力量。"
         },
         title: {
-          zh_Hans: "平衡训练 - 中级",
-          en: "Balance Training - Intermediate Level",
-          zh_Hant: "平衡訓練 - 中級"
+          zh_Hans: "阶段二：坐站过渡训练",
+          en: "Stage 2: Sit-to-Stand Transition Training",
+          zh_Hant: "階段二：坐站過渡訓練"
         },
         clientId: "gofa",
         lessons: ["lesson13", "lesson14", "lesson15", "lesson16", "lesson17", "lesson18", "lesson19", "lesson20", "lesson21", "lesson22", "lesson23", "lesson24"],
@@ -150,21 +149,21 @@ export class LessonPlanService {
         createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) }
       },
       {
-        id: "mock-level-3",
-        planName: "Balance Training Level 3",
-        planDescription: "Advanced balance and functional movement exercises for optimal stability",
-        targetAreas: ["Balance", "Functional Movement", "Agility"],
-        tags: ["Advanced", "Functional", "Complex"],
+        id: "mock-stage-3",
+        planName: "階段三：站立穩定性訓練",
+        planDescription: "進階站立平衡和穩定性訓練，提升動態平衡和協調能力",
+        targetAreas: ["站立平衡", "動態穩定", "協調"],
+        tags: ["進階", "站立", "穩定性"],
         planImage: "https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=400&h=200&fit=crop",
         description: {
-          zh_Hans: "高级平衡训练计划，结合功能性动作和复杂平衡挑战，达到最佳稳定性。",
-          en: "Advanced balance training program combining functional movements and complex balance challenges for optimal stability.",
-          zh_Hant: "高級平衡訓練計劃，結合功能性動作和複雜平衡挑戰，達到最佳穩定性。"
+          zh_Hans: "高级站立稳定性训练计划，结合动态平衡和协调性训练，提升整体稳定能力。",
+          en: "Advanced standing stability training program combining dynamic balance and coordination exercises to enhance overall stability.",
+          zh_Hant: "高級站立穩定性訓練計劃，結合動態平衡和協調性訓練，提升整體穩定能力。"
         },
         title: {
-          zh_Hans: "平衡训练 - 高级",
-          en: "Balance Training - Advanced Level",
-          zh_Hant: "平衡訓練 - 高級"
+          zh_Hans: "阶段三：站立稳定性训练",
+          en: "Stage 3: Standing Stability Training",
+          zh_Hant: "階段三：站立穩定性訓練"
         },
         clientId: "gofa",
         lessons: ["lesson25", "lesson26", "lesson27", "lesson28", "lesson29", "lesson30", "lesson31", "lesson32", "lesson33", "lesson34", "lesson35", "lesson36"],
