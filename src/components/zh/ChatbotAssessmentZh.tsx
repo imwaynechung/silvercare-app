@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useQuizStore } from '../../store/quiz';
+import { useLanguage } from '../../contexts/LanguageContext';
 import { motion } from 'framer-motion';
 import { ChevronRight, ChevronLeft, AlertTriangle, ArrowLeft, TrendingUp, Heart } from 'lucide-react';
 import LoadingAnimation from '../LoadingAnimation';
@@ -19,6 +20,7 @@ const ChatbotAssessmentZh: React.FC = () => {
   >('sitToStand');
   const navigate = useNavigate();
   const quizStore = useQuizStore();
+  const { showLeadCapture } = useLanguage();
 
   useEffect(() => {
     if (!showWelcome) {
