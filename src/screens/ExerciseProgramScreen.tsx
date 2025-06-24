@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
 import { LessonPlanService } from '../services/lessonPlanService';
 import { LessonPlan } from '../types/lessonPlan';
@@ -6,6 +6,7 @@ import { LessonPlan } from '../types/lessonPlan';
 const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
+  const [isHighFrailty] = useState(true); // Assume user is high frailty
   const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
   const [todaysLesson, setTodaysLesson] = useState<{
     title: string;
@@ -50,8 +51,8 @@ const ExerciseProgramScreen: React.FC = () => {
       if (plan.lessonsData && plan.lessonsData.length > 0) {
         const firstLesson = plan.lessonsData[0];
         setTodaysLesson({
-          title: firstLesson.title.zh,
-          description: firstLesson.description.zh,
+          title: '輕鬆坐式運動',
+          description: '安全舒適的坐著運動，幫助您保持活力',
           duration: firstLesson.duration,
           planName: plan.title.zh_Hant,
           stage: '第一階段',
@@ -61,8 +62,8 @@ const ExerciseProgramScreen: React.FC = () => {
       } else {
         // Fallback to mock lesson data
         setTodaysLesson({
-          title: '基礎坐式平衡訓練',
-          description: '練習坐姿平衡，提升核心穩定性和身體控制能力',
+          title: '輕鬆坐式運動',
+          description: '安全舒適的坐著運動，幫助您保持活力',
           duration: 15,
           planName: plan.title.zh_Hant,
           stage: '第一階段',
@@ -115,7 +116,7 @@ const ExerciseProgramScreen: React.FC = () => {
             {/* Plan Header */}
             <div className="mb-6">
               <img 
-                src={selectedPlan.planImage} 
+                src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
                 alt={selectedPlan.title.zh_Hant} 
                 className="w-full h-48 object-cover rounded-2xl mb-4"
               />
@@ -123,7 +124,7 @@ const ExerciseProgramScreen: React.FC = () => {
                 {selectedPlan.title.zh_Hant}
               </h2>
               <p className="text-gray-600 mb-4">
-                {selectedPlan.description.zh_Hant}
+                專為長者設計的安全運動計劃，所有動作都可以坐著完成，讓您安心運動
               </p>
               
               <div className="flex flex-wrap gap-2 mb-4">
@@ -138,7 +139,7 @@ const ExerciseProgramScreen: React.FC = () => {
               </div>
 
               <div className="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-6">
-                {selectedPlan.duration} 個課程
+                {selectedPlan.duration} 個簡單課程
               </div>
             </div>
 
@@ -146,25 +147,25 @@ const ExerciseProgramScreen: React.FC = () => {
             <div className="grid grid-cols-3 gap-4 mb-6">
               <div className="text-center p-4 bg-white rounded-xl shadow-sm">
                 <div className="text-2xl font-bold text-blue-900">{selectedPlan.duration}</div>
-                <div className="text-sm text-gray-600">課程數量</div>
+                <div className="text-sm text-gray-600">簡單課程</div>
               </div>
               <div className="text-center p-4 bg-white rounded-xl shadow-sm">
                 <div className="text-2xl font-bold text-green-600">
                   {selectedPlan.lessonsData ? selectedPlan.lessonsData.reduce((total, lesson) => total + lesson.duration, 0) : selectedPlan.duration * 15}
                 </div>
-                <div className="text-sm text-gray-600">總分鐘</div>
+                <div className="text-sm text-gray-600">總時間（分鐘）</div>
               </div>
               <div className="text-center p-4 bg-white rounded-xl shadow-sm">
                 <div className="text-2xl font-bold text-purple-600">
                   {selectedPlan.tags.length}
                 </div>
-                <div className="text-sm text-gray-600">訓練類型</div>
+                <div className="text-sm text-gray-600">運動種類</div>
               </div>
             </div>
 
             {/* Lessons List */}
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">課程內容</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">運動內容</h3>
               
               {selectedPlan.lessonsData && selectedPlan.lessonsData.length > 0 ? (
                 <div className="grid grid-cols-2 gap-4">
@@ -173,22 +174,22 @@ const ExerciseProgramScreen: React.FC = () => {
                       <div className="relative">
                         <img 
                           src={lesson.thumbImageUrl || lesson.imageUrl} 
-                          alt={lesson.title.zh} 
+                          alt="坐式運動" 
                           className="w-full h-24 object-cover"
                         />
                         <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
                           {lesson.duration}分鐘
                         </div>
                         <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
-                          第{index + 1}課
+                          第{index + 1}個
                         </div>
                       </div>
                       <div className="p-3">
                         <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                          {lesson.title.zh}
+                          坐式運動 {index + 1}
                         </h4>
                         <p className="text-xs text-gray-600 line-clamp-2">
-                          {lesson.description.zh}
+                          安全簡單的坐著運動
                         </p>
                         <div className="flex items-center mt-2">
                           <div className="flex items-center text-xs text-gray-500">
@@ -213,7 +214,7 @@ const ExerciseProgramScreen: React.FC = () => {
                           15分鐘
                         </div>
                         <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
-                          第{index + 1}課
+                          第{index + 1}個
                         </div>
                       </div>
                       <div className="p-3">
@@ -221,7 +222,7 @@ const ExerciseProgramScreen: React.FC = () => {
                           課程 {index + 1}
                         </h4>
                         <p className="text-xs text-gray-600">
-                          {selectedPlan.planDescription}
+                          安全簡單的坐著運動
                         </p>
                       </div>
                     </div>
@@ -235,7 +236,7 @@ const ExerciseProgramScreen: React.FC = () => {
               <button
                 className="w-full bg-blue-900 text-white py-4 rounded-2xl font-medium text-lg"
               >
-                開始訓練計劃
+                開始運動
               </button>
             </div>
           </div>
@@ -248,8 +249,8 @@ const ExerciseProgramScreen: React.FC = () => {
     <div className="min-h-screen bg-gray-50 flex flex-col">
       {/* Header - Fixed */}
       <div className="bg-white px-4 py-6 border-b flex-shrink-0">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">運動計劃</h1>
-        <p className="text-gray-600">3階段循序漸進訓練計劃</p>
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">輕鬆運動</h1>
+        <p className="text-gray-600">安全簡單的坐著運動，適合在家進行</p>
       </div>
 
       {/* Tab Navigation - Fixed */}
@@ -262,7 +263,7 @@ const ExerciseProgramScreen: React.FC = () => {
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          今日課程
+          今日運動
         </button>
         <button
           onClick={() => setActiveTab('programs')}
@@ -272,7 +273,7 @@ const ExerciseProgramScreen: React.FC = () => {
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          訓練計劃
+          運動計劃
         </button>
       </div>
 
@@ -281,7 +282,7 @@ const ExerciseProgramScreen: React.FC = () => {
         <div className="px-4 py-6 pb-8">
           {activeTab === 'today' ? (
             <>
-              {/* Today's Lesson */}
+              {/* Today's Exercise */}
               <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
                 {todaysLesson?.imageUrl && (
                   <div className="absolute inset-0 opacity-20">
@@ -295,9 +296,9 @@ const ExerciseProgramScreen: React.FC = () => {
                 <div className="relative z-10">
                 <div className="flex items-center justify-between mb-4">
                   <div>
-                    <h2 className="text-xl font-bold">今日課程</h2>
+                    <h2 className="text-xl font-bold">今日運動</h2>
                     <p className="text-blue-100">
-                      {todaysLesson?.stage || '第一階段'} - 課程 {todaysLesson?.lessonNumber || 1}
+                      {todaysLesson?.stage || '第一階段'} - 第 {todaysLesson?.lessonNumber || 1} 個
                     </p>
                   </div>
                   <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
@@ -305,10 +306,10 @@ const ExerciseProgramScreen: React.FC = () => {
                   </div>
                 </div>
                 <h3 className="text-lg font-semibold mb-2">
-                  {todaysLesson?.title || '基礎坐式平衡訓練'}
+                  {todaysLesson?.title || '輕鬆坐式運動'}
                 </h3>
                 <p className="text-blue-100 mb-4">
-                  {todaysLesson?.description || '練習坐姿平衡，提升核心穩定性'}
+                  {todaysLesson?.description || '安全舒適的坐著運動，幫助您保持活力'}
                 </p>
                 <div className="flex items-center text-sm text-blue-100">
                   <Clock className="w-4 h-4 mr-1" />
@@ -317,13 +318,13 @@ const ExerciseProgramScreen: React.FC = () => {
                 </div>
               </div>
 
-              {/* Today's Program */}
+              {/* Today's Exercise Program */}
               <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
                 <div className="flex items-center justify-between mb-4">
-                  <h2 className="text-lg font-semibold text-gray-900">課程內容</h2>
+                  <h2 className="text-lg font-semibold text-gray-900">運動內容</h2>
                   <div className="flex items-center text-sm text-gray-600">
                     <Target className="w-4 h-4 mr-1" />
-                    <span>初級難度</span>
+                    <span>輕鬆簡單</span>
                   </div>
                 </div>
 
@@ -334,8 +335,8 @@ const ExerciseProgramScreen: React.FC = () => {
                         <span className="text-blue-900 font-bold">1</span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">熱身運動</p>
-                        <p className="text-sm text-gray-600">關節活動、輕度伸展 • 3分鐘</p>
+                        <p className="font-medium text-gray-900">輕鬆熱身</p>
+                        <p className="text-sm text-gray-600">坐著輕輕活動手腳 • 3分鐘</p>
                       </div>
                     </div>
                     <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium">
@@ -350,10 +351,10 @@ const ExerciseProgramScreen: React.FC = () => {
                       </div>
                       <div>
                         <p className="font-medium text-gray-900">
-                          {todaysLesson?.title || '坐式平衡練習'}
+                          {todaysLesson?.title || '坐式運動'}
                         </p>
                         <p className="text-sm text-gray-600">
-                          核心穩定、姿勢控制 • {Math.max((todaysLesson?.duration || 15) - 5, 8)}分鐘
+                          安全簡單的坐著運動 • {Math.max((todaysLesson?.duration || 15) - 5, 8)}分鐘
                         </p>
                       </div>
                     </div>
@@ -368,8 +369,8 @@ const ExerciseProgramScreen: React.FC = () => {
                         <span className="text-gray-600 font-bold">3</span>
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">放鬆伸展</p>
-                        <p className="text-sm text-gray-600">肌肉放鬆、深呼吸 • 2分鐘</p>
+                        <p className="font-medium text-gray-900">輕鬆放鬆</p>
+                        <p className="text-sm text-gray-600">坐著放鬆、深呼吸 • 2分鐘</p>
                       </div>
                     </div>
                     <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
@@ -381,27 +382,27 @@ const ExerciseProgramScreen: React.FC = () => {
 
               {/* Weekly Progress */}
               <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-                <h2 className="text-lg font-semibold text-gray-900 mb-4">本週進度</h2>
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">本週運動記錄</h2>
                 <div className="grid grid-cols-3 gap-4">
                   <div className="text-center">
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <span className="text-xl font-bold text-green-600">5</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-900">課程</p>
+                    <p className="text-sm font-medium text-gray-900">次數</p>
                     <p className="text-xs text-gray-600">已完成</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <span className="text-xl font-bold text-blue-600">75</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-900">分鐘</p>
+                    <p className="text-sm font-medium text-gray-900">總時間</p>
                     <p className="text-xs text-gray-600">運動時間</p>
                   </div>
                   <div className="text-center">
                     <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
                       <span className="text-xl font-bold text-purple-600">83%</span>
                     </div>
-                    <p className="text-sm font-medium text-gray-900">目標</p>
+                    <p className="text-sm font-medium text-gray-900">完成度</p>
                     <p className="text-xs text-gray-600">已達成</p>
                   </div>
                 </div>
@@ -410,25 +411,25 @@ const ExerciseProgramScreen: React.FC = () => {
               {/* Current Plan Info */}
               {todaysLesson && (
                 <div className="bg-blue-50 rounded-2xl p-4 shadow-sm">
-                  <h3 className="text-lg font-semibold text-blue-900 mb-2">當前計劃</h3>
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">您的運動計劃</h3>
                   <p className="text-blue-800 font-medium">{todaysLesson.planName}</p>
                   <p className="text-blue-600 text-sm mt-1">
-                    專為初學者設計的基礎訓練，循序漸進提升平衡能力
+                    專為長者設計的安全運動，所有動作都可以坐著完成
                   </p>
                 </div>
               )}
             </>
           ) : (
             <>
-              {/* Training Programs Overview */}
+              {/* Exercise Programs Overview */}
               <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-6 text-white">
                 <div className="flex items-center mb-4">
                   <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
                     <Award className="w-8 h-8 text-white" />
                   </div>
                   <div>
-                    <h2 className="text-xl font-bold">3階段訓練計劃</h2>
-                    <p className="text-green-100">循序漸進，從基礎到進階</p>
+                    <h2 className="text-xl font-bold">安全運動計劃</h2>
+                    <p className="text-green-100">簡單安全，適合在家進行</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-3 gap-4">
@@ -436,7 +437,7 @@ const ExerciseProgramScreen: React.FC = () => {
                     <div className="text-2xl font-bold">
                       {(levelPlans.level1?.duration || 0) + (levelPlans.level2?.duration || 0) + (levelPlans.level3?.duration || 0)}
                     </div>
-                    <div className="text-green-100 text-sm">總課程</div>
+                    <div className="text-green-100 text-sm">總運動</div>
                   </div>
                   <div className="text-center">
                     <div className="text-2xl font-bold">5</div>
@@ -449,7 +450,7 @@ const ExerciseProgramScreen: React.FC = () => {
                 </div>
               </div>
 
-              {/* Training Plans */}
+              {/* Exercise Plans */}
               <div className="space-y-4 mb-6">
                 {loading && (
                   <div className="text-center py-8">
@@ -465,7 +466,7 @@ const ExerciseProgramScreen: React.FC = () => {
                   >
                     <div className="relative">
                       <img 
-                        src={levelPlans.level1.planImage} 
+                        src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
                         alt="Stage 1 Training" 
                         className="w-full h-32 object-cover"
                       />
@@ -473,14 +474,14 @@ const ExerciseProgramScreen: React.FC = () => {
                         5/12 進行中
                       </div>
                       <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        第一階段
+                        坐式運動
                       </div>
                     </div>
                     <div className="p-4">
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level1.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">基礎坐式平衡訓練</p>
+                      <p className="text-sm text-gray-600 mb-3">安全簡單的坐著運動</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-600">
                           <Play className="w-4 h-4 mr-1 text-green-600" />
@@ -496,7 +497,7 @@ const ExerciseProgramScreen: React.FC = () => {
 
                 {levelPlans.level2 && (
                   <div 
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-75"
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-60"
                     onClick={() => handlePlanClick(levelPlans.level2!)}
                   >
                     <div className="relative">
@@ -509,7 +510,7 @@ const ExerciseProgramScreen: React.FC = () => {
                         0/12 待開始
                       </div>
                       <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        第二階段
+                        站立運動
                       </div>
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                         <Lock className="w-8 h-8 text-white" />
@@ -519,11 +520,11 @@ const ExerciseProgramScreen: React.FC = () => {
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level2.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">坐站轉換動作訓練</p>
+                      <p className="text-sm text-gray-600 mb-3">簡單的站立運動（需要完成坐式運動後開放）</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Lock className="w-4 h-4 mr-1" />
-                          <span>完成第一階段後解鎖</span>
+                          <span>完成坐式運動後開放</span>
                         </div>
                       </div>
                     </div>
@@ -532,7 +533,7 @@ const ExerciseProgramScreen: React.FC = () => {
 
                 {levelPlans.level3 && (
                   <div 
-                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-75"
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-50"
                     onClick={() => handlePlanClick(levelPlans.level3!)}
                   >
                     <div className="relative">
@@ -545,7 +546,7 @@ const ExerciseProgramScreen: React.FC = () => {
                         0/12 待開始
                       </div>
                       <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
-                        第三階段
+                        進階運動
                       </div>
                       <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
                         <Lock className="w-8 h-8 text-white" />
@@ -555,11 +556,11 @@ const ExerciseProgramScreen: React.FC = () => {
                       <h3 className="font-bold text-gray-900 mb-1">
                         {levelPlans.level3.title.zh_Hant}
                       </h3>
-                      <p className="text-sm text-gray-600 mb-3">進階站立平衡訓練</p>
+                      <p className="text-sm text-gray-600 mb-3">更多運動選擇（需要完成前面運動後開放）</p>
                       <div className="flex items-center justify-between">
                         <div className="flex items-center text-sm text-gray-500">
                           <Lock className="w-4 h-4 mr-1" />
-                          <span>完成第二階段後解鎖</span>
+                          <span>完成前面運動後開放</span>
                         </div>
                       </div>
                     </div>
@@ -569,7 +570,7 @@ const ExerciseProgramScreen: React.FC = () => {
 
               {/* Expected Improvements */}
               <div className="bg-white rounded-2xl p-6 shadow-lg">
-                <h2 className="text-lg font-bold text-gray-900 mb-4">預期改善效果</h2>
+                <h2 className="text-lg font-bold text-gray-900 mb-4">運動的好處</h2>
                 <div className="space-y-4">
                   <div className="flex items-center justify-between p-3 bg-green-50 rounded-lg">
                     <div className="flex items-center">
@@ -577,11 +578,11 @@ const ExerciseProgramScreen: React.FC = () => {
                         <TrendingUp className="w-4 h-4 text-green-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">平衡力改善</p>
-                        <p className="text-sm text-gray-600">預期提升 30-40%</p>
+                        <p className="font-medium text-gray-900">身體更穩定</p>
+                        <p className="text-sm text-gray-600">幫助您走路更穩</p>
                       </div>
                     </div>
-                    <span className="text-green-600 font-bold">+35%</span>
+                    <span className="text-green-600 font-bold">更好</span>
                   </div>
 
                   <div className="flex items-center justify-between p-3 bg-blue-50 rounded-lg">
@@ -590,11 +591,11 @@ const ExerciseProgramScreen: React.FC = () => {
                         <Target className="w-4 h-4 text-blue-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">肌力增強</p>
-                        <p className="text-sm text-gray-600">下肢力量提升</p>
+                        <p className="font-medium text-gray-900">身體更有力</p>
+                        <p className="text-sm text-gray-600">腿部更有力氣</p>
                       </div>
                     </div>
-                    <span className="text-blue-600 font-bold">+25%</span>
+                    <span className="text-blue-600 font-bold">更強</span>
                   </div>
 
                   <div className="flex items-center justify-between p-3 bg-purple-50 rounded-lg">
@@ -603,11 +604,11 @@ const ExerciseProgramScreen: React.FC = () => {
                         <Star className="w-4 h-4 text-purple-600" />
                       </div>
                       <div>
-                        <p className="font-medium text-gray-900">跌倒風險降低</p>
-                        <p className="text-sm text-gray-600">整體風險減少</p>
+                        <p className="font-medium text-gray-900">更加安全</p>
+                        <p className="text-sm text-gray-600">減少跌倒機會</p>
                       </div>
                     </div>
-                    <span className="text-purple-600 font-bold">-50%</span>
+                    <span className="text-purple-600 font-bold">更安全</span>
                   </div>
                 </div>
               </div>
