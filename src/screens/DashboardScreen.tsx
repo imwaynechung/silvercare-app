@@ -38,7 +38,7 @@ const DashboardScreen: React.FC = () => {
           <div className="bg-white/20 rounded-full p-2">
             <div className="w-12 h-12 bg-white rounded-full overflow-hidden">
               <img 
-                src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
+                src="https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?w=100&h=100&fit=crop&crop=face" 
                 alt="User Avatar" 
                 className="w-full h-full object-cover"
               />
@@ -105,7 +105,7 @@ const DashboardScreen: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden card-mobile">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=300&h=150&fit=crop" 
+                  src="hhttps://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
                   alt="Workout Plan" 
                   className="w-full h-32 object-cover"
                 />
