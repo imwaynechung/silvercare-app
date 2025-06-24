@@ -173,7 +173,7 @@ const ExerciseProgramScreen: React.FC = () => {
                       <div className="relative">
                         <img 
                           src={lesson.thumbImageUrl || lesson.imageUrl} 
-                          alt={lesson.title?.zh || lesson.title?.en || `課程 ${index + 1}`} 
+                          alt="坐式運動" 
                           className="w-full h-24 object-cover"
                         />
                         <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
@@ -185,10 +185,10 @@ const ExerciseProgramScreen: React.FC = () => {
                       </div>
                       <div className="p-3">
                         <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                          {lesson.title?.zh || lesson.title?.en || `課程 ${index + 1}`}
+                          坐式運動 {index + 1}
                         </h4>
                         <p className="text-xs text-gray-600 line-clamp-2">
-                          {lesson.description?.zh || lesson.description?.en || '安全簡單的坐著運動'}
+                          安全簡單的坐著運動
                         </p>
                         <div className="flex items-center mt-2">
                           <div className="flex items-center text-xs text-gray-500">
