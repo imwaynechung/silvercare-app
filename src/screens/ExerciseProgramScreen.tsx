@@ -466,7 +466,7 @@ const ExerciseProgramScreen: React.FC = () => {
                   >
                     <div className="relative">
                       <img 
-                        src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
+                        src={levelPlans.level1.planImage} 
                         alt="Stage 1 Training" 
                         className="w-full h-32 object-cover"
                       />
