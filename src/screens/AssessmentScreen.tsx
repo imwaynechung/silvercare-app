@@ -37,7 +37,7 @@ const AssessmentScreen: React.FC = () => {
           {/* Hero Image */}
           <div className="mb-6">
             <img 
-              src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqfSn2RjzEnb76NP63oX82pd75JJfub-mxdA&s" 
+              src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop" 
               alt="Rehabilitation Program" 
               className="w-full h-48 object-cover rounded-2xl"
             />
@@ -235,7 +235,7 @@ const AssessmentScreen: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1571019613454-1cb2f99b2d8b?w=400&h=200&fit=crop" 
+                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqfSn2RjzEnb76NP63oX82pd75JJfub-mxdA&s" 
                   alt="Rehabilitation Program" 
                   className="w-full h-48 object-cover"
                 />
