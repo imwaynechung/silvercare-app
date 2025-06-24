@@ -80,8 +80,7 @@ const MobileLayout: React.FC = () => {
     } else if (/Android/i.test(navigator.userAgent)) {
       // Less aggressive for Android
       interval = setInterval(hideAddressBar, 3000);
-      }
-    }, 3000);
+    }
     
     return () => {
       document.removeEventListener('touchstart', preventDefaultTouch);

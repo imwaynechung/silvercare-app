@@ -103,7 +103,7 @@ function initMobileOptimizations() {
     const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
     if (isIOS && isSafari) {
       setInterval(hideAddressBar, 2000);
-    }, 2000);
+    }
   }
 }
 
