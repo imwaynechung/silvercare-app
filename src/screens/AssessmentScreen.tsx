@@ -235,7 +235,7 @@ const AssessmentScreen: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
               <div className="relative">
                 <img 
-                  src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcRqfSn2RjzEnb76NP63oX82pd75JJfub-mxdA&s" 
+                  src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
                   alt="Rehabilitation Program" 
                   className="w-full h-48 object-cover"
                 />
