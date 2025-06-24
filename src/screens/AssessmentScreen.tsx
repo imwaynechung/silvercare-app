@@ -200,16 +200,10 @@ const AssessmentScreen: React.FC = () => {
                 <p className="text-gray-600 mb-4">根據您的評估結果制定的專屬復康方案，包含運動訓練和營養指導</p>
                 <div className="flex space-x-3">
                   <button 
-                    onClick={() => setShowDetails(true)}
-                    className="flex-1 bg-gray-100 text-gray-700 py-3 rounded-xl font-medium"
-                  >
-                    查看詳情
-                  </button>
-                  <button 
                     onClick={() => setShowAssessment(true)}
-                    className="flex-1 bg-blue-900 text-white py-3 rounded-xl font-medium"
+                    className="w-full bg-blue-900 text-white py-4 rounded-xl font-medium text-lg"
                   >
-                    開始訓練
+                    生成計劃
                   </button>
                 </div>
               </div>
