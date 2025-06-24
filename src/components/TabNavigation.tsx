@@ -15,54 +15,42 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     { id: 'community', label: '社區', icon: Users },
   ];
 
-  // Enhanced mobile Safari address bar hiding
+  // Comprehensive solution for Safari toolbar behavior
   React.useEffect(() => {
-    let timeoutId: NodeJS.Timeout;
-    
-    const hideAddressBar = () => {
-      // Clear any existing timeout
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      
-      // Multiple strategies for different mobile browsers
-      timeoutId = setTimeout(() => {
-        // Force scroll to hide address bar
-        window.scrollTo(0, 1);
-        
-        // Then scroll back to top
-        setTimeout(() => {
-          window.scrollTo(0, 0);
-        }, 50);
-        
-        // Set viewport height variables
-        const vh = window.innerHeight * 0.01;
-        document.documentElement.style.setProperty('--vh', `${vh}px`);
-        
-        // Force body dimensions
-        document.body.style.height = '100vh';
-        document.body.style.height = '100dvh';
-      }, 100);
+    // Set initial viewport height
+    const setViewportHeight = () => {
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      document.body.style.height = `${window.innerHeight}px`;
     };
 
-    // Hide address bar on various events
-    const events = ['scroll', 'touchstart', 'touchend', 'resize', 'orientationchange'];
-    
-    events.forEach(event => {
-      window.addEventListener(event, hideAddressBar, { passive: true });
-    });
+    // Handle toolbar hiding/showing
+    const handleScroll = () => {
+      if (window.scrollY <= 0) {
+        window.scrollTo(0, 1);
+      }
+    };
 
-    // Initial hide
-    hideAddressBar();
+    // Handle orientation changes
+    const handleResize = () => {
+      setViewportHeight();
+      window.scrollTo(0, 1);
+    };
+
+    // Initialize
+    setViewportHeight();
+    window.scrollTo(0, 1);
+
+    // Add event listeners
+    window.addEventListener('scroll', handleScroll, { passive: true });
+    window.addEventListener('resize', handleResize, { passive: true });
+    window.addEventListener('orientationchange', handleResize, { passive: true });
 
     // Cleanup
     return () => {
-      if (timeoutId) {
-        clearTimeout(timeoutId);
-      }
-      events.forEach(event => {
-        window.removeEventListener(event, hideAddressBar);
-      });
+      window.removeEventListener('scroll', handleScroll);
+      window.removeEventListener('resize', handleResize);
+      window.removeEventListener('orientationchange', handleResize);
     };
   }, []);
 
@@ -70,14 +58,13 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     <div 
       className="nav-mobile fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 z-50"
       style={{
-        // Enhanced mobile Safari compatibility
-        overflow: 'hidden',
         position: 'fixed',
         bottom: '0',
         width: '100%',
+        // Handle safe areas (notches and home indicators)
         paddingBottom: 'env(safe-area-inset-bottom)',
-        // Prevent Safari's rubber band effect
-        WebkitOverflowScrolling: 'touch',
+        // Prevent rubber band effect
+        overflow: 'hidden',
         // Ensure proper layering
         zIndex: 9999,
       }}
@@ -91,21 +78,21 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
             <button
               key={tab.id}
               onClick={() => onTabChange(tab.id)}
-              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 min-w-0 touch-manipulation ${
+              className={`flex flex-col items-center justify-center py-2 px-3 rounded-lg transition-all duration-200 min-w-0 ${
                 isActive
                   ? 'text-blue-900'
                   : 'text-gray-600 hover:text-gray-900'
               }`}
               style={{ 
                 minHeight: '60px',
-                // Enhanced touch handling for iOS
+                // iOS-specific optimizations
                 WebkitTapHighlightColor: 'transparent',
                 WebkitTouchCallout: 'none',
-                WebkitUserSelect: 'none',
-                userSelect: 'none',
-                // Ensure proper touch target size
                 touchAction: 'manipulation',
+                // Prevent text selection
+                userSelect: 'none',
               }}
+              aria-label={tab.label}
             >
               {tab.id === 'dashboard' && isActive ? (
                 <div className="w-10 h-10 bg-blue-900 rounded-full flex items-center justify-center mb-1 shadow-lg">
