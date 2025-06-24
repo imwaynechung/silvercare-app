@@ -5,11 +5,11 @@
     <link rel="icon" type="image/png" href="https://iili.io/3rSv1St.png" />
     
     <!-- Enhanced Mobile Viewport - Hide address bar -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui, shrink-to-fit=no" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
     
     <!-- Mobile-specific meta tags for hiding address bar -->
     <meta name="mobile-web-app-capable" content="yes" />
-    <meta name="apple-mobile-web-app-capable" content="standalone" />
+    <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="銀齡樂" />
     <meta name="theme-color" content="#08449E" />
@@ -84,9 +84,8 @@
       /* Prevent zoom on input focus and hide address bar */
       input, select, textarea, button {
         font-size: 16px !important;
-        -webkit-appearance: none !important;
-        border-radius: 0 !important;
-        transform: translateZ(0);
+        -webkit-appearance: none;
+        border-radius: 0;
       }
       
       /* Prevent horizontal scroll and optimize for mobile */
@@ -99,16 +98,13 @@
         -webkit-text-size-adjust: 100%;
         -webkit-font-smoothing: antialiased;
         -moz-osx-font-smoothing: grayscale;
-        height: 100vh !important;
-        height: 100dvh !important;
-        height: -webkit-fill-available !important;
+        height: 100vh;
+        height: 100dvh;
         position: fixed;
         top: 0;
         left: 0;
         right: 0;
         bottom: 0;
-        overscroll-behavior: none;
-        -webkit-overflow-scrolling: touch;
       }
       
       /* Safe area handling for iOS notch */
@@ -122,14 +118,12 @@
 
       /* Ensure root element takes full height and hides address bar */
       #root {
-        height: 100vh !important;
-        height: 100dvh !important;
-        height: -webkit-fill-available !important;
+        height: 100vh;
+        height: 100dvh;
         width: 100%;
         opacity: 1;
         position: relative;
         overflow: hidden;
-        transform: translateZ(0);
       }
 
       /* Mobile optimization and touch handling */
@@ -145,6 +139,13 @@
       input, textarea, select, [contenteditable] {
         -webkit-user-select: text;
         user-select: text;
+      }
+
+      /* Hide address bar on scroll */
+      body.hide-address-bar {
+        height: 100vh;
+        height: 100dvh;
+        overflow: hidden;
       }
 
       /* Immediate fade-in for content */
@@ -178,8 +179,7 @@
 
       /* Prevent pull-to-refresh */
       body {
-        overscroll-behavior: none !important;
-        overscroll-behavior-y: none !important;
+        overscroll-behavior: none;
       }
 
       /* Hide scrollbars but keep functionality */
@@ -195,10 +195,8 @@
       /* Force full height on mobile browsers */
       @media screen and (max-width: 768px) {
         html, body {
-          height: 100% !important;
-          min-height: 100vh !important;
-          min-height: 100dvh !important;
-          min-height: -webkit-fill-available !important;
+          height: 100vh !important;
+          height: 100dvh !important;
           overflow: hidden !important;
           position: fixed !important;
           top: 0 !important;
@@ -208,24 +206,15 @@
         }
 
         #root {
-          height: 100% !important;
-          min-height: 100vh !important;
-          min-height: 100dvh !important;
-          min-height: -webkit-fill-available !important;
+          height: 100vh !important;
+          height: 100dvh !important;
           overflow: hidden !important;
         }
 
         /* Prevent pull-to-refresh */
         body {
           overscroll-behavior: none !important;
-          overscroll-behavior-y: none !important;
           -webkit-overflow-scrolling: touch !important;
-        }
-        
-        /* Prevent bounce scrolling */
-        html {
-          overscroll-behavior: none !important;
-          overscroll-behavior-y: none !important;
         }
       }
 
@@ -233,12 +222,10 @@
       @supports (-webkit-touch-callout: none) {
         html, body {
           height: -webkit-fill-available;
-          min-height: -webkit-fill-available;
         }
 
         #root {
           height: -webkit-fill-available;
-          min-height: -webkit-fill-available;
         }
       }
     </style>
@@ -249,81 +236,56 @@
     
     <!-- Address bar hiding script - CRITICAL -->
     <script>
-      // Enhanced Safari address bar hiding
+      // Aggressive address bar hiding for mobile
       (function() {
-        let isIOS = /iPad|iPhone|iPod/.test(navigator.userAgent);
-        let isSafari = /Safari/.test(navigator.userAgent) && !/Chrome/.test(navigator.userAgent);
-        let isStandalone = window.navigator.standalone;
-        
-        function setViewportHeight() {
-          // Use the smaller of window.innerHeight and window.screen.height
-          let vh = Math.min(window.innerHeight, window.screen.height) * 0.01;
-          document.documentElement.style.setProperty('--vh', `${vh}px`);
-          
-          // Force full height
-          if (isIOS && isSafari && !isStandalone) {
-            document.documentElement.style.height = '-webkit-fill-available';
-            document.body.style.height = '-webkit-fill-available';
-          }
-        }
+        let isHiding = false;
         
         function hideAddressBar() {
-          if (isIOS && isSafari && !isStandalone) {
-            // Force scroll to trigger address bar hide
+          if (isHiding) return;
+          isHiding = true;
+          
+          // Multiple strategies for hiding address bar
+          setTimeout(() => {
             window.scrollTo(0, 1);
-            setTimeout(() => window.scrollTo(0, 0), 0);
-          }
-          setViewportHeight();
+            isHiding = false;
+          }, 0);
+          
+          setTimeout(() => {
+            window.scrollTo(0, 0);
+          }, 100);
+          
+          // Set viewport height to hide address bar
+          const vh = window.innerHeight * 0.01;
+          document.documentElement.style.setProperty('--vh', `${vh}px`);
+          
+          // Force body height
+          document.body.style.height = '100vh';
+          document.body.style.height = '100dvh';
+          
+          // Add class to prevent scrolling
+          document.body.classList.add('hide-address-bar');
         }
         
-        // Initial setup
-        setViewportHeight();
+        // Hide immediately
+        hideAddressBar();
         
-        // Hide address bar on load
-        if (document.readyState === 'loading') {
-          document.addEventListener('DOMContentLoaded', hideAddressBar);
-        } else {
-          hideAddressBar();
-        }
-        
-        // Handle viewport changes
-        window.addEventListener('resize', setViewportHeight);
+        // Hide on various events
+        window.addEventListener('load', hideAddressBar);
+        window.addEventListener('resize', hideAddressBar);
         window.addEventListener('orientationchange', () => {
-          setTimeout(setViewportHeight, 100);
           setTimeout(hideAddressBar, 500);
         });
         
-        // Prevent pull-to-refresh and zoom
-        document.addEventListener('touchmove', function(e) {
-          if (e.touches.length > 1) {
-            e.preventDefault();
-          }
-        }, { passive: false });
+        // Hide on touch events
+        document.addEventListener('touchstart', hideAddressBar, { once: true });
         
-        // Prevent double-tap zoom
-        let lastTouchEnd = 0;
-        document.addEventListener('touchend', function(e) {
-          let now = (new Date()).getTime();
-          if (now - lastTouchEnd <= 300) {
-            e.preventDefault();
-          }
-          lastTouchEnd = now;
-        }, false);
-        
-        // Force scroll on first touch to hide address bar
-        document.addEventListener('touchstart', function() {
-          if (isIOS && isSafari && !isStandalone) {
-            hideAddressBar();
-          }
-        }, { once: true });
-        
-        // Continuous monitoring for Safari
-        if (isIOS && isSafari && !isStandalone) {
+        // Continuous monitoring for mobile browsers
+        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
           setInterval(() => {
-            if (window.pageYOffset === 0) {
+            if (window.innerHeight !== window.screen.height) {
               hideAddressBar();
             }
-          }, 2000);
+          }, 1000);
         }
       })();
     </script>

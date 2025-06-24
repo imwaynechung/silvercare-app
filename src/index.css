@@ -8,10 +8,8 @@
     font-size: 16px;
     -webkit-text-size-adjust: 100%;
     -webkit-tap-highlight-color: transparent;
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     overflow: hidden !important;
     position: fixed !important;
     top: 0 !important;
@@ -26,17 +24,14 @@
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     overflow: hidden !important;
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     position: fixed !important;
     top: 0 !important;
     left: 0 !important;
     right: 0 !important;
     bottom: 0 !important;
     overscroll-behavior: none !important;
-    overscroll-behavior-y: none !important;
     -webkit-overflow-scrolling: touch;
     width: 100% !important;
   }
@@ -64,14 +59,11 @@
 
   /* Full height containers */
   #root {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     width: 100% !important;
     overflow: hidden !important;
     position: relative;
-    transform: translateZ(0);
   }
 }
 
@@ -166,17 +158,13 @@
 
   /* Full viewport height utilities */
   .h-screen-mobile {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
   }
 
   .min-h-screen-mobile {
-    min-height: 100% !important;
     min-height: 100vh !important;
     min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
   }
 
   /* Prevent address bar showing */
@@ -192,25 +180,6 @@
 
 /* Mobile-specific media queries */
 @media (max-width: 768px) {
-  html, body {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
-    overflow: hidden !important;
-    position: fixed !important;
-    overscroll-behavior: none !important;
-    overscroll-behavior-y: none !important;
-  }
-  
-  #root {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
-    overflow: hidden !important;
-  }
-
   .container {
     padding-left: 16px;
     padding-right: 16px;
@@ -247,23 +216,21 @@
 /* iOS specific fixes */
 @supports (-webkit-touch-callout: none) {
   .ios-fix {
-    -webkit-touch-callout: none !important;
-    -webkit-user-select: none !important;
+    -webkit-touch-callout: none;
+    -webkit-user-select: none;
   }
 
   /* iOS address bar hiding */
   html, body {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     height: -webkit-fill-available !important;
     overflow: hidden !important;
   }
 
   #root {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     height: -webkit-fill-available !important;
     overflow: hidden !important;
   }
@@ -344,20 +311,16 @@ textarea:focus-visible {
 /* Force full screen on all mobile devices */
 @media only screen and (max-device-width: 812px) {
   html, body {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     overflow: hidden !important;
     position: fixed !important;
     width: 100% !important;
   }
   
   #root {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     overflow: hidden !important;
   }
 }
@@ -365,10 +328,8 @@ textarea:focus-visible {
 /* iPhone specific fixes */
 @media only screen and (device-width: 375px) and (device-height: 812px) and (-webkit-device-pixel-ratio: 3) {
   html, body, #root {
-    height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
+    height: 100vh !important;
+    height: 100dvh !important;
     overflow: hidden !important;
   }
 }
@@ -378,35 +339,22 @@ textarea:focus-visible {
   /* Prevent any scrolling */
   html {
     overflow: hidden !important;
-    position: fixed !important; 
+    position: fixed !important;
     height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
     width: 100% !important;
-    overscroll-behavior: none !important;
-    overscroll-behavior-y: none !important;
   }
   
   body {
     overflow: hidden !important;
     position: fixed !important;
     height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
     width: 100% !important;
     overscroll-behavior: none !important;
-    overscroll-behavior-y: none !important;
   }
   
   #root {
     overflow: hidden !important;
     height: 100% !important;
-    min-height: 100vh !important;
-    min-height: 100dvh !important;
-    min-height: -webkit-fill-available !important;
     width: 100% !important;
-    transform: translateZ(0);
   }
 }

@@ -15,18 +15,21 @@ const MobileLayout: React.FC = () => {
     // Aggressive address bar hiding on mount
     const hideAddressBar = () => {
       // Multiple strategies for different browsers
-      window.scrollTo(0, 1);
-      setTimeout(() => window.scrollTo(0, 0), 50);
+      setTimeout(() => {
+        window.scrollTo(0, 1);
+      }, 0);
+      
+      setTimeout(() => {
+        window.scrollTo(0, 0);
+      }, 100);
       
       // Force viewport height
-      const vh = Math.min(window.innerHeight, window.screen.height) * 0.01;
+      const vh = window.innerHeight * 0.01;
       document.documentElement.style.setProperty('--vh', `${vh}px`);
       
       // Force body dimensions
-      document.body.style.height = '100%';
-      document.body.style.minHeight = '100vh';
-      document.body.style.minHeight = '100dvh';
-      document.body.style.minHeight = '-webkit-fill-available';
+      document.body.style.height = '100vh';
+      document.body.style.height = '100dvh';
       document.body.style.overflow = 'hidden';
       document.body.style.position = 'fixed';
       document.body.style.width = '100%';
@@ -47,7 +50,7 @@ const MobileLayout: React.FC = () => {
     }
 
     // Prevent pull-to-refresh and zoom
-    const preventDefaultTouch = (e: any) => {
+    const preventDefaultTouch = (e: TouchEvent) => {
       if (e.touches.length > 1) {
         e.preventDefault();
       }
@@ -55,7 +58,7 @@ const MobileLayout: React.FC = () => {
 
     const preventZoom = (e: TouchEvent) => {
       if (e.scale !== 1) {
-        e.preventDefault(); 
+        e.preventDefault();
       }
     };
 
@@ -63,25 +66,12 @@ const MobileLayout: React.FC = () => {
     document.addEventListener('touchmove', preventZoom, { passive: false });
 
     // Continuous address bar hiding for mobile
-    let interval: NodeJS.Timeout;
-    
-    // Check if it's iOS Safari specifically
-    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
-    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
-    
-    if (isIOS && isSafari) {
-      // More aggressive for iOS Safari
-      interval = setInterval(hideAddressBar, 1000);
-      
-      // Add scroll event listener to hide toolbar on scroll
-      window.addEventListener('scroll', () => {
-        setTimeout(hideAddressBar, 100);
-      });
-    } else if (/Android/i.test(navigator.userAgent)) {
-      // Less aggressive for Android
-      interval = setInterval(hideAddressBar, 3000);
-    }
-    
+    const interval = setInterval(() => {
+      if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        hideAddressBar();
+      }
+    }, 3000);
+
     return () => {
       document.removeEventListener('touchstart', preventDefaultTouch);
       document.removeEventListener('touchmove', preventZoom);
@@ -163,7 +153,7 @@ const MobileLayout: React.FC = () => {
 
   // Render immediately without any loading state - optimized for mobile
   return (
-    <div className="mobile-screen flex flex-col bg-gray-50 max-w-md mx-auto relative prevent-scroll ios-fix">
+    <div className="mobile-screen flex flex-col bg-gray-50 max-w-md mx-auto relative prevent-scroll">
       {/* Main Content - with proper padding for fixed navigation and address bar hiding */}
       <div className="flex-1 mobile-scroll">
         <div className="fade-in h-full">
