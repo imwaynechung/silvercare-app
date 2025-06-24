@@ -4,20 +4,73 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/png" href="https://iili.io/3rSv1St.png" />
     
-    <!-- Enhanced Mobile Viewport - Hide address bar -->
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover, minimal-ui" />
+    <!-- Enhanced Mobile Viewport -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
     
-    <!-- Mobile-specific meta tags for hiding address bar -->
+    <!-- PWA Configuration -->
     <meta name="mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-capable" content="yes" />
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
     <meta name="apple-mobile-web-app-title" content="銀齡樂" />
+    
+    <!-- Theme and Browser -->
     <meta name="theme-color" content="#08449E" />
     <meta name="msapplication-navbutton-color" content="#08449E" />
-    
-    <!-- Browser Compatibility -->
     <meta http-equiv="X-UA-Compatible" content="IE=edge" />
     <meta name="format-detection" content="telephone=no" />
+    
+    <!-- Primary Meta Tags -->
+    <title>銀齡樂 | AI智能防跌評估系統</title>
+    <meta name="description" content="AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。" />
+    
+    <!-- Open Graph / Social Media -->
+    <meta property="og:type" content="website" />
+    <meta property="og:url" content="https://silvercare.gofa.co/" />
+    <meta property="og:title" content="銀齡樂 | AI智能防跌評估系統" />
+    <meta property="og:description" content="AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。" />
+    <meta property="og:image" content="https://iili.io/3rSv1St.png" />
+    
+    <!-- iOS Specific -->
+    <link rel="apple-touch-icon" href="https://iili.io/3rSv1St.png" />
+    
+    <!-- Critical CSS -->
+    <style>
+      :root {
+        --vh: 1vh;
+      }
+      
+      html, body, #root {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100vh;
+        height: 100dvh;
+        height: -webkit-fill-available;
+        overflow: hidden;
+        position: fixed;
+        touch-action: manipulation;
+        -webkit-text-size-adjust: 100%;
+        -webkit-font-smoothing: antialiased;
+      }
+      
+      body {
+        padding-top: env(safe-area-inset-top);
+        padding-bottom: env(safe-area-inset-bottom);
+        padding-left: env(safe-area-inset-left);
+        padding-right: env(safe-area-inset-right);
+      }
+      
+      * {
+        -webkit-tap-highlight-color: transparent;
+        -webkit-touch-callout: none;
+        box-sizing: border-box;
+      }
+      
+      input, textarea, [contenteditable] {
+        -webkit-user-select: text;
+        user-select: text;
+      }
+    </style>
     
     <!-- Google Analytics -->
     <script async src="https://www.googletagmanager.com/gtag/js?id=G-W61TVBT34M"></script>
@@ -27,262 +80,48 @@
       gtag('js', new Date());
       gtag('config', 'G-W61TVBT34M');
     </script>
-    
-    <!-- Primary Meta Tags -->
-    <title>銀齡樂 | AI智能防跌評估系統</title>
-    <meta name="title" content="銀齡樂 | AI智能防跌評估系統" />
-    <meta name="description" content="AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。" />
-    <meta name="keywords" content="防跌倒, 長者照顧, 人工智能醫療, 居家安老, 長者安全, 跌倒風險評估, 長者健康科技, 照顧者支援, 銀齡科技, 智能長者照顧, 物理治療" />
-    <meta name="author" content="GOFA" />
-    <meta name="robots" content="index, follow" />
-    <meta name="language" content="Chinese" />
-    <meta name="revisit-after" content="7 days" />
-    
-    <!-- Open Graph / Facebook -->
-    <meta property="og:type" content="website" />
-    <meta property="og:url" content="https://silvercare.gofa.co/" />
-    <meta property="og:title" content="銀齡樂 | AI智能防跌評估系統" />
-    <meta property="og:description" content="AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。" />
-    <meta property="og:image" content="https://iili.io/3rSv1St.png" />
-    <meta property="og:locale" content="zh_HK" />
-
-    <!-- Twitter -->
-    <meta property="twitter:card" content="summary_large_image" />
-    <meta property="twitter:url" content="https://silvercare.gofa.co/" />
-    <meta property="twitter:title" content="銀齡樂 | AI智能防跌評估系統" />
-    <meta property="twitter:description" content="AI智能評估，10分鐘了解跌倒風險！香港首個經臨床實證的長者防跌系統，準確度超過90%。由物理治療師設計，適合長者及照顧者使用。" />
-    <meta property="twitter:image" content="https://iili.io/3rSv1St.png" />
-
-    <!-- Additional SEO -->
-    <meta name="geo.region" content="HK" />
-    <meta name="geo.position" content="22.396428;114.109497" />
-    <meta name="ICBM" content="22.396428, 114.109497" />
-    
-    <!-- iOS Specific -->
-    <link rel="apple-touch-icon" href="https://iili.io/3rSv1St.png" />
-    <link rel="apple-touch-startup-image" href="https://iili.io/3rSv1St.png" />
-    
-    <!-- Structured Data -->
-    <script type="application/ld+json">
-      {
-        "@context": "https://schema.org",
-        "@type": "MobileApplication",
-        "name": "銀齡樂",
-        "applicationCategory": "HealthApplication",
-        "operatingSystem": "iOS, Android",
-        "description": "AI智能防跌評估系統",
-        "url": "https://silvercare.gofa.co",
-        "author": {
-          "@type": "Organization",
-          "name": "GOFA"
-        }
-      }
-    </script>
-
-    <!-- Critical CSS for immediate rendering and mobile optimization -->
-    <style>
-      /* Prevent zoom on input focus and hide address bar */
-      input, select, textarea, button {
-        font-size: 16px !important;
-        -webkit-appearance: none;
-        border-radius: 0;
-      }
-      
-      /* Prevent horizontal scroll and optimize for mobile */
-      html, body {
-        overflow-x: hidden;
-        width: 100%;
-        margin: 0;
-        padding: 0;
-        font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-        -webkit-text-size-adjust: 100%;
-        -webkit-font-smoothing: antialiased;
-        -moz-osx-font-smoothing: grayscale;
-        height: 100vh;
-        height: 100dvh;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        bottom: 0;
-      }
-      
-      /* Safe area handling for iOS notch */
-      body {
-        padding-top: env(safe-area-inset-top);
-        padding-bottom: env(safe-area-inset-bottom);
-        padding-left: env(safe-area-inset-left);
-        padding-right: env(safe-area-inset-right);
-        background-color: #f8fafc;
-      }
-
-      /* Ensure root element takes full height and hides address bar */
-      #root {
-        height: 100vh;
-        height: 100dvh;
-        width: 100%;
-        opacity: 1;
-        position: relative;
-        overflow: hidden;
-      }
-
-      /* Mobile optimization and touch handling */
-      * {
-        -webkit-tap-highlight-color: transparent;
-        -webkit-touch-callout: none;
-        -webkit-user-select: none;
-        user-select: none;
-        box-sizing: border-box;
-      }
-
-      /* Allow text selection for inputs */
-      input, textarea, select, [contenteditable] {
-        -webkit-user-select: text;
-        user-select: text;
-      }
-
-      /* Hide address bar on scroll */
-      body.hide-address-bar {
-        height: 100vh;
-        height: 100dvh;
-        overflow: hidden;
-      }
-
-      /* Immediate fade-in for content */
-      .fade-in {
-        animation: fadeIn 0.3s ease-out;
-      }
-
-      @keyframes fadeIn {
-        from {
-          opacity: 0;
-          transform: translateY(10px);
-        }
-        to {
-          opacity: 1;
-          transform: translateY(0);
-        }
-      }
-
-      /* Loading state prevention */
-      .no-loading {
-        opacity: 1 !important;
-        visibility: visible !important;
-      }
-
-      /* Mobile-specific button styles */
-      button, .btn {
-        min-height: 44px;
-        min-width: 44px;
-        touch-action: manipulation;
-      }
-
-      /* Prevent pull-to-refresh */
-      body {
-        overscroll-behavior: none;
-      }
-
-      /* Hide scrollbars but keep functionality */
-      ::-webkit-scrollbar {
-        display: none;
-      }
-      
-      * {
-        -ms-overflow-style: none;
-        scrollbar-width: none;
-      }
-
-      /* Force full height on mobile browsers */
-      @media screen and (max-width: 768px) {
-        html, body {
-          height: 100vh !important;
-          height: 100dvh !important;
-          overflow: hidden !important;
-          position: fixed !important;
-          top: 0 !important;
-          left: 0 !important;
-          right: 0 !important;
-          bottom: 0 !important;
-        }
-
-        #root {
-          height: 100vh !important;
-          height: 100dvh !important;
-          overflow: hidden !important;
-        }
-
-        /* Prevent pull-to-refresh */
-        body {
-          overscroll-behavior: none !important;
-          -webkit-overflow-scrolling: touch !important;
-        }
-      }
-
-      /* iOS Safari specific fixes */
-      @supports (-webkit-touch-callout: none) {
-        html, body {
-          height: -webkit-fill-available;
-        }
-
-        #root {
-          height: -webkit-fill-available;
-        }
-      }
-    </style>
   </head>
-  <body class="no-loading">
+  
+  <body>
     <div id="root"></div>
     <script type="module" src="/src/main.tsx"></script>
     
-    <!-- Address bar hiding script - CRITICAL -->
+    <!-- Enhanced Mobile Safari Script -->
     <script>
-      // Aggressive address bar hiding for mobile
       (function() {
-        let isHiding = false;
-        
-        function hideAddressBar() {
-          if (isHiding) return;
-          isHiding = true;
-          
-          // Multiple strategies for hiding address bar
-          setTimeout(() => {
-            window.scrollTo(0, 1);
-            isHiding = false;
-          }, 0);
-          
-          setTimeout(() => {
-            window.scrollTo(0, 0);
-          }, 100);
-          
-          // Set viewport height to hide address bar
+        // Set initial viewport height
+        function setViewportHeight() {
           const vh = window.innerHeight * 0.01;
           document.documentElement.style.setProperty('--vh', `${vh}px`);
-          
-          // Force body height
-          document.body.style.height = '100vh';
-          document.body.style.height = '100dvh';
-          
-          // Add class to prevent scrolling
-          document.body.classList.add('hide-address-bar');
+          document.body.style.height = `${window.innerHeight}px`;
         }
         
-        // Hide immediately
+        // Hide address bar
+        function hideAddressBar() {
+          window.scrollTo(0, 1);
+          setTimeout(() => {
+            if (window.pageYOffset === 0) {
+              window.scrollTo(0, 0);
+            }
+          }, 100);
+        }
+        
+        // Initialize
+        setViewportHeight();
         hideAddressBar();
         
-        // Hide on various events
-        window.addEventListener('load', hideAddressBar);
-        window.addEventListener('resize', hideAddressBar);
+        // Event listeners
+        window.addEventListener('resize', setViewportHeight);
         window.addEventListener('orientationchange', () => {
-          setTimeout(hideAddressBar, 500);
+          setTimeout(setViewportHeight, 500);
         });
+        window.addEventListener('scroll', hideAddressBar);
         
-        // Hide on touch events
-        document.addEventListener('touchstart', hideAddressBar, { once: true });
-        
-        // Continuous monitoring for mobile browsers
-        if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
+        // Mobile detection for continuous monitoring
+        if (/iPhone|iPad|iPod/i.test(navigator.userAgent)) {
           setInterval(() => {
-            if (window.innerHeight !== window.screen.height) {
+            if (window.innerHeight !== window.visualViewport.height) {
+              setViewportHeight();
               hideAddressBar();
             }
           }, 1000);
