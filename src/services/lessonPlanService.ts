@@ -33,7 +33,13 @@ export class LessonPlanService {
   static async getLessonDetails(lessonId: string): Promise<LessonData | null> {
     try {
       const url = `${API_BASE_URL}/lessons/${lessonId}?clientId=${CLIENT_ID}`;
+      console.log(`Fetching lesson details for: ${lessonId}`);
       const result = await this.makeRequest(url);
+      
+      if (result) {
+        console.log(`Successfully fetched lesson: ${result.title?.zh || result.title?.en || lessonId}`);
+      }
+      
       return result || null;
     } catch (error) {
       console.error('Failed to fetch lesson details:', error);
@@ -83,6 +89,7 @@ export class LessonPlanService {
           
           // Add the detailed lesson data to the plan
           result.lessonsData = lessonsData;
+          console.log(`Fetched ${lessonsData.length} lesson details for plan ${lessonPlanId}`);
         }
         
         return result;
@@ -198,6 +205,84 @@ export class LessonPlanService {
               zh: "https://example.com/subtitle_zh.vtt"
             },
             videoId: "video1",
+            clientId: "gofa"
+          },
+          {
+            groupByTypes: ["核心訓練"],
+            modifyDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            description: {
+              en: "Core strengthening exercises for better stability",
+              zh: "核心強化運動，提升身體穩定性"
+            },
+            isIndividual: true,
+            videoURLs: ["https://example.com/video2.mp4"],
+            title: {
+              en: "Core Strengthening",
+              zh: "核心強化訓練"
+            },
+            groupByGoals: ["核心強化", "穩定性提升"],
+            duration: 12,
+            groupByEquipments: ["椅子"],
+            groupByIntensity: "低",
+            imageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=400&h=200&fit=crop",
+            modifiedBy: "system",
+            uniqueID: "lesson2",
+            algorithm: "core_training_v1",
+            groupByStyles: ["坐式訓練"],
+            batch: 1,
+            sync: true,
+            thumbImageUrl: "https://images.unsplash.com/photo-1544367567-0f2fcb009e0b?w=200&h=200&fit=crop",
+            intensity: "2",
+            createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            groupByMuscles: ["核心肌群", "腹部肌群"],
+            createdBy: "system",
+            groupByTrainers: ["AI教練"],
+            MET: 2.0,
+            status: "active",
+            subtitleUrl: {
+              en: "https://example.com/subtitle_en.vtt",
+              zh: "https://example.com/subtitle_zh.vtt"
+            },
+            videoId: "video2",
+            clientId: "gofa"
+          },
+          {
+            groupByTypes: ["柔韌性訓練"],
+            modifyDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            description: {
+              en: "Gentle stretching exercises to improve flexibility",
+              zh: "溫和伸展運動，改善身體柔韌性"
+            },
+            isIndividual: true,
+            videoURLs: ["https://example.com/video3.mp4"],
+            title: {
+              en: "Gentle Stretching",
+              zh: "溫和伸展運動"
+            },
+            groupByGoals: ["柔韌性改善", "放鬆"],
+            duration: 10,
+            groupByEquipments: ["椅子"],
+            groupByIntensity: "極低",
+            imageUrl: "https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=400&h=200&fit=crop",
+            modifiedBy: "system",
+            uniqueID: "lesson3",
+            algorithm: "flexibility_training_v1",
+            groupByStyles: ["坐式訓練"],
+            batch: 1,
+            sync: true,
+            thumbImageUrl: "https://images.unsplash.com/photo-1506629905607-c28b47e8d3b3?w=200&h=200&fit=crop",
+            intensity: "1",
+            createDatetime: { _nanoseconds: 0, _seconds: Math.floor(Date.now() / 1000) },
+            groupByMuscles: ["全身肌群"],
+            createdBy: "system",
+            groupByTrainers: ["AI教練"],
+            MET: 1.5,
+            status: "active",
+            subtitleUrl: {
+              en: "https://example.com/subtitle_en.vtt",
+              zh: "https://example.com/subtitle_zh.vtt"
+            },
+            videoId: "video3",
             clientId: "gofa"
           }
         ],
