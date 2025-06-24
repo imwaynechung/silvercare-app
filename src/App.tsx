@@ -1,5 +1,6 @@
 import React, { useEffect, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { LanguageProvider } from './contexts/LanguageContext';
 import ChatbotAssessment from './components/ChatbotAssessment';
 import ChatbotAssessmentZh from './components/zh/ChatbotAssessmentZh';
 import ReportZh from './components/zh/ReportZh';
@@ -65,18 +66,20 @@ const LoadingFallback: React.FC = () => (
 function AppContent() {
   return (
     <ErrorBoundary>
-      <Suspense fallback={<LoadingFallback />}>
-        <Routes>
-          <Route path="/" element={<MobileLayout />} />
-          {/* Assessment routes */}
-          <Route path="/chatbot" element={<ChatbotAssessment onComplete={(state) => console.log('Assessment completed:', state)} />} />
-          <Route path="/chatbot-zh" element={<ChatbotAssessmentZh />} />
-          {/* Report routes */}
-          <Route path="/report-zh/:reportId" element={<ReportZh />} />
-          {/* Catch all route - redirect to dashboard */}
-          <Route path="*" element={<Navigate to="/" replace />} />
-        </Routes>
-      </Suspense>
+      <LanguageProvider>
+        <Suspense fallback={<LoadingFallback />}>
+          <Routes>
+            <Route path="/" element={<MobileLayout />} />
+            {/* Assessment routes */}
+            <Route path="/chatbot" element={<ChatbotAssessment onComplete={(state) => console.log('Assessment completed:', state)} />} />
+            <Route path="/chatbot-zh" element={<ChatbotAssessmentZh />} />
+            {/* Report routes */}
+            <Route path="/report-zh/:reportId" element={<ReportZh />} />
+            {/* Catch all route - redirect to dashboard */}
+            <Route path="*" element={<Navigate to="/" replace />} />
+          </Routes>
+        </Suspense>
+      </LanguageProvider>
     </ErrorBoundary>
   );
 }
