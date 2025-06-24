@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
+import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock, AlertTriangle, Shield } from 'lucide-react';
 import { LessonPlanService } from '../services/lessonPlanService';
 import { LessonPlan } from '../types/lessonPlan';
 
@@ -7,6 +7,12 @@ const ExerciseProgramScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
   const [isHighFrailty] = useState(true); // Assume user is high frailty
+  const [userRiskProfile] = useState({
+    balanceRisk: 'high', // high, medium, low
+    frailtyLevel: 'high', // high, medium, low
+    fallRisk: 85, // percentage
+    riskFactors: ['平衡問題', '肌力不足', '曾經跌倒']
+  });
   const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
   const [todaysLesson, setTodaysLesson] = useState<{
     title: string;
@@ -282,6 +288,92 @@ const ExerciseProgramScreen: React.FC = () => {
         <div className="px-4 py-6 pb-8">
           {activeTab === 'today' ? (
             <>
+              {/* Risk Assessment Overview */}
+              <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">您的健康狀況</h2>
+                
+                <div className="grid grid-cols-2 gap-4 mb-4">
+                  {/* Balance Risk */}
+                  <div className={`p-3 rounded-lg ${
+                    userRiskProfile.balanceRisk === 'high' ? 'bg-red-50 border border-red-200' :
+                    userRiskProfile.balanceRisk === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
+                    'bg-green-50 border border-green-200'
+                  }`}>
+                    <div className="flex items-center mb-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
+                        userRiskProfile.balanceRisk === 'high' ? 'bg-red-100' :
+                        userRiskProfile.balanceRisk === 'medium' ? 'bg-yellow-100' :
+                        'bg-green-100'
+                      }`}>
+                        <AlertTriangle className={`w-4 h-4 ${
+                          userRiskProfile.balanceRisk === 'high' ? 'text-red-600' :
+                          userRiskProfile.balanceRisk === 'medium' ? 'text-yellow-600' :
+                          'text-green-600'
+                        }`} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">平衡風險</p>
+                        <p className={`text-xs ${
+                          userRiskProfile.balanceRisk === 'high' ? 'text-red-600' :
+                          userRiskProfile.balanceRisk === 'medium' ? 'text-yellow-600' :
+                          'text-green-600'
+                        }`}>
+                          {userRiskProfile.balanceRisk === 'high' ? '需要注意' :
+                           userRiskProfile.balanceRisk === 'medium' ? '中等' : '良好'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Frailty Level */}
+                  <div className={`p-3 rounded-lg ${
+                    userRiskProfile.frailtyLevel === 'high' ? 'bg-orange-50 border border-orange-200' :
+                    userRiskProfile.frailtyLevel === 'medium' ? 'bg-yellow-50 border border-yellow-200' :
+                    'bg-green-50 border border-green-200'
+                  }`}>
+                    <div className="flex items-center mb-2">
+                      <div className={`w-8 h-8 rounded-full flex items-center justify-center mr-2 ${
+                        userRiskProfile.frailtyLevel === 'high' ? 'bg-orange-100' :
+                        userRiskProfile.frailtyLevel === 'medium' ? 'bg-yellow-100' :
+                        'bg-green-100'
+                      }`}>
+                        <Shield className={`w-4 h-4 ${
+                          userRiskProfile.frailtyLevel === 'high' ? 'text-orange-600' :
+                          userRiskProfile.frailtyLevel === 'medium' ? 'text-yellow-600' :
+                          'text-green-600'
+                        }`} />
+                      </div>
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">體力狀況</p>
+                        <p className={`text-xs ${
+                          userRiskProfile.frailtyLevel === 'high' ? 'text-orange-600' :
+                          userRiskProfile.frailtyLevel === 'medium' ? 'text-yellow-600' :
+                          'text-green-600'
+                        }`}>
+                          {userRiskProfile.frailtyLevel === 'high' ? '需要加強' :
+                           userRiskProfile.frailtyLevel === 'medium' ? '中等' : '良好'}
+                        </p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Risk Factors */}
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-blue-900 mb-2">為您推薦的運動重點：</p>
+                  <div className="flex flex-wrap gap-2">
+                    {userRiskProfile.riskFactors.map((factor, index) => (
+                      <span 
+                        key={index}
+                        className="bg-blue-100 text-blue-800 px-2 py-1 rounded-full text-xs"
+                      >
+                        改善{factor}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+              </div>
+
               {/* Today's Exercise */}
               <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
                 {todaysLesson?.imageUrl && (
@@ -421,6 +513,68 @@ const ExerciseProgramScreen: React.FC = () => {
             </>
           ) : (
             <>
+              {/* Risk Assessment Overview for Programs Tab */}
+              <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">您的健康評估</h2>
+                
+                <div className="grid grid-cols-1 gap-4 mb-4">
+                  {/* Overall Risk Score */}
+                  <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+                    <div className="flex items-center justify-between mb-3">
+                      <div className="flex items-center">
+                        <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                          <AlertTriangle className="w-5 h-5 text-red-600" />
+                        </div>
+                        <div>
+                          <p className="font-medium text-gray-900">跌倒風險評估</p>
+                          <p className="text-sm text-red-600">需要特別注意</p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <p className="text-2xl font-bold text-red-600">{userRiskProfile.fallRisk}%</p>
+                        <p className="text-xs text-gray-600">風險指數</p>
+                      </div>
+                    </div>
+                    <div className="w-full bg-red-200 rounded-full h-2">
+                      <div 
+                        className="bg-red-600 h-2 rounded-full" 
+                        style={{ width: `${userRiskProfile.fallRisk}%` }}
+                      ></div>
+                    </div>
+                  </div>
+
+                  {/* Risk Factors Summary */}
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
+                      <div className="flex items-center">
+                        <Shield className="w-4 h-4 text-orange-600 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">體力狀況</p>
+                          <p className="text-xs text-orange-600">需要加強</p>
+                        </div>
+                      </div>
+                    </div>
+                    <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
+                      <div className="flex items-center">
+                        <AlertTriangle className="w-4 h-4 text-red-600 mr-2" />
+                        <div>
+                          <p className="text-sm font-medium text-gray-900">平衡能力</p>
+                          <p className="text-xs text-red-600">需要改善</p>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Recommendation */}
+                <div className="bg-blue-50 p-3 rounded-lg">
+                  <p className="text-sm font-medium text-blue-900 mb-1">專為您設計的運動計劃</p>
+                  <p className="text-xs text-blue-700">
+                    根據您的評估結果，我們推薦從安全的坐式運動開始，逐步改善平衡和體力
+                  </p>
+                </div>
+              </div>
+
               {/* Exercise Programs Overview */}
               <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-6 text-white">
                 <div className="flex items-center mb-4">
