@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { Brain, Clock, TrendingUp, Play, BarChart3, ArrowLeft, FileText, Utensils, Dumbbell, Target } from 'lucide-react';
+import { Brain, Clock, TrendingUp, Play, BarChart3, ArrowLeft, FileText, Utensils, Dumbbell, Target, AlertTriangle, Shield } from 'lucide-react';
 import ChatbotAssessment from '../components/ChatbotAssessment';
 import ExerciseProgramScreen from './ExerciseProgramScreen';
 
@@ -7,6 +7,12 @@ const AssessmentScreen: React.FC = () => {
   const [showAssessment, setShowAssessment] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
   const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'diet'>('overview');
+  const [userRiskProfile] = useState({
+    balanceRisk: 'high', // high, medium, low
+    frailtyLevel: 'high', // high, medium, low
+    fallRisk: 85, // percentage
+    riskFactors: ['平衡問題', '肌力不足', '曾經跌倒']
+  });
 
   if (showAssessment) {
     return <ChatbotAssessment onComplete={() => setShowAssessment(false)} />;
@@ -97,6 +103,68 @@ const AssessmentScreen: React.FC = () => {
       case 'overview':
         return (
           <>
+            {/* Health Assessment Overview */}
+            <div className="mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">您的健康評估</h2>
+              
+              <div className="grid grid-cols-1 gap-4 mb-4">
+                {/* Overall Risk Score */}
+                <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
+                        <AlertTriangle className="w-5 h-5 text-red-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">跌倒風險評估</p>
+                        <p className="text-sm text-red-600">需要特別注意</p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <p className="text-2xl font-bold text-red-600">{userRiskProfile.fallRisk}%</p>
+                      <p className="text-xs text-gray-600">風險指數</p>
+                    </div>
+                  </div>
+                  <div className="w-full bg-red-200 rounded-full h-2">
+                    <div 
+                      className="bg-red-600 h-2 rounded-full" 
+                      style={{ width: `${userRiskProfile.fallRisk}%` }}
+                    ></div>
+                  </div>
+                </div>
+
+                {/* Risk Factors Summary */}
+                <div className="grid grid-cols-2 gap-3">
+                  <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
+                    <div className="flex items-center">
+                      <Shield className="w-4 h-4 text-orange-600 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">體力狀況</p>
+                        <p className="text-xs text-orange-600">需要加強</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
+                    <div className="flex items-center">
+                      <AlertTriangle className="w-4 h-4 text-red-600 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">平衡能力</p>
+                        <p className="text-xs text-red-600">需要改善</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Recommendation */}
+              <div className="bg-blue-50 p-4 rounded-lg mb-6">
+                <h3 className="text-lg font-semibold text-blue-900 mb-2">專為您設計的運動計劃</h3>
+                <p className="text-blue-700">
+                  根據您的評估結果，我們推薦從安全的坐式運動開始，逐步改善平衡和體力
+                </p>
+              </div>
+            </div>
+
             {/* Current Progress */}
             <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
               <div className="flex items-center justify-between mb-4">
