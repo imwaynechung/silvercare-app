@@ -18,29 +18,26 @@ window.addEventListener('unhandledrejection', (event) => {
 // Aggressive mobile address bar hiding functionality
 function hideAddressBar() {
   // Force scroll to hide address bar on mobile
-  if (window.innerHeight < window.outerHeight) {
-    setTimeout(() => {
-      window.scrollTo(0, 1);
-    }, 0);
-    
-    setTimeout(() => {
-      window.scrollTo(0, 0);
-    }, 100);
-  }
+  setTimeout(() => {
+    window.scrollTo(0, 1);
+  }, 0);
+  
+  setTimeout(() => {
+    window.scrollTo(0, 0);
+  }, 50);
   
   // Set viewport height to hide address bar
   const vh = window.innerHeight * 0.01;
   document.documentElement.style.setProperty('--vh', `${vh}px`);
   
   // Force body dimensions
-  document.body.style.height = '100vh';
-  document.body.style.height = '100dvh';
+  document.body.style.height = '100%';
+  document.body.style.minHeight = '100vh';
+  document.body.style.minHeight = '100dvh';
+  document.body.style.minHeight = '-webkit-fill-available';
   document.body.style.overflow = 'hidden';
   document.body.style.position = 'fixed';
   document.body.style.width = '100%';
-  
-  // Add class to body to prevent scrolling
-  document.body.classList.add('hide-address-bar');
 }
 
 // Initialize mobile optimizations
@@ -51,7 +48,7 @@ function initMobileOptimizations() {
   // Prevent zoom on double tap
   let lastTouchEnd = 0;
   document.addEventListener('touchend', (event) => {
-    const now = (new Date()).getTime();
+    const now = Date.now();
     if (now - lastTouchEnd <= 300) {
       event.preventDefault();
     }
@@ -59,13 +56,13 @@ function initMobileOptimizations() {
   }, false);
   
   // Prevent pull-to-refresh and zoom
-  document.addEventListener('touchstart', (event) => {
+  document.addEventListener('touchstart', (event: TouchEvent) => {
     if (event.touches.length > 1) {
       event.preventDefault();
     }
   }, { passive: false });
   
-  document.addEventListener('touchmove', (event) => {
+  document.addEventListener('touchmove', (event: TouchEvent) => {
     if (event.scale !== 1) {
       event.preventDefault();
     }
@@ -74,19 +71,25 @@ function initMobileOptimizations() {
   // Handle orientation changes aggressively
   window.addEventListener('orientationchange', () => {
     setTimeout(() => {
-      hideAddressBar();
-      // Force a reflow to ensure proper sizing
-      document.body.style.height = '100vh';
-      document.body.style.height = '100dvh';
+      window.scrollTo(0, 1);
+      
+      // Update viewport height
+      const vh = window.innerHeight * 0.01;
+      document.documentElement.style.setProperty('--vh', `${vh}px`);
     }, 500);
     
-    // Additional attempt after longer delay
+    // Additional attempts after longer delays
     setTimeout(hideAddressBar, 1000);
   });
   
   // Handle resize events
   window.addEventListener('resize', () => {
     hideAddressBar();
+  });
+
+  // Handle scroll events to hide toolbar
+  window.addEventListener('scroll', () => {
+    setTimeout(hideAddressBar, 100);
   });
   
   // Prevent context menu on long press
@@ -96,10 +99,10 @@ function initMobileOptimizations() {
   
   // Continuous monitoring for mobile browsers
   if (/iPhone|iPad|iPod|Android/i.test(navigator.userAgent)) {
-    setInterval(() => {
-      if (window.innerHeight !== window.screen.height) {
-        hideAddressBar();
-      }
+    const isIOS = /iPhone|iPad|iPod/i.test(navigator.userAgent);
+    const isSafari = /Safari/i.test(navigator.userAgent) && !/Chrome/i.test(navigator.userAgent);
+    if (isIOS && isSafari) {
+      setInterval(hideAddressBar, 2000);
     }, 2000);
   }
 }
@@ -171,7 +174,7 @@ try {
     // Ensure proper viewport height
     const updateVH = () => {
       const vh = window.innerHeight * 0.01;
-      document.documentElement.style.setProperty('--vh', `${vh}px`);
+      document.documentElement.style.setProperty('--vh', `${Math.min(window.innerHeight, window.screen.height) * 0.01}px`);
       
       // Force body dimensions again
       document.body.style.height = '100vh';
@@ -190,7 +193,7 @@ try {
   }, 100);
 
   // Final aggressive attempt after everything loads
-  setTimeout(() => {
+  setTimeout(function() {
     hideAddressBar();
   }, 2000);
 
