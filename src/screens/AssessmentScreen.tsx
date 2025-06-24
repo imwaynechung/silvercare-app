@@ -9,9 +9,10 @@ const AssessmentScreen: React.FC = () => {
   const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'diet'>('overview');
   const [userRiskProfile] = useState({
     balanceRisk: 'high', // high, medium, low
-    frailtyLevel: 'high', // high, medium, low
+    frailtyLevel: 'high', // robust, pre-frail, frail
     fallRisk: 85, // percentage
-    riskFactors: ['平衡問題', '肌力不足', '曾經跌倒']
+    riskFactors: ['平衡問題', '肌力不足', '曾經跌倒'],
+    frailtyStatus: 'frail' // robust, pre-frail, frail
   });
 
   if (showAssessment) {
@@ -133,8 +134,43 @@ const AssessmentScreen: React.FC = () => {
                   </div>
                 </div>
 
+                {/* Frailty Level Assessment */}
+                <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
+                  <div className="flex items-center justify-between mb-3">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
+                        <Shield className="w-5 h-5 text-orange-600" />
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">體弱程度評估</p>
+                        <p className="text-sm text-orange-600">
+                          {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
+                          {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
+                          {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
+                        </p>
+                      </div>
+                    </div>
+                    <div className="text-right">
+                      <div className={`px-3 py-1 rounded-full text-sm font-medium ${
+                        userRiskProfile.frailtyStatus === 'robust' ? 'bg-green-100 text-green-800' :
+                        userRiskProfile.frailtyStatus === 'pre-frail' ? 'bg-yellow-100 text-yellow-800' :
+                        'bg-red-100 text-red-800'
+                      }`}>
+                        {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
+                        {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
+                        {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
+                      </div>
+                    </div>
+                  </div>
+                  <div className="text-sm text-gray-700">
+                    {userRiskProfile.frailtyStatus === 'robust' && '您的體力狀況良好，繼續保持現有的活動水平。'}
+                    {userRiskProfile.frailtyStatus === 'pre-frail' && '您處於前期體弱狀態，建議增加運動和營養攝取。'}
+                    {userRiskProfile.frailtyStatus === 'frail' && '您目前處於體弱狀態，需要特別注意安全並進行適當的復康訓練。'}
+                  </div>
+                </div>
+
                 {/* Risk Factors Summary */}
-                <div className="grid grid-cols-2 gap-3">
+                <div className="grid grid-cols-3 gap-3">
                   <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
                     <div className="flex items-center">
                       <Shield className="w-4 h-4 text-orange-600 mr-2" />
@@ -150,6 +186,19 @@ const AssessmentScreen: React.FC = () => {
                       <div>
                         <p className="text-sm font-medium text-gray-900">平衡能力</p>
                         <p className="text-xs text-red-600">需要改善</p>
+                      </div>
+                    </div>
+                  </div>
+                  <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
+                    <div className="flex items-center">
+                      <AlertTriangle className="w-4 h-4 text-purple-600 mr-2" />
+                      <div>
+                        <p className="text-sm font-medium text-gray-900">體弱程度</p>
+                        <p className="text-xs text-purple-600">
+                          {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
+                          {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
+                          {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
+                        </p>
                       </div>
                     </div>
                   </div>
