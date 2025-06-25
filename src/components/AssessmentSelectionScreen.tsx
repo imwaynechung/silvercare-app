@@ -67,7 +67,7 @@ const AssessmentSelectionScreen: React.FC = () => {
           >
             <div className="relative">
               <img 
-                src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop" 
+                src="https://dam.northwell.edu/m/4d3fe0e06d78c830/Drupal-NEWS_falls-older-adult-cane.jpg" 
                 alt="跌倒風險評估" 
                 className="w-full h-32 object-cover"
               />
