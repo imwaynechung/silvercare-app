@@ -24,6 +24,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
       document.body.style.height = `${window.innerHeight}px`;
     };
 
+    const handleScroll = () => {
       if (tab === 'self-assessment') {
         // Navigate to assessment selection for 自我評估
         navigate('/assessment-selection');
