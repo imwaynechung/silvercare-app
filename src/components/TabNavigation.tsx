@@ -11,7 +11,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     { id: 'companion', label: 'AI助理', icon: MessageCircle },
     { id: 'assessment', label: '復康計劃', icon: Brain },
     { id: 'dashboard', label: '首頁', icon: Home },
-    { id: 'program', label: '自我評估', icon: Dumbbell },
+    { id: 'self-assessment', label: '自我評估', icon: Dumbbell },
     { id: 'community', label: '社區', icon: Users },
   ];
 
@@ -24,9 +24,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
       document.body.style.height = `${window.innerHeight}px`;
     };
 
-    // Handle toolbar hiding/showing
-    const handleScroll = () => {
-      if (window.scrollY === 0) {
+      if (tab === 'self-assessment') {
         // Navigate to assessment selection for 自我評估
         navigate('/assessment-selection');
         window.scrollTo(0, 1);
