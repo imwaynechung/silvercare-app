@@ -28,8 +28,7 @@ const AssessmentSelectionScreen: React.FC = () => {
         language: 'zh'
       });
     }
-    // For now, show coming soon alert
-    alert('認知評估功能即將推出，敬請期待！');
+    navigate('/cognitive-assessment');
   };
 
   return (
@@ -134,7 +133,7 @@ const AssessmentSelectionScreen: React.FC = () => {
                 <p className="text-sm opacity-90">記憶力 + 專注力測試</p>
               </div>
               <div className="absolute top-3 right-3 bg-orange-600 text-white px-3 py-1 rounded-full text-sm font-medium">
-                即將推出
+                可用
               </div>
             </div>
             <div className="p-4">
@@ -163,11 +162,11 @@ const AssessmentSelectionScreen: React.FC = () => {
 
               <div className="flex items-center justify-between">
                 <div className="flex items-center text-sm text-gray-500">
-                  <span className="w-2 h-2 bg-orange-500 rounded-full mr-2"></span>
-                  <span>開發中</span>
+                  <span className="w-2 h-2 bg-green-500 rounded-full mr-2"></span>
+                  <span>立即可用</span>
                 </div>
-                <button className="bg-gray-300 text-gray-600 px-4 py-2 rounded-lg text-sm font-medium cursor-not-allowed">
-                  即將推出
+                <button className="bg-purple-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-purple-700 transition-colors">
+                  開始評估
                 </button>
               </div>
             </div>
