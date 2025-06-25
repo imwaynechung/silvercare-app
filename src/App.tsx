@@ -5,6 +5,7 @@ import ChatbotAssessment from './components/ChatbotAssessment';
 import ChatbotAssessmentZh from './components/zh/ChatbotAssessmentZh';
 import ReportZh from './components/zh/ReportZh';
 import MobileLayout from './components/MobileLayout';
+import AssessmentSelectionScreen from './screens/AssessmentSelectionScreen';
 
 class ErrorBoundary extends React.Component<
   { children: React.ReactNode },
@@ -102,6 +103,7 @@ function AppContent() {
             element={<ChatbotAssessment onComplete={(state) => console.log('Assessment completed:', state)} />} 
           />
           <Route path="/chatbot-zh" element={<ChatbotAssessmentZh />} />
+          <Route path="/assessment-selection" element={<AssessmentSelectionScreen />} />
           <Route path="/report-zh/:reportId" element={<ReportZh />} />
           <Route path="*" element={<Navigate to="/" replace />} />
         </Routes>
