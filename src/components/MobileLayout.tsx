@@ -81,9 +81,9 @@ const MobileLayout: React.FC = () => {
 
   const handleTabChange = (tab: string) => {
     try {
-      if (tab === 'program') {
+      if (tab === 'self-assessment') {
         // Navigate to Chinese chatbot for 自我評估
-        navigate('/chatbot-zh');
+        navigate('/assessment-selection');
         return;
       }
       setActiveTab(tab);
