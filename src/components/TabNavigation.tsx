@@ -25,8 +25,8 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     };
 
     // Handle toolbar hiding/showing
-    const handleScroll = () => {
-      if (window.scrollY <= 0) {
+        // Navigate to assessment selection for 自我評估
+        navigate('/assessment-selection');
         window.scrollTo(0, 1);
       }
     };

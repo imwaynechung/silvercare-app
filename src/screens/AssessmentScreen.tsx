@@ -249,10 +249,10 @@ const AssessmentScreen: React.FC = () => {
                 <p className="text-gray-600 mb-4">根據您的評估結果制定的專屬復康方案，包含運動訓練和營養指導</p>
                 <div className="flex space-x-3">
                   <button 
-                    onClick={() => window.location.href = '/chatbot-zh'}
+                    onClick={() => navigate('/assessment-selection')}
                     className="w-full bg-blue-900 text-white py-4 rounded-xl font-medium text-lg"
                   >
-                    生成計劃
+                    開始評估
                   </button>
                 </div>
               </div>
