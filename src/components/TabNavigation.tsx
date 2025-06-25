@@ -25,9 +25,7 @@ const TabNavigation: React.FC<TabNavigationProps> = ({ activeTab, onTabChange })
     };
 
     const handleScroll = () => {
-      if (tab === 'self-assessment') {
-        // Navigate to assessment selection for 自我評估
-        navigate('/assessment-selection');
+      if (window.scrollY <= 0) {
         window.scrollTo(0, 1);
       }
     };
