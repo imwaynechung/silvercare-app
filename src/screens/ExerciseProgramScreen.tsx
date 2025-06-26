@@ -1,6 +1,3 @@
-Here's the fixed version with the missing closing brackets:
-
-```typescript
 import React, { useState, useEffect } from 'react';
 import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
 import { LessonPlanService } from '../services/lessonPlanService';
@@ -593,3 +590,43 @@ const ExerciseProgramScreen: React.FC = () => {
 
               {/* Expected Improvements */}
               <div className="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">預期改善效果</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">平衡能力提升</p>
+                      <p className="text-sm text-gray-600">減少跌倒風險，增強日常活動信心</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                      <Target className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">肌力增強</p>
+                      <p className="text-sm text-gray-600">改善日常生活功能，提升生活品質</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                      <Star className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">心情愉悅</p>
+                      <p className="text-sm text-gray-600">規律運動有助於改善心理健康</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
+export default ExerciseProgramScreen;
