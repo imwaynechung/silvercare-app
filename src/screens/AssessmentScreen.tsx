@@ -3,6 +3,43 @@ import { Brain, Clock, TrendingUp, Play, BarChart3, ArrowLeft, FileText, Utensil
 import ChatbotAssessment from '../components/ChatbotAssessment';
 import ExerciseProgramScreen from './ExerciseProgramScreen';
 
+// Mock workout plans data
+const workoutPlans = [
+  {
+    id: 1,
+    name: '基礎平衡訓練',
+    description: '改善平衡能力的基礎訓練課程',
+    sessions: [
+      { id: 1, name: '坐式平衡練習', status: 'completed', score: 85, grade: 'B+' },
+      { id: 2, name: '站立平衡練習', status: 'completed', score: 78, grade: 'B' },
+      { id: 3, name: '動態平衡練習', status: 'current', score: 0, grade: '' },
+      { id: 4, name: '進階平衡挑戰', status: 'locked', score: 0, grade: '' }
+    ]
+  },
+  {
+    id: 2,
+    name: '肌力強化訓練',
+    description: '針對核心肌群和下肢的強化訓練',
+    sessions: [
+      { id: 1, name: '上肢肌力訓練', status: 'completed', score: 92, grade: 'A-' },
+      { id: 2, name: '下肢肌力訓練', status: 'completed', score: 88, grade: 'B+' },
+      { id: 3, name: '核心穩定訓練', status: 'locked', score: 0, grade: '' },
+      { id: 4, name: '全身協調訓練', status: 'locked', score: 0, grade: '' }
+    ]
+  },
+  {
+    id: 3,
+    name: '柔韌性提升',
+    description: '增加關節活動度和肌肉柔韌性',
+    sessions: [
+      { id: 1, name: '頸部伸展', status: 'completed', score: 90, grade: 'A-' },
+      { id: 2, name: '肩膀放鬆', status: 'locked', score: 0, grade: '' },
+      { id: 3, name: '腰背伸展', status: 'locked', score: 0, grade: '' },
+      { id: 4, name: '腿部拉伸', status: 'locked', score: 0, grade: '' }
+    ]
+  }
+];
+
 const AssessmentScreen: React.FC = () => {
   const [showAssessment, setShowAssessment] = useState(false);
   const [showDetails, setShowDetails] = useState(false);
