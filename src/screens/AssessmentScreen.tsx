@@ -1,410 +1,331 @@
-import React, { useState } from 'react';
-import { Brain, Clock, TrendingUp, Play, BarChart3, ArrowLeft, FileText, Utensils, Dumbbell, Target, AlertTriangle, Shield } from 'lucide-react';
-import ChatbotAssessment from '../components/ChatbotAssessment';
-import ExerciseProgramScreen from './ExerciseProgramScreen';
+import React, { useState, useEffect } from 'react';
+import { Play, Clock, CheckCircle, Star, Target, Calendar, ArrowLeft, Award, TrendingUp, Lock } from 'lucide-react';
+import { LessonPlanService } from '../services/lessonPlanService';
+import { LessonPlan } from '../types/lessonPlan';
 
-const AssessmentScreen: React.FC = () => {
-  const [showAssessment, setShowAssessment] = useState(false);
-  const [showDetails, setShowDetails] = useState(false);
-  const [activeTab, setActiveTab] = useState<'overview' | 'workout' | 'diet'>('overview');
-  const [userRiskProfile] = useState({
-    balanceRisk: 'high', // high, medium, low
-    frailtyLevel: 'high', // robust, pre-frail, frail
-    fallRisk: 85, // percentage
-    riskFactors: ['平衡問題', '肌力不足', '曾經跌倒'],
-    frailtyStatus: 'frail' // robust, pre-frail, frail
-  });
+const ExerciseProgramScreen: React.FC = () => {
+  const [activeTab, setActiveTab] = useState<'today' | 'programs' | 'records'>('today');
+  const [showProgramDetail, setShowProgramDetail] = useState(false);
+  const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
+  const [todaysLesson, setTodaysLesson] = useState<{
+    title: string;
+    description: string;
+    duration: number;
+    planName: string;
+    stage: string;
+    lessonNumber: number;
+    imageUrl: string;
+  } | null>(null);
+  const [levelPlans, setLevelPlans] = useState<{
+    level1: LessonPlan | null;
+    level2: LessonPlan | null;
+    level3: LessonPlan | null;
+  }>({ level1: null, level2: null, level3: null });
+  const [loading, setLoading] = useState(false);
 
-  if (showAssessment) {
-    return <ChatbotAssessment onComplete={() => setShowAssessment(false)} />;
-  }
+  // Mock workout plans data for training records
+  const workoutPlans = [
+    {
+      id: 1,
+      name: '基礎平衡訓練',
+      description: '改善平衡能力的基礎訓練課程',
+      sessions: [
+        { id: 1, name: '坐式平衡練習', status: 'completed', score: 85, grade: 'B' },
+        { id: 2, name: '站立平衡練習', status: 'completed', score: 78, grade: 'B' },
+        { id: 3, name: '動態平衡練習', status: 'current', score: 0, grade: '' },
+        { id: 4, name: '進階平衡挑戰', status: 'locked', score: 0, grade: '' }
+      ]
+    },
+    {
+      id: 2,
+      name: '肌力強化訓練',
+      description: '針對核心肌群和下肢的強化訓練',
+      sessions: [
+        { id: 1, name: '上肢肌力訓練', status: 'completed', score: 92, grade: 'A' },
+        { id: 2, name: '下肢肌力訓練', status: 'completed', score: 88, grade: 'B' },
+        { id: 3, name: '核心穩定訓練', status: 'locked', score: 0, grade: '' },
+        { id: 4, name: '全身協調訓練', status: 'locked', score: 0, grade: '' }
+      ]
+    },
+    {
+      id: 3,
+      name: '柔韌性提升',
+      description: '增加關節活動度和肌肉柔韌性',
+      sessions: [
+        { id: 1, name: '頸部伸展', status: 'completed', score: 90, grade: 'A' },
+        { id: 2, name: '肩膀放鬆', status: 'locked', score: 0, grade: '' },
+        { id: 3, name: '腰背伸展', status: 'locked', score: 0, grade: '' },
+        { id: 4, name: '腿部拉伸', status: 'locked', score: 0, grade: '' }
+      ]
+    }
+  ];
 
-  if (showDetails) {
+  // Mock workout records and scores for demonstration
+  const getWorkoutRecords = (planId: string) => {
+    const records = {
+      'mock-stage-1': [
+        { session: 'A1', name: '基礎坐式平衡', score: 85, status: 'completed', grade: 'A' },
+        { session: 'A2', name: '坐式核心強化', score: 78, status: 'completed', grade: 'B+' },
+        { session: 'A3', name: '坐式協調訓練', score: 92, status: 'completed', grade: 'A' },
+        { session: 'A4', name: '坐式柔韌性', score: 0, status: 'not_started', grade: '-' },
+        { session: 'A5', name: '綜合坐式訓練', score: 0, status: 'not_started', grade: '-' }
+      ],
+      'mock-stage-2': [
+        { session: 'B1', name: '坐站準備動作', score: 0, status: 'locked', grade: '-' },
+        { session: 'B2', name: '輔助坐站訓練', score: 0, status: 'locked', grade: '-' },
+        { session: 'B3', name: '獨立坐站練習', score: 0, status: 'locked', grade: '-' },
+        { session: 'B4', name: '坐站穩定性', score: 0, status: 'locked', grade: '-' }
+      ]
+    };
+    return records[planId] || [];
+  };
+
+  React.useEffect(() => {
+    const fetchLevelPlans = async () => {
+      setLoading(true);
+      try {
+        const plans = await LessonPlanService.getLevelBasedPlans();
+        setLevelPlans(plans);
+        
+        // Set today's lesson from the first available plan
+        if (plans.level1) {
+          await setTodaysLessonFromPlan(plans.level1);
+        }
+      } catch (error) {
+        console.error('Failed to fetch lesson plans:', error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchLevelPlans();
+  }, []);
+
+  const setTodaysLessonFromPlan = async (plan: LessonPlan) => {
+    try {
+      // If we have detailed lesson data, use the first lesson
+      if (plan.lessonsData && plan.lessonsData.length > 0) {
+        const firstLesson = plan.lessonsData[0];
+        setTodaysLesson({
+          title: '輕鬆坐式運動',
+          description: '安全舒適的坐著運動，幫助您保持活力',
+          duration: firstLesson.duration,
+          planName: plan.title.zh_Hant,
+          stage: '第一階段',
+          lessonNumber: 1,
+          imageUrl: firstLesson.thumbImageUrl || firstLesson.imageUrl
+        });
+      } else {
+        // Fallback to mock lesson data
+        setTodaysLesson({
+          title: '輕鬆坐式運動',
+          description: '安全舒適的坐著運動，幫助您保持活力',
+          duration: 15,
+          planName: plan.title.zh_Hant,
+          stage: '第一階段',
+          lessonNumber: 1,
+          imageUrl: plan.planImage
+        });
+      }
+    } catch (error) {
+      console.error('Failed to set today\'s lesson:', error);
+    }
+  };
+
+  const handlePlanClick = async (plan: LessonPlan) => {
+    setLoading(true);
+    try {
+      // Fetch detailed plan with lessons data
+      const detailedPlan = await LessonPlanService.getLessonPlan(plan.id);
+      setSelectedPlan(detailedPlan);
+      setShowProgramDetail(true);
+    } catch (error) {
+      console.error('Failed to fetch plan details:', error);
+      // Fallback to basic plan data
+      setSelectedPlan(plan);
+      setShowProgramDetail(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (showProgramDetail && selectedPlan) {
+    const workoutRecords = getWorkoutRecords(selectedPlan.id);
     return (
-      <div className="min-h-full bg-gray-50">
-        {/* Header */}
-        <div className="bg-white px-4 py-3 border-b flex items-center">
+      <div className="min-h-screen bg-gray-50 flex flex-col">
+        {/* Header - Fixed */}
+        <div className="bg-white px-4 py-3 border-b flex items-center flex-shrink-0">
           <button 
-            onClick={() => setShowDetails(false)}
+            onClick={() => {
+              setShowProgramDetail(false);
+              setSelectedPlan(null);
+            }}
             className="mr-3 p-2 hover:bg-gray-100 rounded-full"
           >
             <ArrowLeft className="w-5 h-5 text-gray-600" />
           </button>
-          <h1 className="text-lg font-semibold text-gray-900">復康計劃詳情</h1>
+          <h1 className="text-lg font-semibold text-gray-900">計劃詳情</h1>
         </div>
 
-        <div className="px-4 py-6">
-          {/* Hero Image */}
-          <div className="mb-6">
-            <img 
-              src="https://images.unsplash.com/photo-1559757148-5c350d0d3c56?w=400&h=200&fit=crop" 
-              alt="Rehabilitation Program" 
-              className="w-full h-48 object-cover rounded-2xl"
-            />
-          </div>
-
-          {/* Title and Description */}
-          <div className="mb-6">
-            <h2 className="text-2xl font-bold text-blue-900 mb-4">個人化復康計劃</h2>
-            <p className="text-gray-600 mb-4">針對您的需求設計的全面復康方案</p>
-            
-            <div className="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-6">
-              平衡力提升 + 肌力強化
-            </div>
-          </div>
-
-          {/* Introduction */}
-          <div className="mb-8">
-            <h3 className="text-lg font-bold text-gray-900 mb-3">計劃簡介</h3>
-            <p className="text-gray-700 leading-relaxed">
-              根據您的評估結果，我們為您制定了個人化的復康計劃，包括運動訓練和營養指導，幫助您改善平衡力、增強肌力，並降低跌倒風險。
-            </p>
-          </div>
-
-          {/* Program Content */}
-          <div className="mb-8">
-            <div className="flex items-center justify-between mb-4">
-              <h3 className="text-lg font-bold text-gray-900">計劃內容</h3>
-              <p className="text-sm text-gray-600">為期12週，每日30分鐘</p>
-            </div>
-
-            <div className="grid grid-cols-2 gap-6">
-              <div className="text-center">
-                <div className="w-16 h-16 bg-blue-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <Dumbbell className="w-8 h-8 text-blue-900" />
-                </div>
-                <p className="font-medium text-gray-900 mb-1">運動計劃</p>
-                <p className="text-sm text-gray-600">個人化訓練課程</p>
+        {/* Scrollable Content */}
+        <div className="flex-1 overflow-y-auto">
+          <div className="px-4 py-6 pb-8">
+            {/* Plan Header */}
+            <div className="mb-6">
+              <img 
+                src={selectedPlan.planImage} 
+                alt={selectedPlan.title.zh_Hant} 
+                className="w-full h-48 object-cover rounded-2xl mb-4"
+              />
+              <h2 className="text-2xl font-bold text-blue-900 mb-2">
+                {selectedPlan.title.zh_Hant}
+              </h2>
+              <p className="text-gray-600 mb-4">
+                專為長者設計的安全運動計劃，所有動作都可以坐著完成，讓您安心運動
+              </p>
+              
+              <div className="flex flex-wrap gap-2 mb-4">
+                {selectedPlan.targetAreas.map((area, index) => (
+                  <span 
+                    key={index}
+                    className="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-sm"
+                  >
+                    {area}
+                  </span>
+                ))}
               </div>
 
-              <div className="text-center">
-                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center mx-auto mb-3">
-                  <Utensils className="w-8 h-8 text-green-600" />
-                </div>
-                <p className="font-medium text-gray-900 mb-1">營養計劃</p>
-                <p className="text-sm text-gray-600">均衡飲食指導</p>
+              <div className="bg-blue-900 text-white px-4 py-2 rounded-lg inline-block mb-6">
+                {selectedPlan.duration} 個簡單課程
               </div>
             </div>
-          </div>
 
-          {/* Start Button */}
-          <button
-            onClick={() => setShowAssessment(true)}
-            className="w-full bg-blue-900 text-white py-4 rounded-2xl font-medium text-lg"
-          >
-            開始復康計劃
-          </button>
+            {/* Plan Statistics */}
+            <div className="grid grid-cols-3 gap-4 mb-6">
+              <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+                <div className="text-2xl font-bold text-blue-900">{selectedPlan.duration}</div>
+                <div className="text-sm text-gray-600">簡單課程</div>
+              </div>
+              <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+                <div className="text-2xl font-bold text-green-600">
+                  {selectedPlan.lessonsData ? selectedPlan.lessonsData.reduce((total, lesson) => total + lesson.duration, 0) : selectedPlan.duration * 15}
+                </div>
+                <div className="text-sm text-gray-600">總時間（分鐘）</div>
+              </div>
+              <div className="text-center p-4 bg-white rounded-xl shadow-sm">
+                <div className="text-2xl font-bold text-purple-600">
+                  {selectedPlan.tags.length}
+                </div>
+                <div className="text-sm text-gray-600">運動種類</div>
+              </div>
+            </div>
+
+            {/* Lessons List */}
+            <div className="mb-6">
+              <h3 className="text-lg font-bold text-gray-900 mb-4">運動內容</h3>
+              
+              {selectedPlan.lessonsData && selectedPlan.lessonsData.length > 0 ? (
+                <div className="grid grid-cols-2 gap-4">
+                  {selectedPlan.lessonsData.map((lesson, index) => (
+                    <div key={lesson.id || index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                      <div className="relative">
+                        <img 
+                          src={lesson.thumbImageUrl || lesson.imageUrl} 
+                          alt="坐式運動" 
+                          className="w-full h-24 object-cover"
+                        />
+                        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                          {lesson.duration}分鐘
+                        </div>
+                        <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
+                          第{index + 1}個
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
+                          坐式運動 {index + 1}
+                        </h4>
+                        <p className="text-xs text-gray-600 line-clamp-2">
+                          安全簡單的坐著運動
+                        </p>
+                        <div className="flex items-center mt-2">
+                          <div className="flex items-center text-xs text-gray-500">
+                            <Star className="w-3 h-3 mr-1 text-yellow-500" />
+                            <span>強度 {lesson.intensity}/10</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              ) : (
+                // Fallback for plans without detailed lesson data
+                <div className="grid grid-cols-2 gap-4">
+                  {Array.from({ length: selectedPlan.duration }, (_, index) => (
+                    <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
+                      <div className="relative">
+                        <div className="w-full h-24 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                          <Play className="w-8 h-8 text-blue-600" />
+                        </div>
+                        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
+                          15分鐘
+                        </div>
+                        <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
+                          第{index + 1}個
+                        </div>
+                      </div>
+                      <div className="p-3">
+                        <h4 className="font-medium text-gray-900 text-sm mb-1">
+                          課程 {index + 1}
+                        </h4>
+                        <p className="text-xs text-gray-600">
+                          安全簡單的坐著運動
+                        </p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              )}
+            </div>
+
+            {/* Start Button */}
+            <div className="sticky bottom-0 bg-gray-50 pt-4 pb-4">
+              <button
+                className="w-full bg-blue-900 text-white py-4 rounded-2xl font-medium text-lg"
+              >
+                開始運動
+              </button>
+            </div>
+          </div>
         </div>
       </div>
     );
   }
 
-  const renderScreen = () => {
-    switch (activeTab) {
-      case 'overview':
-        return (
-          <>
-            {/* Health Assessment Overview */}
-            <div className="mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">您的健康評估</h2>
-              
-              <div className="grid grid-cols-1 gap-4 mb-4">
-                {/* Overall Risk Score */}
-                <div className="bg-red-50 border border-red-200 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-red-100 rounded-full flex items-center justify-center mr-3">
-                        <AlertTriangle className="w-5 h-5 text-red-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">跌倒風險評估</p>
-                        <p className="text-sm text-red-600">需要特別注意</p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <p className="text-2xl font-bold text-red-600">{userRiskProfile.fallRisk}%</p>
-                      <p className="text-xs text-gray-600">風險指數</p>
-                    </div>
-                  </div>
-                  <div className="w-full bg-red-200 rounded-full h-2">
-                    <div 
-                      className="bg-red-600 h-2 rounded-full" 
-                      style={{ width: `${userRiskProfile.fallRisk}%` }}
-                    ></div>
-                  </div>
-                </div>
-
-                {/* Frailty Level Assessment */}
-                <div className="bg-orange-50 border border-orange-200 p-4 rounded-lg">
-                  <div className="flex items-center justify-between mb-3">
-                    <div className="flex items-center">
-                      <div className="w-10 h-10 bg-orange-100 rounded-full flex items-center justify-center mr-3">
-                        <Shield className="w-5 h-5 text-orange-600" />
-                      </div>
-                      <div>
-                        <p className="font-medium text-gray-900">體弱程度評估</p>
-                        <p className="text-sm text-orange-600">
-                          {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
-                          {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
-                          {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
-                        </p>
-                      </div>
-                    </div>
-                    <div className="text-right">
-                      <div className={`px-3 py-1 rounded-full text-sm font-medium ${
-                        userRiskProfile.frailtyStatus === 'robust' ? 'bg-green-100 text-green-800' :
-                        userRiskProfile.frailtyStatus === 'pre-frail' ? 'bg-yellow-100 text-yellow-800' :
-                        'bg-red-100 text-red-800'
-                      }`}>
-                        {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
-                        {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
-                        {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
-                      </div>
-                    </div>
-                  </div>
-                  <div className="text-sm text-gray-700">
-                    {userRiskProfile.frailtyStatus === 'robust' && '您的體力狀況良好，繼續保持現有的活動水平。'}
-                    {userRiskProfile.frailtyStatus === 'pre-frail' && '您處於前期體弱狀態，建議增加運動和營養攝取。'}
-                    {userRiskProfile.frailtyStatus === 'frail' && '您目前處於體弱狀態，需要特別注意安全並進行適當的復康訓練。'}
-                  </div>
-                </div>
-
-                {/* Risk Factors Summary */}
-                <div className="grid grid-cols-3 gap-3">
-                  <div className="bg-orange-50 border border-orange-200 p-3 rounded-lg">
-                    <div className="flex items-center">
-                      <Shield className="w-4 h-4 text-orange-600 mr-2" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">體力狀況</p>
-                        <p className="text-xs text-orange-600">需要加強</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-red-50 border border-red-200 p-3 rounded-lg">
-                    <div className="flex items-center">
-                      <AlertTriangle className="w-4 h-4 text-red-600 mr-2" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">平衡能力</p>
-                        <p className="text-xs text-red-600">需要改善</p>
-                      </div>
-                    </div>
-                  </div>
-                  <div className="bg-purple-50 border border-purple-200 p-3 rounded-lg">
-                    <div className="flex items-center">
-                      <AlertTriangle className="w-4 h-4 text-purple-600 mr-2" />
-                      <div>
-                        <p className="text-sm font-medium text-gray-900">體弱程度</p>
-                        <p className="text-xs text-purple-600">
-                          {userRiskProfile.frailtyStatus === 'robust' && '健壯'}
-                          {userRiskProfile.frailtyStatus === 'pre-frail' && '前期體弱'}
-                          {userRiskProfile.frailtyStatus === 'frail' && '體弱'}
-                        </p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-
-              {/* Recommendation */}
-              <div className="bg-blue-50 p-4 rounded-lg mb-6">
-                <h3 className="text-lg font-semibold text-blue-900 mb-2">專為您設計的運動計劃</h3>
-                <p className="text-blue-700">
-                  根據您的評估結果，我們推薦從安全的坐式運動開始，逐步改善平衡和體力
-                </p>
-              </div>
-            </div>
-
-            {/* Featured Program */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
-              <div className="relative">
-                <img 
-                  src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
-                  alt="Rehabilitation Program" 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
-                  <p className="text-sm opacity-90">平衡力 + 肌力提升</p>
-                </div>
-              </div>
-              <div className="p-4">
-                <p className="text-gray-600 mb-4">根據您的評估結果制定的專屬復康方案，包含運動訓練和營養指導</p>
-                <div className="flex space-x-3">
-                  <button 
-                    onClick={() => window.location.href = '/chatbot-zh'}
-                    className="w-full bg-blue-900 text-white py-4 rounded-xl font-medium text-lg"
-                  >
-                    生成計劃
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress History */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">復康記錄</h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">平衡力評估</p>
-                    <p className="text-sm text-gray-600">2025年1月15日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-green-600">改善 +15%</p>
-                    <p className="text-sm text-gray-500">分數: 85/100</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">肌力測試</p>
-                    <p className="text-sm text-gray-600">2025年1月12日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-green-600">改善 +12%</p>
-                    <p className="text-sm text-gray-500">分數: 78/100</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">整體評估</p>
-                    <p className="text-sm text-gray-600">2025年1月8日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-blue-600">基線測試</p>
-                    <p className="text-sm text-gray-500">分數: 68/100</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        );
-      case 'workout':
-        return <ExerciseProgramScreen />;
-      case 'diet':
-        return (
-          <>
-            {/* Personalized Diet Plan */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <div className="flex items-center justify-between mb-4">
-                <h2 className="text-lg font-semibold text-gray-900">個人化飲食計劃</h2>
-                <div className="flex items-center text-sm text-gray-600">
-                  <Utensils className="w-4 h-4 mr-1" />
-                  <span>均衡營養</span>
-                </div>
-              </div>
-
-              <div className="space-y-4">
-                <div className="bg-orange-50 rounded-xl p-4 border-l-4 border-orange-500">
-                  <h3 className="font-medium text-gray-900 mb-2">🌅 早餐建議</h3>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• 燕麥粥配新鮮水果</li>
-                    <li>• 低脂牛奶或豆漿</li>
-                    <li>• 堅果（杏仁、核桃）</li>
-                  </ul>
-                  <p className="text-xs text-orange-600 mt-2">富含纖維和蛋白質，提供持久能量</p>
-                </div>
-
-                <div className="bg-green-50 rounded-xl p-4 border-l-4 border-green-500">
-                  <h3 className="font-medium text-gray-900 mb-2">🍽️ 午餐建議</h3>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• 瘦肉或魚類（手掌大小）</li>
-                    <li>• 深色蔬菜（菠菜、西蘭花）</li>
-                    <li>• 糙米或全麥麵包</li>
-                  </ul>
-                  <p className="text-xs text-green-600 mt-2">均衡蛋白質和維生素，支持肌肉健康</p>
-                </div>
-
-                <div className="bg-blue-50 rounded-xl p-4 border-l-4 border-blue-500">
-                  <h3 className="font-medium text-gray-900 mb-2">🌙 晚餐建議</h3>
-                  <ul className="text-sm text-gray-700 space-y-1">
-                    <li>• 清蒸魚或豆腐</li>
-                    <li>• 蒸蔬菜</li>
-                    <li>• 少量優質碳水化合物</li>
-                  </ul>
-                  <p className="text-xs text-blue-600 mt-2">清淡易消化，促進夜間恢復</p>
-                </div>
-              </div>
-            </div>
-
-            {/* Nutritional Goals */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">營養目標</h2>
-              <div className="grid grid-cols-2 gap-4">
-                <div className="text-center p-3 bg-blue-50 rounded-xl">
-                  <div className="text-2xl font-bold text-blue-900">1800</div>
-                  <div className="text-sm text-gray-600">每日卡路里</div>
-                </div>
-                <div className="text-center p-3 bg-green-50 rounded-xl">
-                  <div className="text-2xl font-bold text-green-600">80g</div>
-                  <div className="text-sm text-gray-600">蛋白質</div>
-                </div>
-                <div className="text-center p-3 bg-orange-50 rounded-xl">
-                  <div className="text-2xl font-bold text-orange-600">1200mg</div>
-                  <div className="text-sm text-gray-600">鈣質</div>
-                </div>
-                <div className="text-center p-3 bg-purple-50 rounded-xl">
-                  <div className="text-2xl font-bold text-purple-600">800IU</div>
-                  <div className="text-sm text-gray-600">維生素D</div>
-                </div>
-              </div>
-            </div>
-
-            {/* Hydration Reminder */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">水分補充</h2>
-              <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl">
-                <div className="flex items-center">
-                  <div className="w-12 h-12 bg-blue-100 rounded-full flex items-center justify-center mr-3">
-                    <div className="w-6 h-6 text-blue-900">💧</div>
-                  </div>
-                  <div>
-                    <p className="font-medium text-gray-900">每日飲水目標</p>
-                    <p className="text-sm text-gray-600">已完成 6/8 杯</p>
-                  </div>
-                </div>
-                <div className="text-right">
-                  <div className="text-2xl font-bold text-blue-900">75%</div>
-                  <div className="text-sm text-gray-600">完成度</div>
-                </div>
-              </div>
-              <div className="mt-4 bg-gray-200 rounded-full h-2">
-                <div className="bg-blue-600 h-2 rounded-full" style={{ width: '75%' }}></div>
-              </div>
-            </div>
-          </>
-        );
-      default:
-        return null;
-    }
-  };
-
   return (
-    <div className="min-h-full bg-gray-50">
-      {/* Header */}
-      <div className="bg-white px-4 py-6 border-b">
-        <h1 className="text-2xl font-bold text-gray-900 mb-2">Rehab 復康中心</h1>
-        <p className="text-gray-600">個人化復康計劃，改善您的健康狀況</p>
+    <div className="min-h-screen bg-gray-50 flex flex-col">
+      {/* Header - Fixed */}
+      <div className="bg-white px-4 py-6 border-b flex-shrink-0">
+        <h1 className="text-2xl font-bold text-gray-900 mb-2">輕鬆運動</h1>
+        <p className="text-gray-600">安全簡單的坐著運動，適合在家進行</p>
       </div>
 
-      {/* Tab Navigation */}
-      <div className="flex bg-white border-b">
+      {/* Tab Navigation - Fixed */}
+      <div className="flex bg-white border-b flex-shrink-0">
         <button
-          onClick={() => setActiveTab('overview')}
+          onClick={() => setActiveTab('today')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'overview'
+            activeTab === 'today'
               ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          總覽
+          今日運動
         </button>
         <button
-          onClick={() => setActiveTab('workout')}
+          onClick={() => setActiveTab('programs')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'workout'
+            activeTab === 'programs'
               ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
@@ -412,22 +333,449 @@ const AssessmentScreen: React.FC = () => {
           運動計劃
         </button>
         <button
-          onClick={() => setActiveTab('diet')}
+          onClick={() => setActiveTab('records')}
           className={`flex-1 py-3 px-4 text-sm font-medium transition-colors ${
-            activeTab === 'diet'
+            activeTab === 'records'
               ? 'text-blue-900 border-b-2 border-blue-900'
               : 'text-gray-600 hover:text-gray-900'
           }`}
         >
-          飲食計劃
+          訓練記錄
         </button>
       </div>
 
-      <div className="px-4 py-6 pb-24">
-        {renderScreen()}
+      {/* Scrollable Content */}
+      <div className="flex-1 overflow-y-auto">
+        <div className="px-4 py-6 pb-8">
+          {activeTab === 'today' ? (
+            <>              
+              {/* Today's Exercise */}
+              <div className="bg-gradient-to-r from-blue-800 to-blue-900 rounded-2xl p-6 mb-6 text-white relative overflow-hidden">
+                {todaysLesson?.imageUrl && (
+                  <div className="absolute inset-0 opacity-20">
+                    <img 
+                      src={todaysLesson.imageUrl} 
+                      alt="Today's lesson background" 
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="relative z-10">
+                <div className="flex items-center justify-between mb-4">
+                  <div>
+                    <h2 className="text-xl font-bold">今日運動</h2>
+                    <p className="text-blue-100">
+                      {todaysLesson?.stage || '第一階段'} - 第 {todaysLesson?.lessonNumber || 1} 個
+                    </p>
+                  </div>
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center">
+                    <Play className="w-8 h-8 text-white" />
+                  </div>
+                </div>
+                <h3 className="text-lg font-semibold mb-2">
+                  {todaysLesson?.title || '輕鬆坐式運動'}
+                </h3>
+                <p className="text-blue-100 mb-4">
+                  {todaysLesson?.description || '安全舒適的坐著運動，幫助您保持活力'}
+                </p>
+                <div className="flex items-center text-sm text-blue-100">
+                  <Clock className="w-4 h-4 mr-1" />
+                  <span>預計時間：{todaysLesson?.duration || 15}分鐘</span>
+                </div>
+                </div>
+              </div>
+
+              {/* Today's Exercise Program */}
+              <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
+                <div className="flex items-center justify-between mb-4">
+                  <h2 className="text-lg font-semibold text-gray-900">運動內容</h2>
+                  <div className="flex items-center text-sm text-gray-600">
+                    <Target className="w-4 h-4 mr-1" />
+                    <span>輕鬆簡單</span>
+                  </div>
+                </div>
+
+                <div className="space-y-3">
+                  <div className="flex items-center justify-between p-4 bg-blue-50 rounded-xl border-l-4 border-blue-900">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-blue-900 font-bold">1</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">輕鬆熱身</p>
+                        <p className="text-sm text-gray-600">坐著輕輕活動手腳 • 3分鐘</p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 bg-blue-900 text-white rounded-lg text-sm font-medium">
+                      開始
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-gray-600 font-bold">2</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">
+                          {todaysLesson?.title || '坐式運動'}
+                        </p>
+                        <p className="text-sm text-gray-600">
+                          安全簡單的坐著運動 • {Math.max((todaysLesson?.duration || 15) - 5, 8)}分鐘
+                        </p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
+                      排隊
+                    </button>
+                  </div>
+
+                  <div className="flex items-center justify-between p-4 bg-gray-50 rounded-xl">
+                    <div className="flex items-center">
+                      <div className="w-10 h-10 bg-gray-100 rounded-full flex items-center justify-center mr-3">
+                        <span className="text-gray-600 font-bold">3</span>
+                      </div>
+                      <div>
+                        <p className="font-medium text-gray-900">輕鬆放鬆</p>
+                        <p className="text-sm text-gray-600">坐著放鬆、深呼吸 • 2分鐘</p>
+                      </div>
+                    </div>
+                    <button className="px-4 py-2 bg-gray-200 text-gray-700 rounded-lg text-sm font-medium">
+                      排隊
+                    </button>
+                  </div>
+                </div>
+              </div>
+
+              {/* Weekly Progress */}
+              <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
+                <h2 className="text-lg font-semibold text-gray-900 mb-4">本週運動記錄</h2>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-xl font-bold text-green-600">5</span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">次數</p>
+                    <p className="text-xs text-gray-600">已完成</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-blue-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-xl font-bold text-blue-600">75</span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">總時間</p>
+                    <p className="text-xs text-gray-600">運動時間</p>
+                  </div>
+                  <div className="text-center">
+                    <div className="w-16 h-16 bg-purple-100 rounded-full flex items-center justify-center mx-auto mb-2">
+                      <span className="text-xl font-bold text-purple-600">83%</span>
+                    </div>
+                    <p className="text-sm font-medium text-gray-900">完成度</p>
+                    <p className="text-xs text-gray-600">已達成</p>
+                  </div>
+                </div>
+              </div>
+
+              {/* Current Plan Info */}
+              {todaysLesson && (
+                <div className="bg-blue-50 rounded-2xl p-4 shadow-sm">
+                  <h3 className="text-lg font-semibold text-blue-900 mb-2">您的運動計劃</h3>
+                  <p className="text-blue-800 font-medium">{todaysLesson.planName}</p>
+                  <p className="text-blue-600 text-sm mt-1">
+                    專為長者設計的安全運動，所有動作都可以坐著完成
+                  </p>
+                </div>
+              )}
+            </>
+          ) : (
+            <>
+              {/* Risk Assessment Overview for Programs Tab */}
+              <div className="bg-gradient-to-r from-green-600 to-green-700 rounded-2xl p-6 mb-6 text-white">
+                <div className="flex items-center mb-4">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
+                    <Award className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">安全運動計劃</h2>
+                    <p className="text-green-100">簡單安全，適合在家進行</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {(levelPlans.level1?.duration || 0) + (levelPlans.level2?.duration || 0) + (levelPlans.level3?.duration || 0)}
+                    </div>
+                    <div className="text-green-100 text-sm">總運動</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">5</div>
+                    <div className="text-green-100 text-sm">已完成</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">14%</div>
+                    <div className="text-green-100 text-sm">完成度</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Exercise Plans */}
+              <div className="space-y-4 mb-6">
+                {loading && (
+                  <div className="text-center py-8">
+                    <div className="animate-spin rounded-full h-8 w-8 border-4 border-blue-600 border-t-transparent mx-auto mb-2"></div>
+                    <p className="text-gray-600">載入訓練計劃中...</p>
+                  </div>
+                )}
+                
+                {levelPlans.level1 && (
+                  <div 
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow"
+                    onClick={() => handlePlanClick(levelPlans.level1!)}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={levelPlans.level1.planImage} 
+                        alt="Stage 1 Training" 
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-green-600 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        5/12 進行中
+                      </div>
+                      <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        坐式運動
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-bold text-gray-900 mb-1">
+                        {levelPlans.level1.title.zh_Hant}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">安全簡單的坐著運動</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-600">
+                          <Play className="w-4 h-4 mr-1 text-green-600" />
+                          <span>進行中</span>
+                        </div>
+                        <div className="w-24 bg-gray-200 rounded-full h-2">
+                          <div className="bg-green-600 h-2 rounded-full" style={{ width: '42%' }}></div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {levelPlans.level2 && (
+                  <div 
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-60"
+                    onClick={() => handlePlanClick(levelPlans.level2!)}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={levelPlans.level2.planImage} 
+                        alt="Stage 2 Training" 
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        0/12 待開始
+                      </div>
+                      <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        站立運動
+                      </div>
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <Lock className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-bold text-gray-900 mb-1">
+                        {levelPlans.level2.title.zh_Hant}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">簡單的站立運動（需要完成坐式運動後開放）</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Lock className="w-4 h-4 mr-1" />
+                          <span>完成坐式運動後開放</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+
+                {levelPlans.level3 && (
+                  <div 
+                    className="bg-white rounded-2xl shadow-lg overflow-hidden cursor-pointer hover:shadow-xl transition-shadow opacity-50"
+                    onClick={() => handlePlanClick(levelPlans.level3!)}
+                  >
+                    <div className="relative">
+                      <img 
+                        src={levelPlans.level3.planImage} 
+                        alt="Stage 3 Training" 
+                        className="w-full h-32 object-cover"
+                      />
+                      <div className="absolute top-3 right-3 bg-gray-500 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        0/12 待開始
+                      </div>
+                      <div className="absolute top-3 left-3 bg-black/50 text-white px-3 py-1 rounded-full text-sm font-medium">
+                        進階運動
+                      </div>
+                      <div className="absolute inset-0 bg-black/20 flex items-center justify-center">
+                        <Lock className="w-8 h-8 text-white" />
+                      </div>
+                    </div>
+                    <div className="p-4">
+                      <h3 className="font-bold text-gray-900 mb-1">
+                        {levelPlans.level3.title.zh_Hant}
+                      </h3>
+                      <p className="text-sm text-gray-600 mb-3">更多運動選擇（需要完成前面運動後開放）</p>
+                      <div className="flex items-center justify-between">
+                        <div className="flex items-center text-sm text-gray-500">
+                          <Lock className="w-4 h-4 mr-1" />
+                          <span>完成前面運動後開放</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                )}
+              </div>
+
+              {/* Expected Improvements */}
+              <div className="bg-white rounded-2xl p-6 shadow-lg">
+                <h3 className="text-lg font-bold text-gray-900 mb-4">預期改善效果</h3>
+                <div className="space-y-3">
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-green-100 rounded-full flex items-center justify-center mr-3">
+                      <TrendingUp className="w-4 h-4 text-green-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">平衡能力提升</p>
+                      <p className="text-sm text-gray-600">減少跌倒風險，增強日常活動信心</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center mr-3">
+                      <Target className="w-4 h-4 text-blue-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">肌力增強</p>
+                      <p className="text-sm text-gray-600">改善日常生活功能，提升生活品質</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center">
+                    <div className="w-8 h-8 bg-purple-100 rounded-full flex items-center justify-center mr-3">
+                      <Star className="w-4 h-4 text-purple-600" />
+                    </div>
+                    <div>
+                      <p className="font-medium text-gray-900">心情愉悅</p>
+                      <p className="text-sm text-gray-600">規律運動有助於改善心理健康</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </>
+          )}
+          ) : activeTab === 'records' ? (
+            <>
+              {/* Training Records Header */}
+              <div className="bg-gradient-to-r from-purple-600 to-purple-700 rounded-2xl p-6 mb-6 text-white">
+                <div className="flex items-center mb-4">
+                  <div className="w-16 h-16 bg-white/20 rounded-full flex items-center justify-center mr-4">
+                    <Award className="w-8 h-8 text-white" />
+                  </div>
+                  <div>
+                    <h2 className="text-xl font-bold">訓練記錄與評分</h2>
+                    <p className="text-purple-100">追蹤您的運動進度和成績</p>
+                  </div>
+                </div>
+                <div className="grid grid-cols-3 gap-4">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {workoutPlans.reduce((total, plan) => 
+                        total + plan.sessions.filter(s => s.status === 'completed').length, 0
+                      )}
+                    </div>
+                    <div className="text-purple-100 text-sm">已完成</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {Math.round(
+                        workoutPlans
+                          .flatMap(plan => plan.sessions)
+                          .filter(s => s.status === 'completed')
+                          .reduce((sum, s) => sum + s.score, 0) / 
+                        workoutPlans
+                          .flatMap(plan => plan.sessions)
+                          .filter(s => s.status === 'completed').length
+                      )}
+                    </div>
+                    <div className="text-purple-100 text-sm">平均分數</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold">
+                      {workoutPlans
+                        .flatMap(plan => plan.sessions)
+                        .filter(s => s.status === 'completed' && s.grade === 'A').length
+                      }
+                    </div>
+                    <div className="text-purple-100 text-sm">A級成績</div>
+                  </div>
+                </div>
+              </div>
+
+              {/* Training Records */}
+              <div className="space-y-6 mb-6">
+                {workoutPlans.map((plan, planIndex) => (
+                  <div key={plan.id} className="bg-white rounded-2xl p-4 shadow-lg">
+                    <div className="flex items-center justify-between mb-4">
+                      <div>
+                        <h3 className="text-lg font-bold text-gray-900">{plan.name}</h3>
+                        <p className="text-sm text-gray-600">{plan.description}</p>
+                      </div>
+                      <div className="text-right">
+                        <div className="text-sm text-gray-500">
+                          {plan.sessions.filter(s => s.status === 'completed').length}/{plan.sessions.length} 完成
+                        </div>
+                        <div className="w-20 bg-gray-200 rounded-full h-2 mt-1">
+                          <div 
+                            className="bg-purple-600 h-2 rounded-full transition-all duration-300"
+                            style={{ 
+                              width: `${(plan.sessions.filter(s => s.status === 'completed').length / plan.sessions.length) * 100}%` 
+                            }}
+                          />
+                        </div>
+                      </div>
+                    </div>
+                    
+                    <div className="grid grid-cols-1 gap-3">
+                      {plan.sessions.map((session, sessionIndex) => (
+                        <div 
+                          key={session.id} 
+                          className={`p-3 rounded-xl border-l-4 transition-all ${
+                            session.status === 'completed' ? 'bg-green-50 border-green-500' :
+                            session.status === 'current' ? 'bg-blue-50 border-blue-500' :
+                            'bg-gray-50 border-gray-300'
+                          }`}
+                        >
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center">
+                              <div className={`w-10 h-10 rounded-full flex items-center justify-center mr-3 font-bold text-sm ${
+                                session.status === 'completed' ? 'bg-green-100 text-green-700' :
+                                session.status === 'current' ? 'bg-blue-100 text-blue-700' :
+                                'bg-gray-100 text-gray-500'
+                              }`}>
+                                {session.id}
+                              </div>
+                              <div>
+                                <h4 className="font-medium text-gray-900">{session.name}</h4>
+                                <p className="text-sm text-gray-600">
+                                  {session.status === 'completed' ? '已完成' :
+                                   session.status === 'current' ? '進行中' :
+                                   '待解鎖'}
+                                </p>
+                              </div>
+                            </div>
+                            
+                            <div className="text-right">
+        </div>
       </div>
     </div>
   );
 };
 
-export default AssessmentScreen;
+export default ExerciseProgramScreen;
