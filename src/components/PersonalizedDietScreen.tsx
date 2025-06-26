@@ -22,6 +22,14 @@ interface DietPlan {
   supplements: string[];
   tips: string[];
   expectedOutcomes: string[];
+  dailyNutritionTargets: {
+    calories: number;
+    protein: number;
+    carbs: number;
+    fat: number;
+    fiber: number;
+    water: number;
+  };
 }
 
 const PersonalizedDietScreen: React.FC = () => {
@@ -112,6 +120,14 @@ const PersonalizedDietScreen: React.FC = () => {
           '8週內：肌肉量增加，體力提升',
           '12週內：達到前期體弱狀態',
           '整體活動能力顯著改善'
+        ],
+        dailyNutritionTargets: {
+          calories: 2200,
+          protein: 90,
+          carbs: 275,
+          fat: 73,
+          fiber: 30,
+          water: 2500
         ]
       };
     } else if (userProfile.assessmentResult === 'pre-frail') {
@@ -166,6 +182,14 @@ const PersonalizedDietScreen: React.FC = () => {
           '6週內：肌肉力量明顯增強',
           '8週內：達到活躍健康狀態',
           '整體生活質量顯著提升'
+        ],
+        dailyNutritionTargets: {
+          calories: 2000,
+          protein: 80,
+          carbs: 250,
+          fat: 67,
+          fiber: 28,
+          water: 2300
         ]
       };
     } else {
@@ -219,6 +243,14 @@ const PersonalizedDietScreen: React.FC = () => {
           '預防年齡相關疾病',
           '保持活力和認知功能',
           '延緩衰老過程'
+        ],
+        dailyNutritionTargets: {
+          calories: 1800,
+          protein: 70,
+          carbs: 225,
+          fat: 60,
+          fiber: 25,
+          water: 2000
         ]
       };
     }
@@ -473,6 +505,42 @@ const PersonalizedDietScreen: React.FC = () => {
                 <p className="text-sm font-medium text-gray-900">時程</p>
                 <p className="text-xs text-gray-600">{dietPlan.duration}</p>
               </div>
+            </div>
+          </div>
+
+          {/* Daily Nutrition Targets */}
+          <div className="bg-white rounded-2xl p-6 mb-6 shadow-lg">
+            <h3 className="text-lg font-bold text-gray-900 mb-4">每日營養目標</h3>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="bg-red-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-red-600">{dietPlan.dailyNutritionTargets.calories}</div>
+                <div className="text-sm text-gray-600">卡路里 (kcal)</div>
+              </div>
+              <div className="bg-blue-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-blue-600">{dietPlan.dailyNutritionTargets.protein}g</div>
+                <div className="text-sm text-gray-600">蛋白質</div>
+              </div>
+              <div className="bg-green-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-green-600">{dietPlan.dailyNutritionTargets.carbs}g</div>
+                <div className="text-sm text-gray-600">碳水化合物</div>
+              </div>
+              <div className="bg-yellow-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-yellow-600">{dietPlan.dailyNutritionTargets.fat}g</div>
+                <div className="text-sm text-gray-600">脂肪</div>
+              </div>
+              <div className="bg-purple-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-purple-600">{dietPlan.dailyNutritionTargets.fiber}g</div>
+                <div className="text-sm text-gray-600">纖維</div>
+              </div>
+              <div className="bg-cyan-50 rounded-lg p-4 text-center">
+                <div className="text-2xl font-bold text-cyan-600">{dietPlan.dailyNutritionTargets.water}ml</div>
+                <div className="text-sm text-gray-600">水分</div>
+              </div>
+            </div>
+            <div className="mt-4 p-3 bg-gray-50 rounded-lg">
+              <p className="text-sm text-gray-700">
+                💡 <strong>小提示：</strong>這些營養目標是根據您的年齡、性別和體能狀況量身定制的。建議搭配營養追蹤應用程式來監控每日攝取量。
+              </p>
             </div>
           </div>
 
