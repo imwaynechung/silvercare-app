@@ -4,7 +4,7 @@ import { LessonPlanService } from '../services/lessonPlanService';
 import { LessonPlan } from '../types/lessonPlan';
 
 const ExerciseProgramScreen: React.FC = () => {
-  const [activeTab, setActiveTab] = useState<'today' | 'programs'>('programs');
+  const [activeTab, setActiveTab] = useState<'today' | 'programs'>('today');
   const [showProgramDetail, setShowProgramDetail] = useState(false);
   const [selectedPlan, setSelectedPlan] = useState<LessonPlan | null>(null);
   const [todaysLesson, setTodaysLesson] = useState<{
@@ -22,6 +22,20 @@ const ExerciseProgramScreen: React.FC = () => {
     level3: LessonPlan | null;
   }>({ level1: null, level2: null, level3: null });
   const [loading, setLoading] = useState(false);
+
+  // Mock workout records and scores for demonstration
+  const generateMockWorkoutRecords = (lessonCount: number) => {
+    return Array.from({ length: lessonCount }, (_, index) => ({
+      sessionId: `session_${index + 1}`,
+      sessionName: `第${index + 1}個運動`,
+      score: Math.floor(Math.random() * 30) + 70, // Random score between 70-100
+      grade: ['A', 'B', 'C'][Math.floor(Math.random() * 3)],
+      completed: index < Math.floor(lessonCount * 0.4), // 40% completed
+      duration: 15 + Math.floor(Math.random() * 10), // 15-25 minutes
+      difficulty: ['初級', '中級', '進階'][Math.floor(Math.random() * 3)],
+      completedDate: index < Math.floor(lessonCount * 0.4) ? new Date(Date.now() - (lessonCount - index) * 24 * 60 * 60 * 1000).toLocaleDateString() : null
+    }));
+  };
 
   React.useEffect(() => {
     const fetchLevelPlans = async () => {
@@ -164,36 +178,91 @@ const ExerciseProgramScreen: React.FC = () => {
 
             {/* Lessons List */}
             <div className="mb-6">
-              <h3 className="text-lg font-bold text-gray-900 mb-4">運動內容</h3>
+              <h3 className="text-lg font-bold text-gray-900 mb-4">運動內容與記錄</h3>
+              
+              {/* Generate mock workout records */}
+              {(() => {
+                const workoutRecords = generateMockWorkoutRecords(selectedPlan.duration);
               
               {selectedPlan.lessonsData && selectedPlan.lessonsData.length > 0 ? (
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   {selectedPlan.lessonsData.map((lesson, index) => (
-                    <div key={lesson.id || index} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                      <div className="relative">
-                        <img 
-                          src={lesson.thumbImageUrl || lesson.imageUrl} 
-                          alt="坐式運動" 
-                          className="w-full h-24 object-cover"
-                        />
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                          {lesson.duration}分鐘
+                    <div key={lesson.id || index} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                      <div className="flex">
+                        <div className="relative w-24 h-24 flex-shrink-0">
+                          <img 
+                            src={lesson.thumbImageUrl || lesson.imageUrl} 
+                            alt="坐式運動" 
+                            className="w-full h-full object-cover"
+                          />
+                          <div className="absolute bottom-1 right-1 bg-black/70 text-white px-1 py-0.5 rounded text-xs">
+                            {lesson.duration}分鐘
+                          </div>
                         </div>
-                        <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
-                          第{index + 1}個
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <h4 className="font-medium text-gray-900 text-sm mb-1 line-clamp-2">
-                          坐式運動 {index + 1}
-                        </h4>
-                        <p className="text-xs text-gray-600 line-clamp-2">
-                          安全簡單的坐著運動
-                        </p>
-                        <div className="flex items-center mt-2">
-                          <div className="flex items-center text-xs text-gray-500">
-                            <Star className="w-3 h-3 mr-1 text-yellow-500" />
-                            <span>強度 {lesson.intensity}/10</span>
+                        
+                        <div className="flex-1 p-3">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h4 className="font-medium text-gray-900 text-sm mb-1">
+                                第{index + 1}個運動
+                              </h4>
+                              <p className="text-xs text-gray-600">
+                                安全簡單的坐著運動
+                              </p>
+                            </div>
+                            
+                            {/* Workout Record */}
+                            {(() => {
+                              const record = workoutRecords[index];
+                              return (
+                                <div className="text-right">
+                                  {record.completed ? (
+                                    <div className="space-y-1">
+                                      <div className={`px-2 py-1 rounded text-xs font-bold ${
+                                        record.grade === 'A' ? 'bg-green-100 text-green-800' :
+                                        record.grade === 'B' ? 'bg-blue-100 text-blue-800' :
+                                        'bg-yellow-100 text-yellow-800'
+                                      }`}>
+                                        {record.grade}級
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        {record.score}分
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {record.completedDate}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                                      未完成
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="flex items-center text-xs text-gray-500">
+                              <Star className="w-3 h-3 mr-1 text-yellow-500" />
+                              <span>強度 {lesson.intensity}/10</span>
+                            </div>
+                            
+                            {/* Progress indicator */}
+                            {(() => {
+                              const record = workoutRecords[index];
+                              return record.completed ? (
+                                <div className="flex items-center text-xs text-green-600">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  <span>已完成</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  <span>待完成</span>
+                                </div>
+                              );
+                            })()}
                           </div>
                         </div>
                       </div>
@@ -202,32 +271,85 @@ const ExerciseProgramScreen: React.FC = () => {
                 </div>
               ) : (
                 // Fallback for plans without detailed lesson data
-                <div className="grid grid-cols-2 gap-4">
+                <div className="space-y-4">
                   {Array.from({ length: selectedPlan.duration }, (_, index) => (
-                    <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden">
-                      <div className="relative">
-                        <div className="w-full h-24 bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
-                          <Play className="w-8 h-8 text-blue-600" />
+                    <div key={index} className="bg-white rounded-xl shadow-sm overflow-hidden border border-gray-100">
+                      <div className="flex">
+                        <div className="relative w-24 h-24 flex-shrink-0">
+                          <div className="w-full h-full bg-gradient-to-br from-blue-100 to-blue-200 flex items-center justify-center">
+                            <Play className="w-6 h-6 text-blue-600" />
+                          </div>
+                          <div className="absolute bottom-1 right-1 bg-black/70 text-white px-1 py-0.5 rounded text-xs">
+                            15分鐘
+                          </div>
                         </div>
-                        <div className="absolute bottom-2 right-2 bg-black/70 text-white px-2 py-1 rounded text-xs">
-                          15分鐘
+                        
+                        <div className="flex-1 p-3">
+                          <div className="flex justify-between items-start mb-2">
+                            <div>
+                              <h4 className="font-medium text-gray-900 text-sm mb-1">
+                                第{index + 1}個運動
+                              </h4>
+                              <p className="text-xs text-gray-600">
+                                安全簡單的坐著運動
+                              </p>
+                            </div>
+                            
+                            {/* Workout Record */}
+                            {(() => {
+                              const record = workoutRecords[index];
+                              return (
+                                <div className="text-right">
+                                  {record.completed ? (
+                                    <div className="space-y-1">
+                                      <div className={`px-2 py-1 rounded text-xs font-bold ${
+                                        record.grade === 'A' ? 'bg-green-100 text-green-800' :
+                                        record.grade === 'B' ? 'bg-blue-100 text-blue-800' :
+                                        'bg-yellow-100 text-yellow-800'
+                                      }`}>
+                                        {record.grade}級
+                                      </div>
+                                      <div className="text-xs text-gray-600">
+                                        {record.score}分
+                                      </div>
+                                      <div className="text-xs text-gray-500">
+                                        {record.completedDate}
+                                      </div>
+                                    </div>
+                                  ) : (
+                                    <div className="px-2 py-1 bg-gray-100 text-gray-600 rounded text-xs">
+                                      未完成
+                                    </div>
+                                  )}
+                                </div>
+                              );
+                            })()}
+                          </div>
+                          
+                          <div className="flex items-center justify-between">
+                            <div className="text-xs text-gray-500">基礎運動</div>
+                            {(() => {
+                              const record = workoutRecords[index];
+                              return record.completed ? (
+                                <div className="flex items-center text-xs text-green-600">
+                                  <CheckCircle className="w-3 h-3 mr-1" />
+                                  <span>已完成</span>
+                                </div>
+                              ) : (
+                                <div className="flex items-center text-xs text-gray-500">
+                                  <Clock className="w-3 h-3 mr-1" />
+                                  <span>待完成</span>
+                                </div>
+                              );
+                            })()}
+                          </div>
                         </div>
-                        <div className="absolute top-2 left-2 bg-blue-900/80 text-white px-2 py-1 rounded text-xs">
-                          第{index + 1}個
-                        </div>
-                      </div>
-                      <div className="p-3">
-                        <h4 className="font-medium text-gray-900 text-sm mb-1">
-                          課程 {index + 1}
-                        </h4>
-                        <p className="text-xs text-gray-600">
-                          安全簡單的坐著運動
-                        </p>
                       </div>
                     </div>
                   ))}
                 </div>
               )}
+              })()}
             </div>
 
             {/* Start Button */}
