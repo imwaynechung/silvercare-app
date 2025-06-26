@@ -251,93 +251,6 @@ const AssessmentScreen: React.FC = () => {
               </div>
             </div>
 
-            {/* Current Progress */}
-            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
-              <div className="flex items-center justify-between mb-4">
-                <div>
-                  <h2 className="text-lg font-semibold">復康進度</h2>
-                  <p className="text-green-100">第3週 - 持續改善中</p>
-                </div>
-                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
-                  <BarChart3 className="w-6 h-6" />
-                </div>
-              </div>
-              <div className="flex items-end">
-                <span className="text-3xl font-bold">75%</span>
-                <span className="ml-2 text-green-100">完成度</span>
-              </div>
-            </div>
-
-            {/* Featured Program */}
-            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
-              <div className="relative">
-                <img 
-                  src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
-                  alt="Rehabilitation Program" 
-                  className="w-full h-48 object-cover"
-                />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
-                <div className="absolute bottom-4 left-4 text-white">
-                  <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
-                  <p className="text-sm opacity-90">平衡力 + 肌力提升</p>
-                </div>
-              </div>
-              <div className="p-4">
-                <p className="text-gray-600 mb-4">根據您的評估結果制定的專屬復康方案，包含運動訓練和營養指導</p>
-                <div className="flex space-x-3">
-                  <button 
-                    onClick={() => window.location.href = '/chatbot-zh'}
-                    className="w-full bg-blue-900 text-white py-4 rounded-xl font-medium text-lg"
-                  >
-                    生成計劃
-                  </button>
-                </div>
-              </div>
-            </div>
-
-            {/* Progress History */}
-            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
-              <h2 className="text-lg font-semibold text-gray-900 mb-4">復康記錄</h2>
-              <div className="space-y-3">
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">平衡力評估</p>
-                    <p className="text-sm text-gray-600">2025年1月15日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-green-600">改善 +15%</p>
-                    <p className="text-sm text-gray-500">分數: 85/100</p>
-                  </div>
-                </div>
-                
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">肌力測試</p>
-                    <p className="text-sm text-gray-600">2025年1月12日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-green-600">改善 +12%</p>
-                    <p className="text-sm text-gray-500">分數: 78/100</p>
-                  </div>
-                </div>
-
-                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
-                  <div>
-                    <p className="font-medium text-gray-900">整體評估</p>
-                    <p className="text-sm text-gray-600">2025年1月8日</p>
-                  </div>
-                  <div className="text-right">
-                    <p className="font-medium text-blue-600">基線測試</p>
-                    <p className="text-sm text-gray-500">分數: 68/100</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </>
-        );
-      case 'workout':
-        return (
-          <>
             {/* Workout Records and Scores */}
             <div className="mb-6">
               <h2 className="text-lg font-semibold text-gray-900 mb-4">訓練記錄與評分</h2>
@@ -366,7 +279,7 @@ const AssessmentScreen: React.FC = () => {
                     </div>
                     
                     <div className="grid grid-cols-1 gap-3">
-                      {plan.sessions.map((session,  sessionIndex) => (
+                      {plan.sessions.map((session, sessionIndex) => (
                         <div 
                           key={session.id} 
                           className={`p-3 rounded-xl border-l-4 transition-all ${
@@ -456,9 +369,93 @@ const AssessmentScreen: React.FC = () => {
                 ))}
               </div>
             </div>
-            <ExerciseProgramScreen />
+
+            {/* Current Progress */}
+            <div className="bg-gradient-to-r from-green-500 to-green-600 rounded-2xl p-6 mb-6 text-white">
+              <div className="flex items-center justify-between mb-4">
+                <div>
+                  <h2 className="text-lg font-semibold">復康進度</h2>
+                  <p className="text-green-100">第3週 - 持續改善中</p>
+                </div>
+                <div className="w-12 h-12 bg-white/20 rounded-full flex items-center justify-center">
+                  <BarChart3 className="w-6 h-6" />
+                </div>
+              </div>
+              <div className="flex items-end">
+                <span className="text-3xl font-bold">75%</span>
+                <span className="ml-2 text-green-100">完成度</span>
+              </div>
+            </div>
+
+            {/* Featured Program */}
+            <div className="bg-white rounded-2xl shadow-lg overflow-hidden mb-6">
+              <div className="relative">
+                <img 
+                  src="https://media.istockphoto.com/id/1390751416/photo/asian-chinese-senior-woman-friends-enjoying-home-workout-during-evening-in-apartment-living.jpg?s=612x612&w=0&k=20&c=zfF6PzUHp00AXqI1Du7nPLkJoUsi3utpMZROh2X3I_E=" 
+                  alt="Rehabilitation Program" 
+                  className="w-full h-48 object-cover"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-black/60 to-transparent" />
+                <div className="absolute bottom-4 left-4 text-white">
+                  <h3 className="text-xl font-bold mb-1">個人化復康計劃</h3>
+                  <p className="text-sm opacity-90">平衡力 + 肌力提升</p>
+                </div>
+              </div>
+              <div className="p-4">
+                <p className="text-gray-600 mb-4">根據您的評估結果制定的專屬復康方案，包含運動訓練和營養指導</p>
+                <div className="flex space-x-3">
+                  <button 
+                    onClick={() => window.location.href = '/chatbot-zh'}
+                    className="w-full bg-blue-900 text-white py-4 rounded-xl font-medium text-lg"
+                  >
+                    生成計劃
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            {/* Progress History */}
+            <div className="bg-white rounded-2xl p-4 shadow-lg mb-6">
+              <h2 className="text-lg font-semibold text-gray-900 mb-4">復康記錄</h2>
+              <div className="space-y-3">
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                  <div>
+                    <p className="font-medium text-gray-900">平衡力評估</p>
+                    <p className="text-sm text-gray-600">2025年1月15日</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-green-600">改善 +15%</p>
+                    <p className="text-sm text-gray-500">分數: 85/100</p>
+                  </div>
+                </div>
+                
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                  <div>
+                    <p className="font-medium text-gray-900">肌力測試</p>
+                    <p className="text-sm text-gray-600">2025年1月12日</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-green-600">改善 +12%</p>
+                    <p className="text-sm text-gray-500">分數: 78/100</p>
+                  </div>
+                </div>
+
+                <div className="flex items-center justify-between p-3 bg-gray-50 rounded-xl">
+                  <div>
+                    <p className="font-medium text-gray-900">整體評估</p>
+                    <p className="text-sm text-gray-600">2025年1月8日</p>
+                  </div>
+                  <div className="text-right">
+                    <p className="font-medium text-blue-600">基線測試</p>
+                    <p className="text-sm text-gray-500">分數: 68/100</p>
+                  </div>
+                </div>
+              </div>
+            </div>
           </>
         );
+      case 'workout':
+        return <ExerciseProgramScreen />;
       case 'diet':
         return (
           <>
