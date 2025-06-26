@@ -3,7 +3,6 @@ import { LessonPlanService } from '../services/lessonPlanService';
 import { LessonPlan } from '../types/lessonPlan';
 import TodayExercise from '../components/exercise/TodayExercise';
 import WeeklyProgress from '../components/exercise/WeeklyProgress';
-import CurrentPlanInfo from '../components/exercise/CurrentPlanInfo';
 import ExercisePlans from '../components/exercise/ExercisePlans';
 import TrainingRecords from '../components/exercise/TrainingRecords';
 import PlanDetail from '../components/exercise/PlanDetail';
@@ -35,10 +34,10 @@ const ExerciseProgramScreen: React.FC = () => {
       name: '基礎平衡訓練',
       description: '改善平衡能力的基礎訓練課程',
       sessions: [
-        { id: 1, name: '坐式平衡練習', status: 'completed' as const, score: 85, grade: 'B' },
-        { id: 2, name: '站立平衡練習', status: 'completed' as const, score: 78, grade: 'B' },
-        { id: 3, name: '動態平衡練習', status: 'current' as const, score: 0, grade: '' },
-        { id: 4, name: '進階平衡挑戰', status: 'locked' as const, score: 0, grade: '' }
+        { id: 1, name: '坐式平衡練習', status: 'completed', score: 85, grade: 'B' },
+        { id: 2, name: '站立平衡練習', status: 'completed', score: 78, grade: 'B' },
+        { id: 3, name: '動態平衡練習', status: 'current', score: 0, grade: '' },
+        { id: 4, name: '進階平衡挑戰', status: 'locked', score: 0, grade: '' }
       ]
     },
     {
@@ -46,10 +45,10 @@ const ExerciseProgramScreen: React.FC = () => {
       name: '肌力強化訓練',
       description: '針對核心肌群和下肢的強化訓練',
       sessions: [
-        { id: 1, name: '上肢肌力訓練', status: 'completed' as const, score: 92, grade: 'A' },
-        { id: 2, name: '下肢肌力訓練', status: 'completed' as const, score: 88, grade: 'B' },
-        { id: 3, name: '核心穩定訓練', status: 'locked' as const, score: 0, grade: '' },
-        { id: 4, name: '全身協調訓練', status: 'locked' as const, score: 0, grade: '' }
+        { id: 1, name: '上肢肌力訓練', status: 'completed', score: 92, grade: 'A' },
+        { id: 2, name: '下肢肌力訓練', status: 'completed', score: 88, grade: 'B' },
+        { id: 3, name: '核心穩定訓練', status: 'locked', score: 0, grade: '' },
+        { id: 4, name: '全身協調訓練', status: 'locked', score: 0, grade: '' }
       ]
     },
     {
@@ -57,10 +56,10 @@ const ExerciseProgramScreen: React.FC = () => {
       name: '柔韌性提升',
       description: '增加關節活動度和肌肉柔韌性',
       sessions: [
-        { id: 1, name: '頸部伸展', status: 'completed' as const, score: 90, grade: 'A' },
-        { id: 2, name: '肩膀放鬆', status: 'locked' as const, score: 0, grade: '' },
-        { id: 3, name: '腰背伸展', status: 'locked' as const, score: 0, grade: '' },
-        { id: 4, name: '腿部拉伸', status: 'locked' as const, score: 0, grade: '' }
+        { id: 1, name: '頸部伸展', status: 'completed', score: 90, grade: 'A' },
+        { id: 2, name: '肩膀放鬆', status: 'locked', score: 0, grade: '' },
+        { id: 3, name: '腰背伸展', status: 'locked', score: 0, grade: '' },
+        { id: 4, name: '腿部拉伸', status: 'locked', score: 0, grade: '' }
       ]
     }
   ];
