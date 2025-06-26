@@ -238,6 +238,21 @@ const PersonalizedDietScreen: React.FC = () => {
     }
   };
 
+  const handleAddToTracker = () => {
+    // Save diet plan to localStorage for tracking
+    const trackedPlan = {
+      id: Date.now().toString(),
+      plan: dietPlan,
+      userProfile,
+      startDate: new Date().toISOString(),
+      status: 'active'
+    };
+    
+    localStorage.setItem('activeDietPlan', JSON.stringify(trackedPlan));
+    
+    alert('飲食計劃已加入追蹤器！您可以在首頁查看進度。');
+  };
+
   if (step === 'profile') {
     return (
       <div className="h-screen bg-gray-50 flex flex-col max-w-md mx-auto">
@@ -562,6 +577,13 @@ const PersonalizedDietScreen: React.FC = () => {
 
           {/* Action Buttons */}
           <div className="space-y-3 mb-8">
+            <button
+              onClick={handleAddToTracker}
+              className="w-full bg-blue-600 text-white py-3 rounded-xl font-medium hover:bg-blue-700 transition-colors flex items-center justify-center"
+            >
+              <CheckCircle className="w-5 h-5 mr-2" />
+              加入追蹤器
+            </button>
             <button
               onClick={() => {
                 setStep('profile');

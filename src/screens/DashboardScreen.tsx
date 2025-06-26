@@ -27,6 +27,19 @@ const DashboardScreen: React.FC = () => {
     navigate('/personalized-diet');
   };
 
+  // Check if user has an active diet plan
+  const getActiveDietPlan = () => {
+    try {
+      const stored = localStorage.getItem('activeDietPlan');
+      return stored ? JSON.parse(stored) : null;
+    } catch (error) {
+      return null;
+    }
+  };
+
+  const activeDietPlan = getActiveDietPlan();
+  const planProgress = activeDietPlan ? Math.min(Math.floor(Math.random() * 40) + 20, 100) : 0; // Mock progress
+
   return (
     <div className="min-h-full bg-gray-50 mobile-scroll">
       {/* Header with proper GOFA logo and photo avatar */}
@@ -159,11 +172,15 @@ const DashboardScreen: React.FC = () => {
               </div>
               <div className="p-4">
                 <h3 className="font-bold text-gray-900 mb-1">個人化飲食計劃</h3>
-                <p className="text-sm text-gray-600">AI智能分析 | 個人化營養指導</p>
+                <p className="text-sm text-gray-600">
+                  {activeDietPlan ? activeDietPlan.plan.title : 'AI智能分析 | 個人化營養指導'}
+                </p>
                 <div className="mt-3 bg-gray-200 rounded-full h-2">
-                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '0%' }}></div>
+                  <div className="bg-green-600 h-2 rounded-full" style={{ width: `${planProgress}%` }}></div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">點擊開始</p>
+                <p className="text-xs text-gray-500 mt-1">
+                  {activeDietPlan ? `進度: ${planProgress}%` : '點擊開始'}
+                </p>
                 <button
                   onClick={handlePersonalizedDietClick}
                   className="mt-2 w-full bg-green-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
