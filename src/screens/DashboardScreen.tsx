@@ -1,7 +1,10 @@
 import React, { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Heart, TrendingUp, Calendar, User, Bell, CheckCircle, Utensils, Dumbbell } from 'lucide-react';
 
 const DashboardScreen: React.FC = () => {
+  const navigate = useNavigate();
+
   useEffect(() => {
     // Track dashboard view
     if (typeof gtag !== 'undefined') {
@@ -11,6 +14,18 @@ const DashboardScreen: React.FC = () => {
       });
     }
   }, []);
+
+  const handlePersonalizedDietClick = () => {
+    // Track diet plan click
+    if (typeof gtag !== 'undefined') {
+      gtag('event', 'diet_plan_click', {
+        event_category: 'engagement',
+        event_label: 'dashboard_diet_click',
+        language: 'zh'
+      });
+    }
+    navigate('/personalized-diet');
+  };
 
   return (
     <div className="min-h-full bg-gray-50 mobile-scroll">
@@ -130,7 +145,7 @@ const DashboardScreen: React.FC = () => {
             <div className="bg-white rounded-2xl shadow-lg min-w-[280px] overflow-hidden card-mobile">
               <div className="relative">
                 <img 
-                  src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=150&fit=crop" 
+                  src="https://images.unsplash.com/photo-1490645935967-10de6ba17061?w=300&h=150&fit=crop"
                   alt="Diet Plan" 
                   className="w-full h-32 object-cover"
                 />
@@ -144,11 +159,17 @@ const DashboardScreen: React.FC = () => {
               </div>
               <div className="p-4">
                 <h3 className="font-bold text-gray-900 mb-1">個人化飲食計劃</h3>
-                <p className="text-sm text-gray-600">本週計劃 | 均衡營養指導</p>
+                <p className="text-sm text-gray-600">AI智能分析 | 個人化營養指導</p>
                 <div className="mt-3 bg-gray-200 rounded-full h-2">
-                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '100%' }}></div>
+                  <div className="bg-green-600 h-2 rounded-full" style={{ width: '0%' }}></div>
                 </div>
-                <p className="text-xs text-gray-500 mt-1">進度: 100%</p>
+                <p className="text-xs text-gray-500 mt-1">點擊開始</p>
+                <button
+                  onClick={handlePersonalizedDietClick}
+                  className="mt-2 w-full bg-green-600 text-white py-2 rounded-lg text-sm font-medium hover:bg-green-700 transition-colors"
+                >
+                  開始個人化分析
+                </button>
               </div>
             </div>
           </div>
