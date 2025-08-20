@@ -103,6 +103,7 @@ function AppContent() {
           <Route path="/assessment-selection" element={<AssessmentSelectionScreen />} />
           <Route path="/cognitive-assessment" element={<CognitiveAssessmentScreen />} />
           <Route path="/personalized-diet" element={<PersonalizedDietScreen />} />
+          <Route path="/caregiver/exercise-program" element={<ExerciseProgramScreen />} />
           <Route 
             path="/chatbot" 
             element={<ChatbotAssessment onComplete={(state) => console.log('Assessment completed:', state)} />} 
